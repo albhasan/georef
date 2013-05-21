@@ -1,0 +1,137 @@
+/* ------------------------------------------------ 
+ JQuery look
+ ------------------------------------------------ */
+.ui-widget{font-size:12px;}
+
+
+/* ------------------------------------------------ 
+0 window partition 
+ ------------------------------------------------ */
+/* DIV containing everything */
+#container{
+	/*
+	margin-left:auto;
+	margin-right:auto;
+	overflow:scroll;
+	*/
+}
+
+/* ------------------------------------------------ 
+1st window partition 
+ ------------------------------------------------ */
+#top,#middle,#bottom{
+	/*border:1px solid;*/
+	width:100%;
+}
+#middle,#middle-left,#middle-center{
+	/*height:450px;*/
+}
+
+#top{
+	/*
+	height:100px;
+	background-color:Yellow;
+	*/
+	
+}
+#middle{
+	/*background-color:Blue;*/
+}
+#bottom{
+	/*
+	height:100px;
+	background-color:Red;
+	*/
+}
+
+/* ------------------------------------------------ 
+2nd window partition 
+ ------------------------------------------------ */
+#middle-left,#middle-center,{
+	/*border:1px solid;*/
+}
+#middle-left{
+	float: left;
+	width:20%;
+	/*background-color:Green;*/
+}
+#middle-center{
+	float:left;
+	width:80%;
+	overflow:auto;
+	/*
+	background-color:Brown;"
+	*/
+}
+
+
+
+
+/* ------------------------------------------------ 
+3rd window partition 
+ ------------------------------------------------ */
+ 
+ /* ------------------------------------------------ 
+4th window partition 
+ ------------------------------------------------ */
+
+#middle-center-tabone-left,#middle-center-tabone-center{
+	height:100%;
+	width:50%;
+	float:left;
+}
+
+/* ------------------------------------------------ 
+5th window partition 
+ ------------------------------------------------ */
+#mapImage{
+	border:1px solid blue;
+	height:100%;
+	width:100%;
+	/*
+	background-color:Gray;
+	*/
+}
+/* ------------------------------------------------ */
+/* Fourth window partition */
+/* ------------------------------------------------ */
+#imageForm{
+	height:100%;
+	width:100%;
+	/*
+	background-color:Violet;
+	*/
+}
+
+/* ------------------------------------------------ */
+/* Controls */
+/* ------------------------------------------------ */
+ #accordion-resizer {
+	padding: 10px;
+	width: 350px;
+	height: 100%;
+}
+#tabs .tabs-spacer {float: left; height: 200px; }
+.tabs-bottom .ui-tabs-nav { clear: left; padding: 0 .2em .2em .2em; }
+.tabs-bottom .ui-tabs-nav li { top: auto; bottom: 0; margin: 0 .2em 1px 0; border-bottom: auto; border-top: 0; }
+.tabs-bottom .ui-tabs-nav li.ui-tabs-active { margin-top: -1px; padding-top: 1px; }
+
+#tabs-1,#tabs-2,#tabs-3{
+	height:350px;
+}
+
+#accordion{
+	height:411px;
+}
+
+#map{
+	border:1px solid blue;
+	height:100%;
+	width:100%;
+}
+
+
+
+
+
+

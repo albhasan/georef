@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<title>GeoRef</title>
+
+		<!--*********************************
+		Leaflet stuff
+		*********************************-->
+		<!--<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.5.1/leaflet.css" />-->
+		<!----><!--[if lte IE 8]><link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.5.1/leaflet.ie.css" /><![endif]-->
+		<!--<script src="http://cdn.leafletjs.com/leaflet-0.5.1/leaflet.js"></script>-->
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<script src="./js/Leaflet-Leaflet-0deed73/dist/leaflet.js"></script>
+		<link rel="stylesheet" href="./js/Leaflet-Leaflet-0deed73/dist/leaflet.css" />
+		
+		<!--*********************************
+		JQuery stuff
+		<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+		<script src="http://code.jquery.com/jquery-migrate-1.1.1.min.js"></script>
+		*********************************-->
+		<script src="./js/jquery-1.9.1.min.js"></script>
+		<script src="./js/jquery-ui-1.10.2/ui/jquery-ui.js"></script>
+		<link rel="stylesheet" type="text/css" href="./js/jquery-ui-1.10.2/themes/base/jquery-ui.css" />
+
+		<!--
+		*********************************
+		Datatables stuff
+		*********************************
+		-->		
+		<style type="text/css">
+			@import "./js/DataTables-1.9.4/media/css/demo_page.css";
+			@import "./js/DataTables-1.9.4/media/css/demo_table.css";
+		</style>
+		<script class="jsbin" src="./js/DataTables-1.9.4/media/js/jquery-dataTables.js"></script>
+		
+		
+		<!--
+		*********************************
+		Sylvester (matrix operations)
+		*********************************
+		-->
+		<script src="./js/sylvester/lib/sylvester.js"></script>
+		
+		
+		
+		
+		<!--
+		*********************************
+		GeoReferencer stuff
+		*********************************
+		-->
+		<script src="./js/georef/ControlPointManager.js"></script>
+		<script src="./js/georef/ImageModel.js"></script>
+		<script src="./js/georef/Util.js"></script>
+		<script src="./js/georef/Coords.js"></script>
+		<script src="./js/georef/Gui.js"></script>
+		<script src="./js/georef/SimilarityTransformation.js"></script>
+		<link rel="stylesheet" type="text/css" href="css/georef.css" />
+		
+		
+	</head>
+	
+
+	<body> 
+		<div id="container">
+			<div id="top">
+				<h1>GeoReferencer</h1>
+			</div>
+			<div id="middle">
+				<div id="middle-left">
+					<div id="accordion">
+						<h3>1 - Image</h3>
+						<div>
+							<div id="imageForm">
+								Image url: 
+								<input id="imgMapInput" type="text">
+								<button id="btLoadImage">Click Me!</button>
+								<br/>
+								i.e <a href="http://upload.wikimedia.org/wikipedia/commons/4/40/Strategic_Situation_of_Europe_1809.jpg" target="_blank">Europe 1809</a>
+							</div>
+						</div>
+						<h3>2 - Control Points</h3>
+						<div>
+							<a href="javascript:void(0)" id="delete">Delete selected row</a>
+							<div id="controlPointsTableDiv"></div>
+						</div>
+						<h3>3 - Map area</h3>
+						<div>
+							Polygon with the efective map area
+						</div>
+						<h3>4 - Ruler</h3>
+						<div>
+							Captures a measure on the ruler scanned along the map
+						</div>
+						<h3>Help</h3>
+						<div>
+						<ul>
+						<li>List item one</li>
+						<li>List item two</li>
+						<li>List item three</li>
+						</ul>
+						</div>
+					</div>
+				</div>
+				<div id="middle-center">
+					<div id="tabs" class="tabs-bottom" >
+						<ul>
+							<li><a href="#tabs-1">Split view no sync</a></li>
+							<li><a href="#tabs-2">Split view sync</a></li>
+							<li><a href="#tabs-3">LOD view</a></li>
+						</ul>
+						<div class="tabs-spacer"></div>
+						<div id="tabs-1">
+							<div id="middle-center-tabone-left">
+								<div id="mapImage"></div>
+							</div>
+							<div id="middle-center-tabone-center">
+								<div id="map"></div>
+							</div>
+						</div>
+						<div id="tabs-2">
+							<p>Morbi tincidunt, dui sit amet facilisis feugiat, odio metus gravida ante, ut pharetra massa metus id nunc. Duis scelerisque molestie turpis. Sed fringilla, massa eget luctus malesuada, metus eros molestie lectus, ut tempus eros massa ut dolor. Aenean aliquet fringilla sem. Suspendisse sed ligula in ligula suscipit aliquam. Praesent in eros vestibulum mi adipiscing adipiscing. Morbi facilisis. Curabitur ornare consequat nunc. Aenean vel metus. Ut posuere viverra nulla. Aliquam erat volutpat. Pellentesque convallis. Maecenas feugiat, tellus pellentesque pretium posuere, felis lorem euismod felis, eu ornare leo nisi vel felis. Mauris consectetur tortor et purus.</p>
+						</div>
+						<div id="tabs-3">
+							<p>Mauris eleifend est et turpis. Duis id erat. Suspendisse potenti. Aliquam vulputate, pede vel vehicula accumsan, mi neque rutrum erat, eu congue orci lorem eget lorem. Vestibulum non ante. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Fusce sodales. Quisque eu urna vel enim commodo pellentesque. Praesent eu risus hendrerit ligula tempus pretium. Curabitur lorem enim, pretium nec, feugiat nec, luctus a, lacus.</p>
+							<p>Duis cursus. Maecenas ligula eros, blandit nec, pharetra at, semper at, magna. Nullam ac lacus. Nulla facilisi. Praesent viverra justo vitae neque. Praesent blandit adipiscing velit. Suspendisse potenti. Donec mattis, pede vel pharetra blandit, magna ligula faucibus eros, id euismod lacus dolor eget odio. Nam scelerisque. Donec non libero sed nulla mattis commodo. Ut sagittis. Donec nisi lectus, feugiat porttitor, tempor ac, tempor vitae, pede. Aenean vehicula velit eu tellus interdum rutrum. Maecenas commodo. Pellentesque nec elit. Fusce in lacus. Vivamus a libero vitae lectus hendrerit hendrerit.</p>
+						</div>
+					</div>				
+				
+				
+				
+				
+				
+				
+				
+				
+
+					
+					
+					
+				</div>
+			</div>
+			<div id="bottom">
+				bikini bottom
+			</div>
+		</div>
+	</body>
+</html> 
