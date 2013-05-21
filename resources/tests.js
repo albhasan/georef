@@ -1,19 +1,27 @@
-	//Coords in the map
-	var xyMap1 = new Array(97799.72, 53116.92);
-	var xyMap2 = new Array(98954.56, 63419.03);
-	var xyMap3 = new Array(108181.95, 63175.97);
-	var xyMap4 = new Array(107882.7, 53106.30);
-	var xyMap5 = new Array(104019.3, 58850.44);
+/*
+Copyright © 2000 Alber Sanchez <albhasan@gmail.com>
+This work is free. You can redistribute it and/or modify it under the
+terms of the Do What The Fuck You Want To Public License, Version 2,
+as published by Sam Hocevar. See the COPYING file for more details.
+*/
 
-	//Coords in the image (first quadrant)
-	var xyImage1Q_1 = new Array(374, 146);
-	var xyImage1Q_2 = new Array(596, 3263);
-	var xyImage1Q_3 = new Array(3378, 3307);
-	var xyImage1Q_4 = new Array(3414, 255);
-	var xyImage1Q_5 = new Array(2177, 1940);
 
-	var xySource = new Array(xyMap1, xyMap2, xyMap3);
-	var xyDestination = new Array(xyImage1Q_1, xyImage1Q_2, xyImage1Q_3);
+//Coords in the map
+var xyMap1 = new Array(97799.72, 53116.92);
+var xyMap2 = new Array(98954.56, 63419.03);
+var xyMap3 = new Array(108181.95, 63175.97);
+var xyMap4 = new Array(107882.7, 53106.30);
+var xyMap5 = new Array(104019.3, 58850.44);
+
+//Coords in the image (first quadrant)
+var xyImage1Q_1 = new Array(374, 146);
+var xyImage1Q_2 = new Array(596, 3263);
+var xyImage1Q_3 = new Array(3378, 3307);
+var xyImage1Q_4 = new Array(3414, 255);
+var xyImage1Q_5 = new Array(2177, 1940);
+
+var xySource = new Array(xyMap1, xyMap2, xyMap3);
+var xyDestination = new Array(xyImage1Q_1, xyImage1Q_2, xyImage1Q_3);
 
 	
 test("SimilarityTransformation", function(){
