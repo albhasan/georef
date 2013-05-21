@@ -19,6 +19,30 @@ function ControlPointManager(){
 	//---------------------------------------------------------
 	//PRIVATE
 	//---------------------------------------------------------
+	
+	function cpId2Index(cpId){
+		var res;
+		var len = (mapArray.length >= imageArray.length) ? mapArray.length : imageArray.length;
+		for(var i = 0; i < len; i++){
+			if(i < mapArray.length){
+				var cpMap = mapArray[i];
+				if(cpId == cpMap[0] && cpMap[cpMap.length - 1] == true){
+					res = i;
+					break;
+				}
+			}
+			if(i < imageArray.length){
+				var cpImage = imageArray[i];
+				if(cpId == cpImage[0] && cpImage[cpImage.length - 1] == true){
+					res = i;
+					break;
+				}
+			}
+		}
+		return res;
+	}
+	
+	
 	function createMapCp(x, y){
 		var res = new Array();
 		mapIndex++;
@@ -27,7 +51,7 @@ function ControlPointManager(){
 		res[2] = y;
 		res[3] = true;
 		mapArray.push(res);
-		return res;
+		return res[0];
 	}
 	
 	function createImageCp(x, y){
@@ -38,11 +62,12 @@ function ControlPointManager(){
 		res[2] = y;
 		res[3] = true;
 		imageArray.push(res);
-		return res;
+		return res[0];
 	}
 	
-	function readMapCp(index){
+	function readMapCp(cpId){
 		var res;
+		var index = cpId2Index(cpId);
 		if(index >= 0 && index < mapArray.length){
 			res = new Array();
 			res = mapArray[index];
@@ -51,8 +76,9 @@ function ControlPointManager(){
 		return res;
 	}
 	
-	function readImageCp(index){
+	function readImageCp(cpId){
 		var res;
+		var index = cpId2Index(cpId);
 		if(index >= 0 && index < imageArray.length){
 			res = new Array();
 			res = imageArray[index];
@@ -61,8 +87,9 @@ function ControlPointManager(){
 		return res;
 	}
 
-	function updateMapCp(index, x, y){
+	function updateMapCp(cpId, x, y){
 		var res = false;
+		var index = cpId2Index(cpId);
 		if(index >= 0 && index < mapArray.length){
 			var tmp = mapArray[index];
 			tmp[1] = x;
@@ -74,8 +101,9 @@ function ControlPointManager(){
 		return res;
 	}
 	
-	function updateImageCp(index, x, y){
+	function updateImageCp(cpId, x, y){
 		var res = false;
+		var index = cpId2Index(cpId);
 		if(index >= 0 && index < imageArray.length){
 			var tmp = imageArray[index];
 			tmp[1] = x;
@@ -87,8 +115,9 @@ function ControlPointManager(){
 	}
 	
 	//Mark as deleted
-	function deleteMapCp(index){
+	function deleteMapCp(cpId){
 		var res = false;
+		var index = cpId2Index(cpId);
 		if(index >= 0 && index < mapArray.length){
 			var tmp = mapArray[index];
 			tmp[tmp.length - 1] = false;
@@ -98,8 +127,9 @@ function ControlPointManager(){
 	}
 	
 	//Mark as deleted
-	function deleteImageCp(index){
+	function deleteImageCp(cpId){
 		var res = false;
+		var index = cpId2Index(cpId);
 		if(index >= 0 && index < imageArray.length){
 			var tmp = imageArray[index];
 			tmp[tmp.length - 1] = false;
@@ -136,24 +166,21 @@ function ControlPointManager(){
 	//---------------------------------------------------------
 	//PRIVILEGED
 	//---------------------------------------------------------
-	this.addMapMarker = function(aL, aLatlng, anIcon){
-		var res = new Array();
-		var marker = aL.marker(aLatlng, {icon: anIcon});
-		var mcp = createMapCp(aLatlng.lng, aLatlng.lat);
-		res[0] = mcp[0];
-		res[1] = marker;
+	this.addMapControlPoint = function(xImg, yImg){
+		var res = createMapCp(xImg, yImg);
 		return res;
 	}
 
-	this.addImageMarker = function(aL, aLatlng, anIcon){
-		var res = new Array();
-		var marker = aL.marker(aLatlng, {icon: anIcon});
-		var icp = createImageCp(aLatlng.lng, aLatlng.lat);
-		res[0] = icp[0];
-		res[1] = marker;
+	this.addImageControlPoint = function(xImg, yImg){
+		var res = createImageCp(xImg, yImg);
 		return res;
 	}
 
+	this.removeControlPoint = function(cpId){
+		deleteImageCp(cpId);
+		deleteMapCp(cpId);
+	}
+	
 	this.toArray = function(){
 		var res = new Array();
 		var len = (mapIndex >= imageIndex) ? mapIndex : imageIndex;		

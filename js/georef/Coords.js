@@ -62,6 +62,7 @@ function Coords(){
 		return res;
 	}	
 	
+	//Uses sylvester
 	this.leastSquaresLongNoWeight = function(Aarray, Carray, barray){
 		//Inputs arrays to matrixes
 		var A = Matrix.create(Aarray);
@@ -88,6 +89,7 @@ function Coords(){
 	}
 	
 	
+	//Uses sylvester
 	//https://groups.google.com/forum/?fromgroups#!topic/mapinfo-l/au0j3pSLXHM
 	this.perspectivity = function(Aarray, Barray){
 		//Inputs arrays to matrixes

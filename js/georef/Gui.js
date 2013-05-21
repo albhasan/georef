@@ -5,30 +5,19 @@ terms of the Do What The Fuck You Want To Public License, Version 2,
 as published by Sam Hocevar. See the COPYING file for more details.
 */
 
-//********************************************************
-//********************************************************
-//TODO LIST:
-//isUrlOfImage: Just checks the extension of the file's URL. Check the remaining parts of the URL
-//Copyright: Give credits
-//********************************************************
-//********************************************************
 
+var map;//Map container
+var mapImage;//Map container for the image
+var imageMapMaxSize = 10;//Maximum size of the image in map units
+var imgModelOriginal;//Representation of the image
+var imgModelScaled;//Scaled representation of the image to fit the map container
+var cpManager = new ControlPointManager();
+var mkManager;
+var imageMapLayer;
 var cpTable;//Table of control points. It must be outside of the ready function
 
 
-
 $(document).ready(function () {
-
-	var map;//Map container
-	var mapImage;//Map container for the image
-	var imageMapMaxSize = 10;//Maximum size of the image in map units
-	var imgModelOriginal;//Representation of the image
-	var imgModelScaled;//Scaled representation of the image to fit the map container
-	var cpManager = new ControlPointManager();
-	var imageMapLayer;
-	//var cpTable;
-
-	
 	
 	//------------------------------------------
 	// Initialization
@@ -51,15 +40,6 @@ $(document).ready(function () {
 	//------------------------------------------
 	//LEAFLET http://leafletjs.com/
 	//------------------------------------------
-	var controlPointIcon = L.icon({
-		iconUrl: 'http://localhost:81/code/js/Leaflet-Leaflet-0deed73/dist/images/marker-icon.png',
-		shadowUrl: 'http://localhost:81/code/js/Leaflet-Leaflet-0deed73/dist/images/marker-shadow.png',
-		iconSize:     [25, 41], // size of the icon
-		shadowSize:   [41, 41], // size of the shadow
-		iconAnchor:   [12, 40], // point of the icon which will correspond to marker's location
-		shadowAnchor: [12, 40],  // the same for the shadow
-		popupAnchor:  [0, -40] // point from which the popup should open relative to the iconAnchor
-	});
 	function initmap(){
 
 		//NOTES:
@@ -68,7 +48,7 @@ $(document).ready(function () {
 		//Map start
 		map = L.map('map').setView([51.96236,7.62571], 12);
 		mapImage = L.map('mapImage', {center: [imageMapMaxSize/2, imageMapMaxSize/2],zoom: 12,crs: L.CRS.Simple});	//Plane SRS to put the map-image
-		
+		mkManager = new MarkerManager(cpManager, mapImage, map);		
 		
 		//Adds layers
 		L.tileLayer('http://{s}.tile.cloudmade.com/BC9A493B41014CAABB98F0471D759707/997/256/{z}/{x}/{y}.png', {
@@ -78,34 +58,24 @@ $(document).ready(function () {
 		//Event registration
 		map.on('click', function(e) {
 			//alert(e.latlng);
-			var markerArray = cpManager.addMapMarker(L, e.latlng, controlPointIcon);
-			markerArray[1].addTo(map);
-			markerArray[1].bindPopup(markerArray[0]).openPopup();		
-			addControlPointToTable(cpTable, markerArray[0], null, null, e.latlng.lng, e.latlng.lat);
+			var cpId = mkManager.addMapMarker(L, e.latlng);
+			addControlPointToTable(cpTable, cpId, null, null, e.latlng.lng, e.latlng.lat);
 		});
 		mapImage.on('click', function(e) {
 			//alert(e.latlng);
 			if(imageMapLayer != null){
 				if(imgModelScaled.isInside_Image1q(e.latlng.lng, e.latlng.lat)){
-					var markerArray = cpManager.addImageMarker(L, e.latlng, controlPointIcon);
-					markerArray[1].addTo(mapImage);
-					markerArray[1].bindPopup(markerArray[0]).openPopup();		
-					addControlPointToTable(cpTable, markerArray[0], e.latlng.lng, e.latlng.lat, null, null);
+				var cpId = mkManager.addImageMarker(L, e.latlng);
+				addControlPointToTable(cpTable, cpId, e.latlng.lng, e.latlng.lat, null, null);
 				}
 			}
 		});
 	}
 
 
-
-
 	//------------------------------------------
 	//DataTables http://www.datatables.net
 	//------------------------------------------
-
-	
-	BORRAR MARCADORES DEL MAPA CUANDO EL USUARIO BORRA UN REGISTRO DE LA TABLA. USAR CALL BACK DEL 
-	
 	
 	function addControlPointToTable(cpTable, cpId, xImage, yImage, xMap, yMap){
 		var tmpArray = new Array();
@@ -151,50 +121,30 @@ $(document).ready(function () {
 		}
 	}
 	
-	
-	
-	
-	
-	
-	
-	
-
-	
-	
     /* Add a click handler to the rows - this could be used as a callback */
     $("#controlPointsTableDiv").on('click', '#controlPointsTable tbody tr', function( e ) {
         if ( $(this).hasClass('row_selected') ) {
             $(this).removeClass('row_selected');
+			mkManager.selectMarker(-1);
         }
         else {
             cpTable.$('tr.row_selected').removeClass('row_selected');
             $(this).addClass('row_selected');
+			var cpId = cpTable.$('tr.row_selected')[0].children[0].innerHTML;
+			mkManager.selectMarker(cpId);
         }
     });
      
     /* Add a click handler for the delete row */
     $('#delete').click( function() {
         var anSelected = fnGetSelected( cpTable );
-        if ( anSelected.length !== 0 ) {
-            cpTable.fnDeleteRow( anSelected[0] );
+        if(anSelected.length !== 0){
+			var selRow = cpTable.fnDeleteRow(anSelected[0]);
+			var cpId = selRow[0]._aData[0]
+			mkManager.removeMapMarker(cpId);
+			mkManager.removeImageMarker(cpId);
         }
     } );
-
-	function removeAllControlPoints(){
-		cpManager.removeAll();
-		updateControlPointTable(cpManager);
-	}
-
-
-
-
-
-
-
-
-
-
-
 
 
 	//------------------------------------------
@@ -249,7 +199,7 @@ $(document).ready(function () {
 					imageMapLayer.addTo(mapImage);
 					mapImage.setView([imgModelScaled.getHeight()/2, imgModelScaled.getWidth()/2], 5);//Zoom to image center
 					//Remove control points
-					removeAllControlPoints();
+//removeAllControlPoints();
 				}
 				image.src = imageUrl;	
 			}else{
