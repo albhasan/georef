@@ -27,21 +27,11 @@ function ImageModel(imageUrl, width, height){
 		return res;
 	}	
 	
-	//Calculates the scaled image proportions to fit the given size
-	function scaleImageToSize(imgWidth, imgHeight, maxSize){
-		var xProp = maxSize;
-		var yProp = maxSize;
-		if(imgWidth > imgHeight){
-			yProp = imgHeight * xProp / imgWidth;
-		}else if(imgWidth < imgHeight){
-			xProp = imgWidth * yProp / imgHeight;
-		}
-		var res = new Array(xProp, yProp);
-		return res;
-	}
+	
+	
+	
 	
 
-	
 	
 	//---------------------------------------------------------
 	//PRIVILEGED
@@ -55,11 +45,7 @@ function ImageModel(imageUrl, width, height){
 	this.getHeight = function(){
 		return imageHeight;
 	}
-	this.getScaledImageModel = function(maximumSize){
-		var prop = scaleImageToSize(this.getWidth(), this.getHeight(), maximumSize);
-		var res = new ImageModel("", prop[0], prop[1]);
-		return res;
-	}
+
 	//Using image's ref sys
 	this.getMinCoords = function(){
 		return imageOrigin;
@@ -145,5 +131,10 @@ function ImageModel(imageUrl, width, height){
 		var img = this.image1q2image(xImg1q, yImg1q);
 		return this.isInsideImage(img[0], img[1]);
 	}
+	
+	
+
+
+	
 	
 }

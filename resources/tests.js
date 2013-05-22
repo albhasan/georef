@@ -65,3 +65,49 @@ test("AffineTransformation", function(){
 	ok(Math.abs(xyMap5Trans[1] - 1950.7717) < tolerance);
 
 });
+
+test("ImageModel", function(){
+	
+	var maxSize = 10;
+	var imOriginal = new ImageModel("http://test.org/original", 1000, 100);
+	
+	equal(imOriginal.getMinCoords().toString(), [0,0].toString());
+	equal(imOriginal.getMaxCoords().toString(), [1000,100].toString());
+	equal(imOriginal.getLowerLeft().toString(), [0,100].toString());
+	equal(imOriginal.getUpperRight().toString(), [1000,0].toString());
+
+	equal(imOriginal.image2image4q(0, 100).toString(), [0, -100].toString());
+	equal(imOriginal.image2image4q(1000, 0).toString(), [1000, 0].toString());
+	
+	equal(imOriginal.image2image1q(0, 100).toString(), [0, 0].toString());
+	equal(imOriginal.image2image1q(1000, 0).toString(), [1000, 100].toString());
+
+	equal(imOriginal.image4q2image(0, -100).toString(), [0, 100].toString());
+	equal(imOriginal.image4q2image(1000, 0).toString(), [1000, 0].toString());
+	
+	equal(imOriginal.image1q2image(0, 0).toString(), [0, 100].toString());
+	equal(imOriginal.image1q2image(1000, 100).toString(), [1000, 0].toString());
+	
+	
+	
+	
+});
+
+test("ScaledImage", function(){
+	var maxSize = 10;
+	var imOriginal = new ImageModel("http://test.org/original", 1000, 100);
+	var imScaled = new ScaledImage(imOriginal, maxSize);
+	
+	equal(imScaled.getScaledImage().getMinCoords().toString(), [0,0].toString());
+	equal(imScaled.getScaledImage().getMaxCoords().toString(), [10,1].toString());
+	equal(imScaled.getScaledImage().getLowerLeft().toString(), [0,1].toString());
+	equal(imScaled.getScaledImage().getUpperRight().toString(), [10,0].toString());
+
+	var xyImg = [567, 76];
+	var xyScaled = imScaled.scaleCoords(xyImg[0], xyImg[1]);
+	var xyUnscaled = imScaled.unScaleCoords(xyScaled[0], xyScaled[1]);
+	equal(xyImg.toString(), xyUnscaled.toString());	
+	
+	
+	
+});

@@ -64,9 +64,13 @@ $(document).ready(function () {
 		mapImage.on('click', function(e) {
 			//alert(e.latlng);
 			if(imageMapLayer != null){
-				if(imgModelScaled.isInside_Image1q(e.latlng.lng, e.latlng.lat)){
-				var cpId = mkManager.addImageMarker(L, e.latlng);
-				addControlPointToTable(cpTable, cpId, e.latlng.lng, e.latlng.lat, null, null);
+				if(imgModelScaled.getScaledImage().isInside_Image1q(e.latlng.lng, e.latlng.lat)){
+					//Transform to image coords
+					var xyImgScl1Q = [e.latlng.lng, e.latlng.lat];
+					var xyImgScl = imgModelScaled.getScaledImage().image1q2image(xyImgScl1Q[0], xyImgScl1Q[1]);
+					var xyImgOriginal = imgModelScaled.unScaleCoords(xyImgScl[0], xyImgScl[1]);
+					var cpId = mkManager.addImageMarkerImgScaled1Q(L, e.latlng, imgModelScaled);
+					addControlPointToTable(cpTable, cpId, xyImgOriginal[0], xyImgOriginal[1], null, null);
 				}
 			}
 		});
@@ -141,8 +145,7 @@ $(document).ready(function () {
         if(anSelected.length !== 0){
 			var selRow = cpTable.fnDeleteRow(anSelected[0]);
 			var cpId = selRow[0]._aData[0]
-			mkManager.removeMapMarker(cpId);
-			mkManager.removeImageMarker(cpId);
+			mkManager.removeMarker(cpId);
         }
     } );
 
@@ -188,16 +191,16 @@ $(document).ready(function () {
 				image.onload = function(){
 					//Loads the new image to the map
 					imgModelOriginal = new ImageModel(imageUrl, this.width, this.height);
-					imgModelScaled = imgModelOriginal.getScaledImageModel(imageMapMaxSize);
+					imgModelScaled = new ScaledImage(imgModelOriginal, imageMapMaxSize);
 					var scaleBounds = new Array();
-					scaleBounds[0] = imgModelScaled.getCartesianLowerLeft_Image1Q().reverse();
-					scaleBounds[1] = imgModelScaled.getCartesianUpperRight_Image1Q().reverse();
+					scaleBounds[0] = imgModelScaled.getScaledImage().getCartesianLowerLeft_Image1Q().reverse();
+					scaleBounds[1] = imgModelScaled.getScaledImage().getCartesianUpperRight_Image1Q().reverse();
 					if(imageMapLayer != null){
 						mapImage.removeLayer(imageMapLayer);//Removes the last loaded image
 					}
 					imageMapLayer = new L.imageOverlay(imageUrl, scaleBounds);
 					imageMapLayer.addTo(mapImage);
-					mapImage.setView([imgModelScaled.getHeight()/2, imgModelScaled.getWidth()/2], 5);//Zoom to image center
+					mapImage.setView([imgModelScaled.getScaledImage().getHeight()/2, imgModelScaled.getScaledImage().getWidth()/2], 5);//Zoom to image center
 					//Remove control points
 //removeAllControlPoints();
 				}

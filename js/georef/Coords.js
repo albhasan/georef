@@ -19,25 +19,34 @@ function Coords(){
 
 	//Transformation from cartesian coordinates to image coordinates
 	this.cartesian2imageCoords = function (x, y){
-		var res = new Array();
-		res[0] = x;
-		res[1] = -y;
+		var res;
+		if(isNumber(x) && isNumber(y)){
+			res = new Array();
+			res[0] = x;
+			res[1] = -y;
+		}
 		return res;
 	}
 
 	//Transformation from image coordinates to cartesian coordinates
 	this.image2cartesianCoords = function (xImg, yImg){
-		var res = new Array();
-		res[0] = xImg;
-		res[1] = -yImg;
+		var res;
+		if(isNumber(xImg) && isNumber(yImg)){
+			res = new Array();
+			res[0] = xImg;
+			res[1] = -yImg;
+		}
 		return res;
 	}
 	
 	//Traslation
 	this.traslation = function(x, y, dx, dy){
-		var res = new Array();
-		res[0] = x + dx;
-		res[1] = y + dy;
+		var res;
+		if(isNumber(x) && isNumber(y) && isNumber(dx) && isNumber(dy)){
+			res = new Array();
+			res[0] = x + dx;
+			res[1] = y + dy;
+		}
 		return res;
 	}
 

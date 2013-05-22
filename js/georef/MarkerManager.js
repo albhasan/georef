@@ -98,8 +98,13 @@ function MarkerManager(cpMngr, imgMap, map){
 		return id;
 	}
 	
-	this.addImageMarker = function(aL, aLatlng){
-		var id = cpManager.addImageControlPoint(aLatlng.lng, aLatlng.lat);
+	this.addImageMarkerImgScaled1Q = function(aL, aLatlng, aScaledImage){
+		var xyImgScl1Q = [aLatlng.lng, aLatlng.lat];
+		var xyImgScl = aScaledImage.getScaledImage().image1q2image(xyImgScl1Q[0], xyImgScl1Q[1]);
+		var xyImgOriginal = aScaledImage.unScaleCoords(xyImgScl[0], xyImgScl[1]);
+		var xyImgOriginal1Q = aScaledImage.getImageModel().image2image1q(xyImgOriginal[0], xyImgOriginal[1]);
+		var id = cpManager.addImageControlPoint(xyImgOriginal1Q[0], xyImgOriginal1Q[1]);
+		
 		var marker = aL.marker(aLatlng, {icon: controlPointIcon});
 		var tmp = new Array();
 		tmp.push(id);
@@ -110,12 +115,10 @@ function MarkerManager(cpMngr, imgMap, map){
 		return id;
 	}
 	
-	this.removeImageMarker = function(cpId){
+	this.removeMarker = function(cpId){
 		deleteImageMarker(cpId);
-	}
-	
-	this.removeMapMarker = function(cpId){
 		deleteMapMarker(cpId);
+		cpManager.removeControlPoint(cpId);
 	}
 	
 	this.selectMarker = function(cpId){
