@@ -93,5 +93,25 @@ function SimilarityTransformation(xyArraySource, xyArrayDestination){
 		res.push(yTo);
 		return res;
 	}
+
+	this.transform = function(xyArray){
+		var res = new Array();
+		//a0 b0 a b
+		var a0 = parameters[0];
+		var b0 = parameters[1]; 
+		var a =  parameters[2];
+		var b =  parameters[3];
+		for(var i = 0; i < xyArray.length; i++){
+			var xy = xyArray[i];		
+			var xTo = a0 + a * xy[0] + b * xy[1];
+			var yTo = b0 - b * xy[0] + a * xy[1];
+			var tmp = new Array();
+			tmp.push(xTo);
+			tmp.push(yTo);
+			res.push(tmp);
+		}
+		return res;
+	}
+
 	
 }

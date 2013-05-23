@@ -223,4 +223,32 @@ function ControlPointManager(){
 	this.removeAll = function(){
 		deleteAll();
 	}
+	
+	this.getMatchedCP = function(){
+		var res = new Array();
+		var cpIdArray = new Array();
+		var xyFrom = new Array();
+		var xyTo = new Array();
+		
+		var len = (mapIndex <= imageIndex) ? mapIndex : imageIndex;		
+		for (var i = 0; i < len; i++){
+			var cpMap = mapArray[i];
+			var cpImg = imageArray[i];
+			if(cpMap[cpMap.length - 1] && cpImg[cpImg.length - 1]){
+				cpIdArray.push(cpImg[0]);
+				var xyFromTmp = new Array();
+				xyFromTmp.push(cpImg[1]);
+				xyFromTmp.push(cpImg[2]);
+				xyFrom.push(xyFromTmp)
+				var xyToTmp = new Array();
+				xyToTmp.push(cpMap[1]);
+				xyToTmp.push(cpMap[2]);
+				xyTo.push(xyToTmp);
+			}
+		}
+		res.push(cpIdArray);
+		res.push(xyFrom);
+		res.push(xyTo);
+		return res;
+	}
 }

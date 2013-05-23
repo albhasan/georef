@@ -36,3 +36,17 @@ function trasposeArray(anArray){
 function isNumber(n) {
   return !isNaN(parseFloat(n)) && isFinite(n);
 }
+
+function xySwap(xyArray){
+	var res = new Array();
+	for(var i = 0; i < xyArray.length; i++){
+		var xy = xyArray[i];
+		var x = xy[0];
+		var y = xy[1];
+		var yx = new Array();
+		yx.push(y);
+		yx.push(x);
+		res.push(yx);
+	}
+	return res;
+}

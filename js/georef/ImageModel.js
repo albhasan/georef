@@ -65,10 +65,25 @@ function ImageModel(imageUrl, width, height){
 		return res;
 	}
 	//Using image's ref sys
+	this.getUpperLeft = function(){
+		var res = new Array();
+		var minCoords = this.getMinCoords();
+		res[0] = minCoords[0];
+		res[1] = minCoords[1];
+		return res;
+	}
+	//Using image's ref sys
 	this.getUpperRight = function(){
 		res = new Array();
 		res[0] = this.getWidth();
 		res[1] = this.getMinCoords()[1];
+		return res;
+	}
+
+	this.getLowerRight = function(){
+		res = new Array();
+		res[0] = this.getWidth();
+		res[1] = this.getHeight();
 		return res;
 	}
 	
@@ -100,14 +115,29 @@ function ImageModel(imageUrl, width, height){
 		var imgCoords = this.getLowerLeft();
 		return this.image2image4q(imgCoords[0], imgCoords[1]);
 	}
+	this.getCartesianUpperLeft_Image4Q = function(){
+		var imgCoords = this.getUpperLeft();
+		return this.image2image4q(imgCoords[0], imgCoords[1]);
+	}
 	//Assuming the image is in the 4th quadrant
 	this.getCartesianUpperRight_Image4Q = function(){
 		var imgCoords = this.getUpperRight();
 		return this.image2image4q(imgCoords[0], imgCoords[1]);
 	}
+	//Assuming the image is in the 4th quadrant
+	this.getCartesianLowerRight_Image4Q = function(){
+		var imgCoords = this.getLowerRight();
+		return this.image2image4q(imgCoords[0], imgCoords[1]);
+	}
+	
 	//Assuming the image is in the 1st quadrant
 	this.getCartesianLowerLeft_Image1Q = function(){
 		var img = this.getLowerLeft();
+		return this.image2image1q(img[0], img[1]);
+	}
+	//Assuming the image is in the 1st quadrant
+	this.getCartesianUpperLeft_Image1Q = function(){
+		var img = this.getUpperLeft();
 		return this.image2image1q(img[0], img[1]);
 	}
 	//Assuming the image is in the 1st quadrant
@@ -115,8 +145,28 @@ function ImageModel(imageUrl, width, height){
 		var img = this.getUpperRight();
 		return this.image2image1q(img[0], img[1]);
 	}
+	//Assuming the image is in the 1st quadrant
+	this.getCartesianLowerRight_Image1Q = function(){
+		var img = this.getLowerRight();
+		return this.image2image1q(img[0], img[1]);
+	}
 
-
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	//Using image's ref sys, checks of the point is inside the image area
 	this.isInsideImage = function(xImg, yImg){
 		return isInImage(xImg, yImg);

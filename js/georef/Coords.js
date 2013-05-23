@@ -5,6 +5,10 @@ terms of the Do What The Fuck You Want To Public License, Version 2,
 as published by Sam Hocevar. See the COPYING file for more details.
 */
 
+/**
+ * Creates an object for handling coordinate transformations
+ *
+ */
 function Coords(){
 
 
@@ -17,7 +21,13 @@ function Coords(){
 	//PRIVILEGED
 	//---------------------------------------------------------
 
-	//Transformation from cartesian coordinates to image coordinates
+	/**
+	 * Transforms from cartesian coordinates to image coordinates, assuming the image is located in the 4th quadrant
+	 *
+	 * @param {Number} x x coordinate in cartesian reference system
+	 * @param {Number} y y coordinate in cartesian reference system
+	 * @returns {Array} Array of numbers x, y
+	 */
 	this.cartesian2imageCoords = function (x, y){
 		var res;
 		if(isNumber(x) && isNumber(y)){
@@ -28,7 +38,13 @@ function Coords(){
 		return res;
 	}
 
-	//Transformation from image coordinates to cartesian coordinates
+	/**
+	 * Transforms from image coordinates to cartesian coordinates, assuming the image is located in the 4th quadrant
+	 *
+	 * @param {Number} xImg x coordinate in an image reference system
+	 * @param {Number} yImg y coordinate in an image reference system
+	 * @returns {Array} Array of numbers x, y
+	 */
 	this.image2cartesianCoords = function (xImg, yImg){
 		var res;
 		if(isNumber(xImg) && isNumber(yImg)){
@@ -39,7 +55,16 @@ function Coords(){
 		return res;
 	}
 	
-	//Traslation
+	
+	/**
+	 * Move the coordinates
+	 *
+	 * @param {Number} x x coordinate
+	 * @param {Number} y y coordinate
+	 * @param {Number} dx Traslation value in x
+	 * @param {Number} dy Traslation value in y
+	 * @returns {Array} Array of numbers x, y
+	 */
 	this.traslation = function(x, y, dx, dy){
 		var res;
 		if(isNumber(x) && isNumber(y) && isNumber(dx) && isNumber(dy)){
@@ -51,7 +76,13 @@ function Coords(){
 	}
 
 	
-	//Uses sylvester
+	/**
+	 * Calculates the least square assuming all observations have the same weight as described in Datums and map projections for remote sensing, GIS and surveying 2nd edition page 188 E.13. Depends on sylvester for matrix calculation http://sylvester.jcoglan.com/
+	 *
+	 * @param {Array} Aarray Array of number arrays
+	 * @param {Array} lVector Array of number
+	 * @returns {Array} Array of number arrays
+	 */
 	this.leastSquaresShortNoWeight = function(Aarray, lVector){
 		
 		//Inputs arrays to matrixes
@@ -71,7 +102,14 @@ function Coords(){
 		return res;
 	}	
 	
-	//Uses sylvester
+	/**
+	 * Calculates the least square assuming all observations have the same weight as described in Datums and map projections for remote sensing, GIS and surveying 2nd edition page 189 E.14. Depends on sylvester for matrix calculation http://sylvester.jcoglan.com/
+	 *
+	 * @param {Array} Aarray Array of number arrays
+	 * @param {Array} Carray Array of number
+	 * @param {Array} barray Array of number
+	 * @returns {Array} Array of number arrays
+	 */
 	this.leastSquaresLongNoWeight = function(Aarray, Carray, barray){
 		//Inputs arrays to matrixes
 		var A = Matrix.create(Aarray);
@@ -98,8 +136,13 @@ function Coords(){
 	}
 	
 	
-	//Uses sylvester
-	//https://groups.google.com/forum/?fromgroups#!topic/mapinfo-l/au0j3pSLXHM
+	/**
+	 * Calculates the least square assuming all observations have the same weight as described in https://groups.google.com/forum/?fromgroups#!topic/mapinfo-l/au0j3pSLXHM Depends on sylvester for matrix calculation http://sylvester.jcoglan.com/
+	 *
+	 * @param {Array} Aarray Array of number arrays. Each row is [xSource, ySource, 1]
+	 * @param {Array} Barray Array of number. Each row is [xDestination, yDestination, 1]
+	 * @returns {Array} Array of number arrays. The matrix structure is [[a, b, c], [d, e, f], [u, v, w]] where each element is a parameter for equations aXsource + bYsource + c = xDestination and dXsource + eYsource + f = yDestination
+	 */
 	this.perspectivity = function(Aarray, Barray){
 		//Inputs arrays to matrixes
 		var A = Matrix.create(Aarray);
@@ -114,8 +157,8 @@ function Coords(){
 		AtB = At.multiply(B);
 	
 		var resMatrix = AtAinv.multiply(AtB);
+		resMatrix = resMatrix.transpose();
 		var res = resMatrix.elements;
-		
 		return res;
 	}
 

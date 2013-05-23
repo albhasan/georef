@@ -15,7 +15,7 @@ var cpManager = new ControlPointManager();
 var mkManager;
 var imageMapLayer;
 var cpTable;//Table of control points. It must be outside of the ready function
-
+var imageBoundaryOnMap;
 
 $(document).ready(function () {
 	
@@ -60,6 +60,7 @@ $(document).ready(function () {
 			//alert(e.latlng);
 			var cpId = mkManager.addMapMarker(L, e.latlng);
 			addControlPointToTable(cpTable, cpId, null, null, e.latlng.lng, e.latlng.lat);
+projectImageBoundaries(cpManager, imgModelOriginal, imgModelScaled, L, map);					
 		});
 		mapImage.on('click', function(e) {
 			//alert(e.latlng);
@@ -71,11 +72,42 @@ $(document).ready(function () {
 					var xyImgOriginal = imgModelScaled.unScaleCoords(xyImgScl[0], xyImgScl[1]);
 					var cpId = mkManager.addImageMarkerImgScaled1Q(L, e.latlng, imgModelScaled);
 					addControlPointToTable(cpTable, cpId, xyImgOriginal[0], xyImgOriginal[1], null, null);
+projectImageBoundaries(cpManager, imgModelOriginal, imgModelScaled, L, map);					
 				}
 			}
 		});
 	}
 
+	function projectImageBoundaries(cpManager, imgModelOriginal, imgModelScaled, aL, map){
+
+		var trans;
+		var matchCp = cpManager.getMatchedCP();
+		var n = matchCp[0].length;
+		if(n == 2){
+			trans = new SimilarityTransformation(matchCp[1], matchCp[2]);
+		}else if(n > 2 && n < 6){
+			trans = new AffineTransformation(matchCp[1], matchCp[2]);
+		}else if(n > 5){
+			alert("polynomial");
+		}
+		if(trans != null){
+			var ll = imgModelScaled.getImageModel().getCartesianLowerLeft_Image1Q();
+			var ul = imgModelScaled.getImageModel().getCartesianUpperLeft_Image1Q();
+			var ur = imgModelScaled.getImageModel().getCartesianUpperRight_Image1Q();
+			var lr = imgModelScaled.getImageModel().getCartesianLowerRight_Image1Q();
+			var tmp = new Array();
+			tmp.push(ll);
+			tmp.push(ul);
+			tmp.push(ur);
+			tmp.push(lr);
+			var xyProjArray = trans.transform(tmp);
+			if(imageBoundaryOnMap != null){
+				map.removeLayer(imageBoundaryOnMap);
+			}
+imageBoundaryOnMap = L.polygon(xySwap(xyProjArray)).addTo(map);
+			
+		}
+	}
 
 	//------------------------------------------
 	//DataTables http://www.datatables.net
