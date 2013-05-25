@@ -60,7 +60,7 @@ $(document).ready(function () {
 			//alert(e.latlng);
 			var cpId = mkManager.addMapMarker(L, e.latlng);
 			addControlPointToTable(cpTable, cpId, null, null, e.latlng.lng, e.latlng.lat);
-projectImageBoundaries(cpManager, imgModelOriginal, imgModelScaled, L, map);					
+			projectImageBoundaries(cpManager, imgModelOriginal, imgModelScaled, L, map);					
 		});
 		mapImage.on('click', function(e) {
 			//alert(e.latlng);
@@ -72,14 +72,13 @@ projectImageBoundaries(cpManager, imgModelOriginal, imgModelScaled, L, map);
 					var xyImgOriginal = imgModelScaled.unScaleCoords(xyImgScl[0], xyImgScl[1]);
 					var cpId = mkManager.addImageMarkerImgScaled1Q(L, e.latlng, imgModelScaled);
 					addControlPointToTable(cpTable, cpId, xyImgOriginal[0], xyImgOriginal[1], null, null);
-projectImageBoundaries(cpManager, imgModelOriginal, imgModelScaled, L, map);					
+					projectImageBoundaries(cpManager, imgModelOriginal, imgModelScaled, L, map);					
 				}
 			}
 		});
 	}
 
 	function projectImageBoundaries(cpManager, imgModelOriginal, imgModelScaled, aL, map){
-
 		var trans;
 		var matchCp = cpManager.getMatchedCP();
 		var n = matchCp[0].length;
@@ -104,8 +103,7 @@ projectImageBoundaries(cpManager, imgModelOriginal, imgModelScaled, L, map);
 			if(imageBoundaryOnMap != null){
 				map.removeLayer(imageBoundaryOnMap);
 			}
-imageBoundaryOnMap = L.polygon(xySwap(xyProjArray)).addTo(map);
-			
+			imageBoundaryOnMap = L.polygon(xySwap(xyProjArray)).addTo(map);
 		}
 	}
 
@@ -178,6 +176,7 @@ imageBoundaryOnMap = L.polygon(xySwap(xyProjArray)).addTo(map);
 			var selRow = cpTable.fnDeleteRow(anSelected[0]);
 			var cpId = selRow[0]._aData[0]
 			mkManager.removeMarker(cpId);
+projectImageBoundaries(cpManager, imgModelOriginal, imgModelScaled, L, map);
         }
     } );
 
