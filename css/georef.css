@@ -28,65 +28,49 @@ as published by Sam Hocevar. See the COPYING file for more details.
 /* ------------------------------------------------ 
 1st window partition 
  ------------------------------------------------ */
-#top,#middle,#bottom{
-	/*border:1px solid;*/
-	width:100%;
-}
-#middle,#middle-left,#middle-center{
-	/*height:450px;*/
-}
-
 #top{
-	/*
-	height:100px;
-	background-color:Yellow;
-	*/
-	
+	height: 15%;
 }
 #middle{
-	/*background-color:Blue;*/
+	height: 450px;
 }
 #bottom{
-	/*
-	height:100px;
-	background-color:Red;
-	*/
+	height: 10%;
 }
 
 /* ------------------------------------------------ 
 2nd window partition 
  ------------------------------------------------ */
-#middle-left,#middle-center,{
-	/*border:1px solid;*/
-}
 #middle-left{
 	float: left;
 	width:20%;
-	/*background-color:Green;*/
+	height: 100%;
 }
 #middle-center{
 	float:left;
-	width:80%;
-	overflow:auto;
-	/*
-	background-color:Brown;"
-	*/
+	width:40%;
+	height: 100%;
 }
-
-
+#middle-right{
+	float:left;
+	width:40%;
+	height: 100%;
+}
 
 
 /* ------------------------------------------------ 
 3rd window partition 
  ------------------------------------------------ */
+ #tabs{
+	height: 100%;
+}
  
  /* ------------------------------------------------ 
 4th window partition 
  ------------------------------------------------ */
-
 #middle-center-tabone-left,#middle-center-tabone-center{
 	height:100%;
-	width:50%;
+	width:100%;
 	float:left;
 }
 
@@ -97,9 +81,6 @@ as published by Sam Hocevar. See the COPYING file for more details.
 	border:1px solid blue;
 	height:100%;
 	width:100%;
-	/*
-	background-color:Gray;
-	*/
 }
 /* ------------------------------------------------ */
 /* Fourth window partition */
@@ -107,9 +88,6 @@ as published by Sam Hocevar. See the COPYING file for more details.
 #imageForm{
 	height:100%;
 	width:100%;
-	/*
-	background-color:Violet;
-	*/
 }
 
 /* ------------------------------------------------ */
@@ -118,29 +96,25 @@ as published by Sam Hocevar. See the COPYING file for more details.
  #accordion-resizer {
 	padding: 10px;
 	width: 350px;
-	height: 100%;
+	
 }
+
 #tabs .tabs-spacer {float: left; height: 200px; }
 .tabs-bottom .ui-tabs-nav { clear: left; padding: 0 .2em .2em .2em; }
 .tabs-bottom .ui-tabs-nav li { top: auto; bottom: 0; margin: 0 .2em 1px 0; border-bottom: auto; border-top: 0; }
 .tabs-bottom .ui-tabs-nav li.ui-tabs-active { margin-top: -1px; padding-top: 1px; }
 
 #tabs-1,#tabs-2,#tabs-3{
-	height:350px;
+	/*height:350px;*/
+	height:100%;
 }
 
 #accordion{
-	height:411px;
+	height: 100%;
 }
 
 #map{
-	border:1px solid blue;
-	height:100%;
-	width:100%;
+	border: 1px solid blue;
+	height: 95%;
+	width: 100%;
 }
-
-
-
-
-
-
