@@ -60,7 +60,7 @@ $(document).ready(function () {
 			//alert(e.latlng);
 			var cpId = mkManager.addMapMarker(L, e.latlng);
 			addControlPointToTable(cpTable, cpId, null, null, e.latlng.lng, e.latlng.lat);
-			projectImageBoundaries(cpManager, imgModelOriginal, imgModelScaled, L, map);					
+			projectImageBoundaries(cpManager, imgModelScaled, map);					
 		});
 		mapImage.on('click', function(e) {
 			//alert(e.latlng);
@@ -72,13 +72,13 @@ $(document).ready(function () {
 					var xyImgOriginal = imgModelScaled.unScaleCoords(xyImgScl[0], xyImgScl[1]);
 					var cpId = mkManager.addImageMarkerImgScaled1Q(L, e.latlng, imgModelScaled);
 					addControlPointToTable(cpTable, cpId, xyImgOriginal[0], xyImgOriginal[1], null, null);
-					projectImageBoundaries(cpManager, imgModelOriginal, imgModelScaled, L, map);					
+					projectImageBoundaries(cpManager, imgModelScaled, map);					
 				}
 			}
 		});
 	}
 
-	function projectImageBoundaries(cpManager, imgModelOriginal, imgModelScaled, aL, map){
+	function projectImageBoundaries(cpManager, imgModelScaled, map){
 		var trans;
 		var matchCp = cpManager.getMatchedCP();
 		var n = matchCp[0].length;
@@ -106,7 +106,7 @@ $(document).ready(function () {
 			imageBoundaryOnMap = L.polygon(xySwap(xyProjArray)).addTo(map);
 		}
 	}
-
+	
 	//------------------------------------------
 	//DataTables http://www.datatables.net
 	//------------------------------------------

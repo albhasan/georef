@@ -7,7 +7,7 @@ as published by Sam Hocevar. See the COPYING file for more details.
 
 
 function isUrlOfImage(testUrl){
-	return /^.*\.(jp?g|JP?G|gif|GIF|bmp|BMP)$/.test(testUrl);
+	return /^.*\.(jpg|JPG|jpeg|JPEG|gif|GIF|bmp|BMP)$/.test(testUrl);
 }
 
 function padNumber(number, size) {

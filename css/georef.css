@@ -81,6 +81,7 @@ as published by Sam Hocevar. See the COPYING file for more details.
 	border:1px solid blue;
 	height:100%;
 	width:100%;
+	cursor:crosshair;	
 }
 /* ------------------------------------------------ */
 /* Fourth window partition */
@@ -117,4 +118,7 @@ as published by Sam Hocevar. See the COPYING file for more details.
 	border: 1px solid blue;
 	height: 95%;
 	width: 100%;
+	cursor:crosshair;
 }
+
+

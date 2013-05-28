@@ -14,6 +14,33 @@ function MarkerManager(cpMngr, imgMap, map){
 	var cpManager = cpMngr;//Control point manager
 	var selectedMarkerMap;
 	var selectedMarkerImage;
+	
+
+
+/*
+function onDraggingStart(e) {
+	var m = e.target;
+	var id = m._popup._content;
+	var ll = m.getLatLng;
+	console.log("start");
+	console.log(ll.Lng + " - " + ll.Lat);
+}
+
+function onDraggingEnd(e) {
+	var m = e.target;
+	var id = m._popup._content;
+	var ll = m.getLatLng;
+	console.log("end");
+	console.log(ll.Lng + " - " + ll.Lat);
+}
+*/
+
+
+
+
+
+
+
 	var controlPointIcon = L.icon({
 		iconUrl: './js/Leaflet-Leaflet-0deed73/dist/images/marker-icon.png',
 		shadowUrl: './js/Leaflet-Leaflet-0deed73/dist/images/marker-shadow.png',
@@ -88,7 +115,9 @@ function MarkerManager(cpMngr, imgMap, map){
 	//---------------------------------------------------------
 	this.addMapMarker = function(aL, aLatlng){
 		var id = cpManager.addMapControlPoint(aLatlng.lng, aLatlng.lat);
-		var marker = aL.marker(aLatlng, {icon: controlPointIcon});
+		var marker = aL.marker(aLatlng, {icon: controlPointIcon, draggable: true});//var marker = aL.marker(aLatlng, {icon: controlPointIcon});
+//marker.on('drag', onDraggingStart);
+//marker.on('drag', onDraggingEnd);
 		var tmp = new Array();
 		tmp.push(id);
 		tmp.push(marker);
@@ -105,7 +134,9 @@ function MarkerManager(cpMngr, imgMap, map){
 		var xyImgOriginal1Q = aScaledImage.getImageModel().image2image1q(xyImgOriginal[0], xyImgOriginal[1]);
 		var id = cpManager.addImageControlPoint(xyImgOriginal1Q[0], xyImgOriginal1Q[1]);
 		
-		var marker = aL.marker(aLatlng, {icon: controlPointIcon});
+		var marker = aL.marker(aLatlng, {icon: controlPointIcon, draggable: true}); //aL.marker(aLatlng, {icon: controlPointIcon});
+//marker.on('drag', onDraggingStart);
+//marker.on('drag', onDraggingEnd);
 		var tmp = new Array();
 		tmp.push(id);
 		tmp.push(marker);

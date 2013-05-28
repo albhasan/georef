@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<script>
+/*
+Demonstrating use of a single query to populate a # Virtuoso Quad Store via Javascript. 
+*/
+
+/* 
+HTTP URL is constructed accordingly with JSON query results format as the default via mime type.
+*/
+
+function sparqlQuery(query, baseURL, defGraphhUri) {
+	var format = "application/json";
+	var debug = "on";
+	var timeout = 0;
+	var params={
+		"default-graph-uri": defGraphhUri, "should-sponge": "soft", "query": query,
+		"debug": debug, "timeout": timeout, "format": format,
+		"save": "display", "fname": ""
+	};
+	
+	var querypart="";
+	for(var k in params) {
+		querypart+=k+"="+encodeURIComponent(params[k])+"&";
+	}
+	var queryURL=baseURL + '?' + querypart;
+	if (window.XMLHttpRequest) {
+  	xmlhttp=new XMLHttpRequest();
+  }
+  else {
+  	xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+  }
+
+  xmlhttp.open("GET",queryURL,false);
+  //debugger;
+  xmlhttp.send();
+  return JSON.parse(xmlhttp.responseText);
+}
+
+/*
+setting Data Source Name (DSN)
+*/
+
+var dsn="http://dbpedia.org/resource/DBpedia";
+
+/*
+Virtuoso pragma "DEFINE get:soft "replace" instructs Virtuoso SPARQL engine to perform an HTTP GET using the IRI in FROM clause as Data Source URL with regards to 
+DBMS record inserts
+*/
+
+var query="SELECT DISTINCT * FROM <"+dsn+"> WHERE {?s ?p ?o} LIMIT 10"; 
+var defGraphUri = "http://dbpedia.org";
+var endpointUrl = "http://DBpedia.org/sparql";
+var data = sparqlQuery(query, endpointUrl, defGraphUri);
+document.write(recurse( data ));
+
+
+
+
+
+
+
+
+
+
+
+function recurse( data ) {
+  var htmlRetStr = "<ul class='recurseObj' >"; 
+  for (var key in data) {
+        if (typeof(data[key])== 'object' && data[key] != null) {
+            htmlRetStr += "<li class='keyObj' ><strong>" + key + ":</strong><ul class='recurseSubObj' >";
+            htmlRetStr += recurse( data[key] );
+            htmlRetStr += '</ul  ></li   >';
+        } else {
+            htmlRetStr += ("<li class='keyStr' ><strong>" + key + ': </strong>&quot;' + data[key] + '&quot;</li  >' );
+        }
+  };
+  htmlRetStr += '</ul >';    
+  return( htmlRetStr );
+}
+
+
+
+		</script>
+	</head>
+	<body>
+	</body>
+</html>
