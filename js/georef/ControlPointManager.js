@@ -180,6 +180,16 @@ function ControlPointManager(){
 		deleteImageCp(cpId);
 		deleteMapCp(cpId);
 	}
+
+	this.removeMapControlPoint = function(cpId){
+		deleteMapCp(cpId);
+	}
+
+	this.removeImageControlPoint = function(cpId){
+		deleteImageCp(cpId);
+	}
+
+
 	
 	this.toArray = function(){
 		var res = new Array();

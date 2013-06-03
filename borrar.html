@@ -1,89 +1,107 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<script>
-/*
-Demonstrating use of a single query to populate a # Virtuoso Quad Store via Javascript. 
-*/
+<head>
+	<title>Leaflet.draw drawing and editing tools</title>
 
-/* 
-HTTP URL is constructed accordingly with JSON query results format as the default via mime type.
-*/
+	<link rel="stylesheet" href="./js/Leaflet.draw/examples/libs/leaflet.css" />
+	<!--[if lte IE 8]><link rel="stylesheet" href="libs/leaflet.ie.css" /><![endif]-->
+	<link rel="stylesheet" href="./js/Leaflet.draw/dist/leaflet.draw.css" />
+	<!--[if lte IE 8]><link rel="stylesheet" href="../dist/leaflet.draw.ie.css" /><![endif]-->
 
-function sparqlQuery(query, baseURL, defGraphhUri) {
-	var format = "application/json";
-	var debug = "on";
-	var timeout = 0;
-	var params={
-		"default-graph-uri": defGraphhUri, "should-sponge": "soft", "query": query,
-		"debug": debug, "timeout": timeout, "format": format,
-		"save": "display", "fname": ""
-	};
 	
-	var querypart="";
-	for(var k in params) {
-		querypart+=k+"="+encodeURIComponent(params[k])+"&";
-	}
-	var queryURL=baseURL + '?' + querypart;
-	if (window.XMLHttpRequest) {
-  	xmlhttp=new XMLHttpRequest();
-  }
-  else {
-  	xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
-  }
+	
+	
+	
+	<script src="./js/Leaflet/dist/leaflet.js"></script>
 
-  xmlhttp.open("GET",queryURL,false);
-  //debugger;
-  xmlhttp.send();
-  return JSON.parse(xmlhttp.responseText);
-}
+	
+	
+	<script src="./js/Leaflet.draw/src/Leaflet.draw.js"></script>
+	<script src="./js/Leaflet.draw/src/edit/handler/Edit.Poly.js"></script>
+	<script src="./js/Leaflet.draw/src/edit/handler/Edit.SimpleShape.js"></script>
+	<script src="./js/Leaflet.draw/src/edit/handler/Edit.Circle.js"></script>
+	<script src="./js/Leaflet.draw/src/edit/handler/Edit.Rectangle.js"></script>
+	<script src="./js/Leaflet.draw/src/draw/handler/Draw.Feature.js"></script>
+	<script src="./js/Leaflet.draw/src/draw/handler/Draw.Polyline.js"></script>
+	<script src="./js/Leaflet.draw/src/draw/handler/Draw.Polygon.js"></script>
+	<script src="./js/Leaflet.draw/src/draw/handler/Draw.SimpleShape.js"></script>
+	<script src="./js/Leaflet.draw/src/draw/handler/Draw.Rectangle.js"></script>
+	<script src="./js/Leaflet.draw/src/draw/handler/Draw.Circle.js"></script>
+	<script src="./js/Leaflet.draw/src/draw/handler/Draw.Marker.js"></script>
+	<script src="./js/Leaflet.draw/src/ext/LatLngUtil.js"></script>
+	<script src="./js/Leaflet.draw/src/ext/LineUtil.Intersect.js"></script>
+	<script src="./js/Leaflet.draw/src/ext/Polygon.Intersect.js"></script>
+	<script src="./js/Leaflet.draw/src/ext/Polyline.Intersect.js"></script>
+	<script src="./js/Leaflet.draw/src/Control.Draw.js"></script>
+	<script src="./js/Leaflet.draw/src/Tooltip.js"></script>
+	<script src="./js/Leaflet.draw/src/Toolbar.js"></script>
+	<script src="./js/Leaflet.draw/src/draw/DrawToolbar.js"></script>
+	<script src="./js/Leaflet.draw/src/edit/EditToolbar.js"></script>
+	<script src="./js/Leaflet.draw/src/edit/handler/EditToolbar.Edit.js"></script>
+	<script src="./js/Leaflet.draw/src/edit/handler/EditToolbar.Delete.js"></script>
+</head>
+<body>
+	<div id="map" style="width: 800px; height: 600px; border: 1px solid #ccc"></div>
+	<button id="changeColor">Rectangle -> Blue</button>
+	<script>
+		
+		var cloudmadeUrl = 'http://{s}.tile.cloudmade.com/BC9A493B41014CAABB98F0471D759707/997/256/{z}/{x}/{y}.png',
+			cloudmade = new L.TileLayer(cloudmadeUrl, {maxZoom: 18}),
+			map = new L.Map('map', {layers: [cloudmade], center: new L.LatLng(-37.7772, 175.2756), zoom: 15 });
 
-/*
-setting Data Source Name (DSN)
-*/
+		var drawnItems = new L.FeatureGroup();
+		map.addLayer(drawnItems);
 
-var dsn="http://dbpedia.org/resource/DBpedia";
+		var drawControl = new L.Control.Draw({
+			draw: {
+				position: 'topleft',
+				polygon: {
+					title: 'Draw a sexy polygon!',
+					allowIntersection: false,
+					drawError: {
+						color: '#b00b00',
+						timeout: 1000
+					},
+					shapeOptions: {
+						color: '#bada55'
+					}
+				},
+				circle: {
+					shapeOptions: {
+						color: '#662d91'
+					}
+				}
+			},
+			edit: {
+				featureGroup: drawnItems
+			}
+		});
+		map.addControl(drawControl);
 
-/*
-Virtuoso pragma "DEFINE get:soft "replace" instructs Virtuoso SPARQL engine to perform an HTTP GET using the IRI in FROM clause as Data Source URL with regards to 
-DBMS record inserts
-*/
+		map.on('draw:created', function (e) {
+			var type = e.layerType,
+				layer = e.layer;
 
-var query="SELECT DISTINCT * FROM <"+dsn+"> WHERE {?s ?p ?o} LIMIT 10"; 
-var defGraphUri = "http://dbpedia.org";
-var endpointUrl = "http://DBpedia.org/sparql";
-var data = sparqlQuery(query, endpointUrl, defGraphUri);
-document.write(recurse( data ));
+			if (type === 'marker') {
+				layer.bindPopup('A popup!');
+			}
 
+			drawnItems.addLayer(layer);
+		});
 
+		map.on('draw:edited', function (e) {
+			var layers = e.layers;
+			var countOfEditedLayers = 0;
+			layers.eachLayer(function(layer) {
+				countOfEditedLayers++;
+			});
+			console.log("Edited " + countOfEditedLayers + " layers");
+		});
 
+		L.DomUtil.get('changeColor').onclick = function () {
+			drawControl.setDrawingOptions({ rectangle: { shapeOptions: { color: '#004a80' } } });
+		};
 
-
-
-
-
-
-
-
-function recurse( data ) {
-  var htmlRetStr = "<ul class='recurseObj' >"; 
-  for (var key in data) {
-        if (typeof(data[key])== 'object' && data[key] != null) {
-            htmlRetStr += "<li class='keyObj' ><strong>" + key + ":</strong><ul class='recurseSubObj' >";
-            htmlRetStr += recurse( data[key] );
-            htmlRetStr += '</ul  ></li   >';
-        } else {
-            htmlRetStr += ("<li class='keyStr' ><strong>" + key + ': </strong>&quot;' + data[key] + '&quot;</li  >' );
-        }
-  };
-  htmlRetStr += '</ul >';    
-  return( htmlRetStr );
-}
-
-
-
-		</script>
-	</head>
-	<body>
-	</body>
+	</script>
+</body>
 </html>

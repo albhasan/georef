@@ -13,12 +13,43 @@ as published by Sam Hocevar. See the COPYING file for more details.
 		<!--*********************************
 		Leaflet stuff
 		*********************************-->
-		<!--<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.5.1/leaflet.css" />-->
-		<!----><!--[if lte IE 8]><link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.5.1/leaflet.ie.css" /><![endif]-->
-		<!--<script src="http://cdn.leafletjs.com/leaflet-0.5.1/leaflet.js"></script>-->
+		
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<script src="./js/Leaflet-Leaflet-0deed73/dist/leaflet.js"></script>
-		<link rel="stylesheet" href="./js/Leaflet-Leaflet-0deed73/dist/leaflet.css" />
+		<script src="./js/Leaflet/dist/leaflet.js"></script>
+		<link rel="stylesheet" href="./js/Leaflet/dist/leaflet.css" />
+		<!--[if lte IE 8]><link rel="stylesheet" href="./js/Leaflet/dist/leaflet.ie.css" /><![endif]-->
+		
+<link rel="stylesheet" href="./js/Leaflet.draw/dist/leaflet.draw.css" />
+<!--[if lte IE 8]><link rel="stylesheet" href="./js/Leaflet.draw/dist/leaflet.draw.ie.css" /><![endif]-->
+<script src="./js/Leaflet.draw/src/Leaflet.draw.js"></script>
+<script src="./js/Leaflet.draw/src/edit/handler/Edit.Poly.js"></script>
+<script src="./js/Leaflet.draw/src/edit/handler/Edit.SimpleShape.js"></script>
+<script src="./js/Leaflet.draw/src/edit/handler/Edit.Circle.js"></script>
+<script src="./js/Leaflet.draw/src/edit/handler/Edit.Rectangle.js"></script>
+<script src="./js/Leaflet.draw/src/draw/handler/Draw.Feature.js"></script>
+<script src="./js/Leaflet.draw/src/draw/handler/Draw.Polyline.js"></script>
+<script src="./js/Leaflet.draw/src/draw/handler/Draw.Polygon.js"></script>
+<script src="./js/Leaflet.draw/src/draw/handler/Draw.SimpleShape.js"></script>
+<script src="./js/Leaflet.draw/src/draw/handler/Draw.Rectangle.js"></script>
+<script src="./js/Leaflet.draw/src/draw/handler/Draw.Circle.js"></script>
+<script src="./js/Leaflet.draw/src/draw/handler/Draw.Marker.js"></script>
+<script src="./js/Leaflet.draw/src/ext/LatLngUtil.js"></script>
+<script src="./js/Leaflet.draw/src/ext/LineUtil.Intersect.js"></script>
+<script src="./js/Leaflet.draw/src/ext/Polygon.Intersect.js"></script>
+<script src="./js/Leaflet.draw/src/ext/Polyline.Intersect.js"></script>
+<script src="./js/Leaflet.draw/src/Control.Draw.js"></script>
+<script src="./js/Leaflet.draw/src/Tooltip.js"></script>
+<script src="./js/Leaflet.draw/src/Toolbar.js"></script>
+<script src="./js/Leaflet.draw/src/draw/DrawToolbar.js"></script>
+<script src="./js/Leaflet.draw/src/edit/EditToolbar.js"></script>
+<script src="./js/Leaflet.draw/src/edit/handler/EditToolbar.Edit.js"></script>
+<script src="./js/Leaflet.draw/src/edit/handler/EditToolbar.Delete.js"></script>		
+
+		
+		
+		
+		
+		
 		
 		<!--*********************************
 		JQuery stuff
@@ -40,15 +71,12 @@ as published by Sam Hocevar. See the COPYING file for more details.
 		</style>
 		<script class="jsbin" src="./js/DataTables-1.9.4/media/js/jquery-dataTables.js"></script>
 		
-		
 		<!--
 		*********************************
 		Sylvester (matrix operations)
 		*********************************
 		-->
 		<script src="./js/sylvester/lib/sylvester.js"></script>
-		
-		
 		
 		
 		<!--
@@ -84,14 +112,16 @@ as published by Sam Hocevar. See the COPYING file for more details.
 							<div id="imageForm">
 								Image url: 
 								<input id="imgMapInput" type="text">
-								<button id="btLoadImage">Click Me!</button>
+								<button id="btLoadImage">Load image</button>
 								<br/>
 								i.e <a href="http://upload.wikimedia.org/wikipedia/commons/4/40/Strategic_Situation_of_Europe_1809.jpg" target="_blank">Europe 1809</a>
 							</div>
 						</div>
 						<h3>2 - Control Points</h3>
 						<div>
-							<a href="javascript:void(0)" id="delete">Delete selected row</a>
+<!--
+<a href="javascript:void(0)" id="delete">Delete selected row</a>
+-->
 							<div id="controlPointsTableDiv"></div>
 						</div>
 						<h3>3 - Map area</h3>

@@ -5,45 +5,21 @@ terms of the Do What The Fuck You Want To Public License, Version 2,
 as published by Sam Hocevar. See the COPYING file for more details.
 */
 
-function MarkerManager(cpMngr, imgMap, map){
+function MarkerManager(cpMngr, dwItmImage, dwItmMap){
 	var that = this;
-	var imageMap = imgMap;
-	var mapMap = map;
 	var mapMarkerArray = new Array();
 	var imageMarkerArray = new Array();
 	var cpManager = cpMngr;//Control point manager
 	var selectedMarkerMap;
 	var selectedMarkerImage;
+	var drawnItemsImage = dwItmImage;
+	var drawnItemsMap = dwItmMap;
+
 	
-
-
-/*
-function onDraggingStart(e) {
-	var m = e.target;
-	var id = m._popup._content;
-	var ll = m.getLatLng;
-	console.log("start");
-	console.log(ll.Lng + " - " + ll.Lat);
-}
-
-function onDraggingEnd(e) {
-	var m = e.target;
-	var id = m._popup._content;
-	var ll = m.getLatLng;
-	console.log("end");
-	console.log(ll.Lng + " - " + ll.Lat);
-}
-*/
-
-
-
-
-
-
-
+	
 	var controlPointIcon = L.icon({
-		iconUrl: './js/Leaflet-Leaflet-0deed73/dist/images/marker-icon.png',
-		shadowUrl: './js/Leaflet-Leaflet-0deed73/dist/images/marker-shadow.png',
+		iconUrl: './js/Leaflet/dist/images/marker-icon.png',
+		shadowUrl: './js/Leaflet/dist/images/marker-shadow.png',
 		iconSize:     [25, 41], // size of the icon
 		shadowSize:   [41, 41], // size of the shadow
 		iconAnchor:   [12, 40], // point of the icon which will correspond to marker's location
@@ -51,8 +27,8 @@ function onDraggingEnd(e) {
 		popupAnchor:  [0, -40] // point from which the popup should open relative to the iconAnchor
 	});	
 	var selectedCpIcon = L.icon({
-		iconUrl: './js/Leaflet-Leaflet-0deed73/dist/images/marker-icon@2x.png',
-		shadowUrl: './js/Leaflet-Leaflet-0deed73/dist/images/marker-shadow.png',
+		iconUrl: './js/Leaflet/dist/images/marker-icon-2x.png',
+		shadowUrl: './js/Leaflet/dist/images/marker-shadow.png',
 		iconSize:     [50, 82], // size of the icon
 		shadowSize:   [41, 41], // size of the shadow
 		iconAnchor:   [25, 81], // point of the icon which will correspond to marker's location
@@ -91,8 +67,8 @@ function onDraggingEnd(e) {
 		for(var i = 0; i < imageMarkerArray.length; i++){
 			var tmp = imageMarkerArray[i];
 			if(cpId == tmp[0]){
-				imageMap.removeLayer(tmp[1]);
 				var res = imageMarkerArray.splice(i,1);
+//drawnItemsImage
 				break;
 			}
 		}
@@ -103,8 +79,8 @@ function onDraggingEnd(e) {
 		for(var i = 0; i < mapMarkerArray.length; i++){
 			var tmp = mapMarkerArray[i];
 			if(cpId == tmp[0]){
-				mapMap.removeLayer(tmp[1]);
 				var res = mapMarkerArray.splice(i,1);
+//drawnItemsMap
 				break;
 			}
 		}
@@ -113,36 +89,33 @@ function onDraggingEnd(e) {
 	//---------------------------------------------------------
 	//PRIVILEGED
 	//---------------------------------------------------------
-	this.addMapMarker = function(aL, aLatlng){
-		var id = cpManager.addMapControlPoint(aLatlng.lng, aLatlng.lat);
-		var marker = aL.marker(aLatlng, {icon: controlPointIcon, draggable: true});//var marker = aL.marker(aLatlng, {icon: controlPointIcon});
-//marker.on('drag', onDraggingStart);
-//marker.on('drag', onDraggingEnd);
+	this.addMapMarker = function(layer){
+		var id = cpManager.addMapControlPoint(layer.getLatLng().lng, layer.getLatLng().lat);
 		var tmp = new Array();
+		
 		tmp.push(id);
-		tmp.push(marker);
+		tmp.push(layer);
 		mapMarkerArray.push(tmp);
-		marker.addTo(mapMap);
-		marker.bindPopup(id).openPopup();
+		drawnItemsMap.addLayer(layer);
+		layer.bindPopup(id).openPopup();
+
 		return id;
 	}
 	
-	this.addImageMarkerImgScaled1Q = function(aL, aLatlng, aScaledImage){
-		var xyImgScl1Q = [aLatlng.lng, aLatlng.lat];
+	this.addImageMarkerImgScaled1Q = function(layer, aScaledImage){
+		var xyImgScl1Q = [layer.getLatLng().lng, layer.getLatLng().lat];
 		var xyImgScl = aScaledImage.getScaledImage().image1q2image(xyImgScl1Q[0], xyImgScl1Q[1]);
 		var xyImgOriginal = aScaledImage.unScaleCoords(xyImgScl[0], xyImgScl[1]);
 		var xyImgOriginal1Q = aScaledImage.getImageModel().image2image1q(xyImgOriginal[0], xyImgOriginal[1]);
 		var id = cpManager.addImageControlPoint(xyImgOriginal1Q[0], xyImgOriginal1Q[1]);
-		
-		var marker = aL.marker(aLatlng, {icon: controlPointIcon, draggable: true}); //aL.marker(aLatlng, {icon: controlPointIcon});
-//marker.on('drag', onDraggingStart);
-//marker.on('drag', onDraggingEnd);
 		var tmp = new Array();
+		
 		tmp.push(id);
-		tmp.push(marker);
+		tmp.push(layer);
 		imageMarkerArray.push(tmp);
-		marker.addTo(imageMap);
-		marker.bindPopup(id).openPopup();
+		drawnItemsImage.addLayer(layer);
+		layer.bindPopup(id).openPopup();
+		
 		return id;
 	}
 	
@@ -151,18 +124,30 @@ function onDraggingEnd(e) {
 		deleteMapMarker(cpId);
 		cpManager.removeControlPoint(cpId);
 	}
+
+	this.removeMapMarker = function(cpId){
+		deleteMapMarker(cpId);
+		cpManager.removeMapControlPoint(cpId);
+	}
+
+	this.removeImageMarker = function(cpId){
+		deleteMapMarker(cpId);
+		cpManager.removeImageControlPoint(cpId);
+	}
+
 	
 	this.selectMarker = function(cpId){
 		var mkImage = getImageMarker(cpId);
 		var mkMap = getMapMarker(cpId);
 		
+		//Changes the icons of the former selected markers
 		if(selectedMarkerImage != null){
 			selectedMarkerImage.setIcon(controlPointIcon);
 		}
 		if(selectedMarkerMap != null){
 			selectedMarkerMap.setIcon(controlPointIcon);
 		}
-		
+		//Changes the icons of the new selected markers
 		if(mkImage != null){
 			mkImage.setIcon(selectedCpIcon);
 			selectedMarkerImage = mkImage;
@@ -178,4 +163,13 @@ function onDraggingEnd(e) {
 		
 	}
 	
+	//Adds the map area polygon (drawn on the image)
+	this.addMapArea = function(layer){
+		drawnItemsImage.addLayer(layer);
+	}
+	
+	//Adds the ruler distance (drawn on the image)
+	this.addRuler = function(layer){
+		drawnItemsImage.addLayer(layer);
+	}
 }
