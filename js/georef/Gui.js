@@ -159,6 +159,7 @@ $(document).ready(function () {
 					cpid = layer._popup._content;
 					mkManager.removeImageMarker(cpid);
 					updateImageControlPointInTable(cpTable, cpid, "-", "-");
+					projectImageBoundaries(cpManager, imgModelScaled, map);
 				}
 			}
 		});
@@ -171,6 +172,7 @@ $(document).ready(function () {
 					cpid = layer._popup._content;
 					mkManager.removeMapMarker(cpid);
 					updateMapControlPointInTable(cpTable, cpid, "-", "-");
+					projectImageBoundaries(cpManager, imgModelScaled, map);
 				}
 			}
 		});
@@ -199,23 +201,20 @@ $(document).ready(function () {
 		return res;
 	}
 	
-	function projectImageBoundaries(cpManager, imgModelScaled, map){
+	function projectImageBoundaries(cpManager, imgModelScaled, mapAreaLatLonArray, map){
 		var trans = createTransformation(cpManager);
 		if(trans != null){
 			var imgBnd = new Array();
-//TODO?????????????????????????????????????????????????????????????????????????????????????			
-//var imgMa = new Array();
 			imgBnd.push(imgModelScaled.getImageModel().getCartesianLowerLeft_Image1Q());
 			imgBnd.push(imgModelScaled.getImageModel().getCartesianUpperLeft_Image1Q());
 			imgBnd.push(imgModelScaled.getImageModel().getCartesianUpperRight_Image1Q());
 			imgBnd.push(imgModelScaled.getImageModel().getCartesianLowerRight_Image1Q());
 			
 /*
-TODO: Write function for getting polygon's corners
-imgMa.push();
-imgMa.push();
-imgMa.push();
-imgMa.push();
+TODO: 
+transform de lat lon array a double double array
+Project mapAreaLatLonArray form image to map coordinates
+draw the thing on map
 */
 			
 			
@@ -223,6 +222,12 @@ imgMa.push();
 			if(imageBoundaryOnMap != null){
 				map.removeLayer(imageBoundaryOnMap);
 			}
+			if(imageMapAreaOnMap != null){
+				map.removeLayer(imageMapAreaOnMap);
+			}
+			
+			
+			
 			imageBoundaryOnMap = L.polygon(xySwap(xyProjArrayBnd), {
 				"stroke" : false, 
 				"fill" : true, 
@@ -269,12 +274,6 @@ imgMa.push();
 		}
 	}
 
-
-
-
-
-
-
 	//Returns the index and the row values of the table 
 	function getRowFromTable(cpTable, cpId, xImg, yImg){
 		var res = new Array();
@@ -311,9 +310,8 @@ imgMa.push();
     $("#controlPointsTableDiv").on('click', '#controlPointsTable tbody tr', function( e ) {
         if ( $(this).hasClass('row_selected') ) {
             $(this).removeClass('row_selected');
-			mkManager.selectMarker(-1);
-        }
-        else {
+			mkManager.selectMarker("");
+        }else {
             cpTable.$('tr.row_selected').removeClass('row_selected');
             $(this).addClass('row_selected');
 			var cpId = cpTable.$('tr.row_selected')[0].children[0].innerHTML;

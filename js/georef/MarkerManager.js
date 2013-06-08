@@ -5,10 +5,9 @@ terms of the Do What The Fuck You Want To Public License, Version 2,
 as published by Sam Hocevar. See the COPYING file for more details.
 */
 
+//Add dwItmImage and dwItmMap as a layer to the maps before creating this object
 function MarkerManager(cpMngr, dwItmImage, dwItmMap){
 	var that = this;
-	var mapMarkerArray = new Array();
-	var imageMarkerArray = new Array();
 	var cpManager = cpMngr;//Control point manager
 	var selectedMarkerMap;
 	var selectedMarkerImage;
@@ -18,6 +17,7 @@ function MarkerManager(cpMngr, dwItmImage, dwItmMap){
 	
 	
 	var controlPointIcon = L.icon({
+//TODO: Move to config	
 		iconUrl: './js/Leaflet/dist/images/marker-icon.png',
 		shadowUrl: './js/Leaflet/dist/images/marker-shadow.png',
 		iconSize:     [25, 41], // size of the icon
@@ -27,6 +27,7 @@ function MarkerManager(cpMngr, dwItmImage, dwItmMap){
 		popupAnchor:  [0, -40] // point from which the popup should open relative to the iconAnchor
 	});	
 	var selectedCpIcon = L.icon({
+//TODO: Move to config
 		iconUrl: './js/Leaflet/dist/images/marker-icon-2x.png',
 		shadowUrl: './js/Leaflet/dist/images/marker-shadow.png',
 		iconSize:     [50, 82], // size of the icon
@@ -39,63 +40,42 @@ function MarkerManager(cpMngr, dwItmImage, dwItmMap){
 	//---------------------------------------------------------
 	//PRIVATE
 	//---------------------------------------------------------
-	function getImageMarker(cpId){
-		var res;
-		for(var i = 0; i < imageMarkerArray.length; i++){
-			var tmp = imageMarkerArray[i];
-			if(cpId == tmp[0]){
-				res = tmp[1];
-				break;
+
+
+	function changeMarkerIcon(drawnItems, cpId, icon){
+		drawnItems.eachLayer(function (layer) {
+			if(layer instanceof L.Marker){
+				var id = layer._popup._content;
+				if(id == cpId){
+					layer.setIcon(icon);
+				}
 			}
-		}
-		return res;
+		});
 	}
-	
-	function getMapMarker(cpId){
-		var res;
-		for(var i = 0; i < mapMarkerArray.length; i++){
-			var tmp = mapMarkerArray[i];
-			if(cpId == tmp[0]){
-				res = tmp[1];
-				break;
-			}
-		}
-		return res;
-	}
-	
-	function deleteImageMarker(cpId){
-		for(var i = 0; i < imageMarkerArray.length; i++){
-			var tmp = imageMarkerArray[i];
-			if(cpId == tmp[0]){
-				var res = imageMarkerArray.splice(i,1);
-//drawnItemsImage
-				break;
-			}
+
+	function selectImageMarker(cpId, select){
+		if(select){
+			changeMarkerIcon(drawnItemsImage, cpId, selectedCpIcon);
+		}else{
+			changeMarkerIcon(drawnItemsImage, cpId, controlPointIcon);
 		}
 	}
-	
-	
-	function deleteMapMarker(cpId){
-		for(var i = 0; i < mapMarkerArray.length; i++){
-			var tmp = mapMarkerArray[i];
-			if(cpId == tmp[0]){
-				var res = mapMarkerArray.splice(i,1);
-//drawnItemsMap
-				break;
-			}
+
+	function selectMapMarker(cpId, select){
+		if(select){
+			changeMarkerIcon(drawnItemsMap, cpId, selectedCpIcon);
+		}else{
+			changeMarkerIcon(drawnItemsMap, cpId, controlPointIcon);
 		}
 	}
-	
+
+
 	//---------------------------------------------------------
 	//PRIVILEGED
 	//---------------------------------------------------------
 	this.addMapMarker = function(layer){
 		var id = cpManager.addMapControlPoint(layer.getLatLng().lng, layer.getLatLng().lat);
-		var tmp = new Array();
-		
-		tmp.push(id);
-		tmp.push(layer);
-		mapMarkerArray.push(tmp);
+
 		drawnItemsMap.addLayer(layer);
 		layer.bindPopup(id).openPopup();
 
@@ -108,11 +88,7 @@ function MarkerManager(cpMngr, dwItmImage, dwItmMap){
 		var xyImgOriginal = aScaledImage.unScaleCoords(xyImgScl[0], xyImgScl[1]);
 		var xyImgOriginal1Q = aScaledImage.getImageModel().image2image1q(xyImgOriginal[0], xyImgOriginal[1]);
 		var id = cpManager.addImageControlPoint(xyImgOriginal1Q[0], xyImgOriginal1Q[1]);
-		var tmp = new Array();
-		
-		tmp.push(id);
-		tmp.push(layer);
-		imageMarkerArray.push(tmp);
+
 		drawnItemsImage.addLayer(layer);
 		layer.bindPopup(id).openPopup();
 		
@@ -120,56 +96,82 @@ function MarkerManager(cpMngr, dwItmImage, dwItmMap){
 	}
 	
 	this.removeMarker = function(cpId){
-		deleteImageMarker(cpId);
-		deleteMapMarker(cpId);
 		cpManager.removeControlPoint(cpId);
 	}
 
 	this.removeMapMarker = function(cpId){
-		deleteMapMarker(cpId);
 		cpManager.removeMapControlPoint(cpId);
 	}
 
 	this.removeImageMarker = function(cpId){
-		deleteMapMarker(cpId);
 		cpManager.removeImageControlPoint(cpId);
 	}
 
-	
 	this.selectMarker = function(cpId){
-		var mkImage = getImageMarker(cpId);
-		var mkMap = getMapMarker(cpId);
-		
-		//Changes the icons of the former selected markers
+
+		//Changes the icons of the former selected markers back to normal
 		if(selectedMarkerImage != null){
-			selectedMarkerImage.setIcon(controlPointIcon);
-		}
-		if(selectedMarkerMap != null){
-			selectedMarkerMap.setIcon(controlPointIcon);
-		}
-		//Changes the icons of the new selected markers
-		if(mkImage != null){
-			mkImage.setIcon(selectedCpIcon);
-			selectedMarkerImage = mkImage;
-		}else{
+			selectImageMarker(selectedMarkerImage, false);
 			selectedMarkerImage = null;
 		}
-		if(mkMap != null){
-			mkMap.setIcon(selectedCpIcon);
-			selectedMarkerMap = mkMap;
-		}else{
+		if(selectedMarkerMap != null){
+			selectMapMarker(selectedMarkerMap, false);
 			selectedMarkerMap = null;
 		}
-		
+	
+		if(cpId.length > 0){
+			//Changes the icons of the new selected markers
+			selectImageMarker(cpId, true);
+			selectMapMarker(cpId, true);
+			selectedMarkerImage = cpId;
+			selectedMarkerMap = cpId;
+		}
 	}
 	
 	//Adds the map area polygon (drawn on the image)
-	this.addMapArea = function(layer){
-		drawnItemsImage.addLayer(layer);
+	this.addMapArea = function(newlayer){
+		//Removes any previous layers
+		drawnItemsImage.eachLayer(function (layer) {
+			if(layer instanceof L.Polygon){
+				drawnItemsImage.removeLayer(layer);
+			}
+		});	
+		// add the new polygon
+		if(newlayer instanceof L.Polygon){
+			drawnItemsImage.addLayer(newlayer);
+		}
 	}
 	
 	//Adds the ruler distance (drawn on the image)
 	this.addRuler = function(layer){
-		drawnItemsImage.addLayer(layer);
+		//Removes any previous layers
+		drawnItemsImage.eachLayer(function (layer) {
+			if(layer instanceof L.Polyline){
+				drawnItemsImage.removeLayer(layer);
+			}
+		});	
+		// add the new polyline
+		if(layer instanceof L.Polyline){
+			drawnItemsImage.addLayer(newlayer);
+		}
+	}
+	
+	//returns a L.LatLng array
+	this.getMapAreaCoords(){
+		var res;
+		var mapArea;
+		var maArray = new Array();
+		drawnItemsImage.eachLayer(function (layer) {
+			if(layer instanceof L.Polygon){
+				maArray.push(layer);
+			}
+		});	
+		if(maArray.length > 0){
+			mapArea = maArray[0];
+		}else{
+			return res;
+		}
+		res = getLatLngs();
+		return res;
 	}
 }
