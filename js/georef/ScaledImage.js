@@ -58,5 +58,25 @@ function ScaledImage(imgModel, maxSize){
 		res.push(yOriginal);
 		return res;
 	}
+	
+	this.scaleCoordsArray = function(xyImgOriginal){
+		var res = new Array();
+		for(var i = 0; i < xyImgOriginal.length; i++){
+			var tmpArray = xyImgOriginal[i];
+			var tmpRes = this.scaleCoords(tmpArray[0], tmpArray[1]);
+			res.push(tmpRes);
+		}
+		return res;
+	}
+
+	this.unScaleCoordsArray = function(xyImgOriginal){
+		var res = new Array();
+		for(var i = 0; i < xyImgOriginal.length; i++){
+			var tmpArray = xyImgOriginal[i];
+			var tmpRes = this.unScaleCoords(tmpArray[0], tmpArray[1]);
+			res.push(tmpRes);
+		}
+		return res;
+	}
 
 }

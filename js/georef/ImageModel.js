@@ -28,11 +28,6 @@ function ImageModel(imageUrl, width, height){
 	}	
 	
 	
-	
-	
-	
-
-	
 	//---------------------------------------------------------
 	//PRIVILEGED
 	//---------------------------------------------------------
@@ -100,7 +95,6 @@ function ImageModel(imageUrl, width, height){
 	this.image4q2image = function(xImg4q, yImg4q){
 		return c.cartesian2imageCoords(xImg4q, yImg4q);
 	}
-	
 	
 	//transforms cartesian to image coordinates assuming the image is in the 1th Quadrant
 	this.image1q2image = function(xImg1q, yImg1q){

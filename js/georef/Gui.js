@@ -128,11 +128,12 @@ $(document).ready(function () {
 						var xyImgOriginal = imgModelScaled.unScaleCoords(xyImgScl[0], xyImgScl[1]);
 						var cpId = mkManager.addImageMarkerImgScaled1Q(layer, imgModelScaled);
 						updateImageControlPointInTable(cpTable, cpId, xyImgOriginal[0], xyImgOriginal[1]);
-						projectImageBoundaries(cpManager, imgModelScaled, map);
+						projectImageBoundaries(cpManager, imgModelScaled, mkManager.getMapAreaCoords(), map);
 					}
 				}
 				if(type === 'polygon'){
 					mkManager.addMapArea(layer);
+					projectImageBoundaries(cpManager, imgModelScaled, mkManager.getMapAreaCoords(), map);
 				}
 				if(type === 'polyline'){
 					mkManager.addRuler(layer);
@@ -147,7 +148,7 @@ $(document).ready(function () {
 				var ll = layer.getLatLng();
 				var cpId = mkManager.addMapMarker(layer);
 				updateMapControlPointInTable(cpTable, cpId, ll.lng, ll.lat);
-				projectImageBoundaries(cpManager, imgModelScaled, map);	
+				projectImageBoundaries(cpManager, imgModelScaled, mkManager.getMapAreaCoords(), map);	
 			}
 		});
 
@@ -159,7 +160,9 @@ $(document).ready(function () {
 					cpid = layer._popup._content;
 					mkManager.removeImageMarker(cpid);
 					updateImageControlPointInTable(cpTable, cpid, "-", "-");
-					projectImageBoundaries(cpManager, imgModelScaled, map);
+					projectImageBoundaries(cpManager, imgModelScaled, mkManager.getMapAreaCoords(), map);
+				}else if(layer instanceof L.Polygon){
+					projectImageBoundaries(cpManager, imgModelScaled, mkManager.getMapAreaCoords(), map);
 				}
 			}
 		});
@@ -172,7 +175,7 @@ $(document).ready(function () {
 					cpid = layer._popup._content;
 					mkManager.removeMapMarker(cpid);
 					updateMapControlPointInTable(cpTable, cpid, "-", "-");
-					projectImageBoundaries(cpManager, imgModelScaled, map);
+					projectImageBoundaries(cpManager, imgModelScaled, mkManager.getMapAreaCoords(), map);
 				}
 			}
 		});
@@ -201,24 +204,35 @@ $(document).ready(function () {
 		return res;
 	}
 	
+	
+	
+	
+	function latlon2xyArray(latlonArray){
+		var res = new Array();
+		for(var i = 0; i < latlonArray.length; i++){
+			var ll = latlonArray[i];
+			var tmpCoords = new Array();
+			tmpCoords.push(ll.lng);
+			tmpCoords.push(ll.lat);
+			res.push(tmpCoords);
+		}
+		return res;
+	}
+	
+	
 	function projectImageBoundaries(cpManager, imgModelScaled, mapAreaLatLonArray, map){
 		var trans = createTransformation(cpManager);
 		if(trans != null){
 			var imgBnd = new Array();
+			var mapAreaBnd = new Array();
+			
 			imgBnd.push(imgModelScaled.getImageModel().getCartesianLowerLeft_Image1Q());
 			imgBnd.push(imgModelScaled.getImageModel().getCartesianUpperLeft_Image1Q());
 			imgBnd.push(imgModelScaled.getImageModel().getCartesianUpperRight_Image1Q());
 			imgBnd.push(imgModelScaled.getImageModel().getCartesianLowerRight_Image1Q());
 			
-/*
-TODO: 
-transform de lat lon array a double double array
-Project mapAreaLatLonArray form image to map coordinates
-draw the thing on map
-*/
-			
-			
 			var xyProjArrayBnd = trans.transform(imgBnd);
+
 			if(imageBoundaryOnMap != null){
 				map.removeLayer(imageBoundaryOnMap);
 			}
@@ -226,8 +240,7 @@ draw the thing on map
 				map.removeLayer(imageMapAreaOnMap);
 			}
 			
-			
-			
+			//Draws the image boundaries
 			imageBoundaryOnMap = L.polygon(xySwap(xyProjArrayBnd), {
 				"stroke" : false, 
 				"fill" : true, 
@@ -235,6 +248,23 @@ draw the thing on map
 				"fillOpacity" : 0.2,
 				"clickable" : false
 			}).addTo(map);
+
+			//Draws the map area
+			if(mapAreaLatLonArray != null){
+				//Gets an XY number array from L.Latlng objects
+				mapAreaBnd = latlon2xyArray(mapAreaLatLonArray);
+				//Scale the coords from scaled image to image
+				var unScaledMapAreaBnd = imgModelScaled.unScaleCoordsArray(mapAreaBnd);
+				//Transform the coords from image refsys to map refsys
+				var xyProjmapAreaBnd = trans.transform(unScaledMapAreaBnd);				
+				imageMapAreaOnMap = L.polygon(xySwap(xyProjmapAreaBnd), {
+							"stroke" : true, 
+							"fill" : false, 
+							"fillColor" : "#03f",
+							"fillOpacity" : 0.2,
+							"clickable" : false
+				}).addTo(map);
+			}
 		}else{
 			if(imageBoundaryOnMap != null){
 				map.removeLayer(imageBoundaryOnMap);

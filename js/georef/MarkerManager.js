@@ -157,7 +157,7 @@ function MarkerManager(cpMngr, dwItmImage, dwItmMap){
 	}
 	
 	//returns a L.LatLng array
-	this.getMapAreaCoords(){
+	this.getMapAreaCoords = function(){
 		var res;
 		var mapArea;
 		var maArray = new Array();
@@ -171,7 +171,7 @@ function MarkerManager(cpMngr, dwItmImage, dwItmMap){
 		}else{
 			return res;
 		}
-		res = getLatLngs();
+		res = mapArea.getLatLngs();
 		return res;
 	}
 }
