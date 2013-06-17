@@ -51,7 +51,7 @@ $(document).ready(function () {
 		//- The origin of the image in the map is 0,0
 		
 		//Map start
-		map = L.map('map').setView([51.96236,7.62571], 12);
+		map = L.map('map').setView([51.96236,7.62571], 12);//Default CRS is EPSG3857 spherical mercator
 		mapImage = L.map('mapImage', {center: [imageMapMaxSize/2, imageMapMaxSize/2],zoom: 12,crs: L.CRS.Simple});	//Plane SRS to put the map-image
 		mkManager = new MarkerManager(cpManager, drawnItemsImage, drawnItemsMap);
 		
@@ -166,7 +166,8 @@ $(document).ready(function () {
 				}
 			}
 		});
-
+//TODO:caargar geonames ?
+//TODO:cargar wikipedia ?
 		map.on('draw:deleted', function(e) {
 			var layers = e.layers.getLayers();
 			for(var i = 0; i < layers.length; i++){
@@ -180,7 +181,7 @@ $(document).ready(function () {
 			}
 		});
 
-
+//TODO: update event
 
 		
 		

@@ -50,3 +50,30 @@ function xySwap(xyArray){
 	}
 	return res;
 }
+
+function calculatePolygonArea(xyArray){
+	var res;
+	var isClosed = false;
+	var pointCount = xyArray.length;
+	if(pointCount > 2){
+		if(xyArray[0][0] == xyArray[pointCount - 1][0] && xyArray[0][1] == xyArray[pointCount - 1][1]){
+			isClosed = true;
+		}
+		var l2r = 0;
+		var r2l = 0;
+		for(var i = 1; i < pointCount; i++){
+			var l2rTmp = xyArray[i - 1][0] * xyArray[i][1];
+			var r2lTmp = xyArray[i][0] * xyArray[i-1][1];
+			l2r = l2r + l2rTmp;
+			r2l = r2l + r2lTmp;
+		}
+		if(isClosed == false){
+			var l2rTmp = xyArray[pointCount - 1][0] * xyArray[0][1];
+			var r2lTmp = xyArray[0][0] * xyArray[pointCount-1][1];
+			l2r = l2r + l2rTmp;
+			r2l = r2l + r2lTmp;
+		}
+		res = (l2r - r2l) / 2;
+	}
+	return res;
+}

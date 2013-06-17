@@ -108,6 +108,17 @@ test("ScaledImage", function(){
 	var xyUnscaled = imScaled.unScaleCoords(xyScaled[0], xyScaled[1]);
 	equal(xyImg.toString(), xyUnscaled.toString());	
 	
+});
+
+test("Area calculation", function(){
+	var xyOpen = [[-3,-2],[-1,4],[6,1],[3,10],[-4,9]];
+	var xyClosed = [[-3,-2],[-1,4],[6,1],[3,10],[-4,9],[-3,-2]];
 	
+	var resOpen = calculatePolygonArea(xyOpen);
+	var resClosed = calculatePolygonArea(xyClosed);
+
+	equal(resOpen, resClosed);
+	equal(resOpen, 60);
+	equal(resClosed, 60);
 	
 });

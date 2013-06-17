@@ -152,7 +152,7 @@ function MarkerManager(cpMngr, dwItmImage, dwItmMap){
 		});	
 		// add the new polyline
 		if(layer instanceof L.Polyline){
-			drawnItemsImage.addLayer(newlayer);
+			drawnItemsImage.addLayer(layer);
 		}
 	}
 	
