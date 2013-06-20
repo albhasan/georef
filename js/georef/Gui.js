@@ -181,8 +181,16 @@ $(document).ready(function () {
 			}
 		});
 
-//TODO: update event
+//TODO: Wire update event to update stuff accordingly
 
+//Georeference the map and the reference to dbpedia
+//Not only refefencing but enriching
+//Drop relevance, too advance for 
+//Use the ontology
+//Store usign the ontology
+//----MEETING ABOUT THE ONTOLOGY
+
+//Move into goereferencing
 		
 		
 	

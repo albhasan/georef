@@ -39,48 +39,11 @@ function SparqlQuery(){
 	  xmlhttp.send();
 	  return JSON.parse(xmlhttp.responseText);
 	}
+	
+	
 	//---------------------------------------------------------
 	//PRIVILEGED
 	//---------------------------------------------------------
 
-/*
-var dsn="http://dbpedia.org/resource/DBpedia";
-
-
-Virtuoso pragma "DEFINE get:soft "replace" instructs Virtuoso SPARQL engine to perform an HTTP GET using the IRI in FROM clause as Data Source URL with regards to 
-DBMS record inserts
-
-
-var query="SELECT DISTINCT * FROM <"+dsn+"> WHERE {?s ?p ?o} LIMIT 10"; 
-var defGraphUri = "http://dbpedia.org";
-var endpointUrl = "http://DBpedia.org/sparql";
-var data = sparqlQuery(query, endpointUrl, defGraphUri);
-document.write(recurse( data ));
-
-
-
-
-
-
-
-
-
-
-
-function recurse( data ) {
-  var htmlRetStr = "<ul class='recurseObj' >"; 
-  for (var key in data) {
-        if (typeof(data[key])== 'object' && data[key] != null) {
-            htmlRetStr += "<li class='keyObj' ><strong>" + key + ":</strong><ul class='recurseSubObj' >";
-            htmlRetStr += recurse( data[key] );
-            htmlRetStr += '</ul  ></li   >';
-        } else {
-            htmlRetStr += ("<li class='keyStr' ><strong>" + key + ': </strong>&quot;' + data[key] + '&quot;</li  >' );
-        }
-  };
-  htmlRetStr += '</ul >';    
-  return( htmlRetStr );
-}
-*/
 
 }

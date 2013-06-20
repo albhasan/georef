@@ -30,6 +30,7 @@ as published by Sam Hocevar. See the COPYING file for more details.
  ------------------------------------------------ */
 #top{
 	height: 15%;
+	width:100%;
 }
 #middle{
 	height: 450px;
@@ -41,6 +42,19 @@ as published by Sam Hocevar. See the COPYING file for more details.
 /* ------------------------------------------------ 
 2nd window partition 
  ------------------------------------------------ */
+#top-left{ 
+	float: left; 
+	width: 25%;
+}
+#top-center{ 
+	float: left; 
+	width: 50%;
+}
+#top-right{ 
+	float: left; 
+	width: 25%;
+}
+
 #middle-left{
 	float: left;
 	width:20%;
@@ -121,4 +135,10 @@ as published by Sam Hocevar. See the COPYING file for more details.
 	/*cursor:crosshair;*/
 }
 
-
+#pTitle{
+	font-style: italic;
+	font-weight: normal;
+	font-size: 1.2em;
+	color: #8e141c;
+	text-align: center;
+}
