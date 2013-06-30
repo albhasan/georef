@@ -36,16 +36,26 @@ test("SimilarityTransformation", function(){
 	equal(roundNumber(param[2], decimalPlaces), roundNumber(3.012922e-01, decimalPlaces));
 	equal(roundNumber(param[3], decimalPlaces), roundNumber(-1.243784e-02, decimalPlaces));
 	
-	
 	//Applies the transformation
-	var xyMap4Trans = simTrans.transform(xyMap4[0], xyMap4[1]);
-	var xyMap5Trans = simTrans.transform(xyMap5[0], xyMap5[1]);
+	var tmp = new Array();
+	tmp.push(xyMap4);
+	tmp.push(xyMap5);
 	
-	decimalPlaces = 1;
-	equal(roundNumber(xyMap4Trans[0], decimalPlaces), roundNumber(3413.137, decimalPlaces));
-	equal(roundNumber(xyMap4Trans[1], decimalPlaces), roundNumber(268.1597, decimalPlaces));
-	equal(roundNumber(xyMap5Trans[0], decimalPlaces), roundNumber(2177.681, decimalPlaces));
-	equal(roundNumber(xyMap5Trans[1], decimalPlaces), roundNumber(1950.7717, decimalPlaces));
+	var res = new Array(new Array(3413.137,268.1597),new Array(2177.681,1950.7717));
+	var tolerance = 0.1;
+
+	var xyMap4_5Trans = simTrans.transform(tmp);
+	ok(Math.abs(xyMap4_5Trans[0][0] - res[0][0]) < tolerance);
+	ok(Math.abs(xyMap4_5Trans[0][1] - res[0][1]) < tolerance);
+	ok(Math.abs(xyMap4_5Trans[1][0] - res[1][0]) < tolerance);
+	ok(Math.abs(xyMap4_5Trans[1][1] - res[1][1]) < tolerance);
+	
+	//Applies the reverse transformation
+	var xyMap4_5TransRev = simTrans.transformReverse(res);
+	ok(Math.abs(xyMap4_5TransRev[0][0] - xyMap4[0]) < tolerance);
+	ok(Math.abs(xyMap4_5TransRev[0][1] - xyMap4[1]) < tolerance);
+	ok(Math.abs(xyMap4_5TransRev[1][0] - xyMap5[0]) < tolerance);
+	ok(Math.abs(xyMap4_5TransRev[1][1] - xyMap5[1]) < tolerance);
 	
 });	
 	
@@ -55,14 +65,25 @@ test("AffineTransformation", function(){
 	var param = affTrans.getParameters();
 
 	//Applies the transformation
-	var xyMap4Trans = affTrans.transform(xyMap4[0], xyMap4[1]);
-	var xyMap5Trans = affTrans.transform(xyMap5[0], xyMap5[1]);
-
+	var tmp = new Array();
+	tmp.push(xyMap4);
+	tmp.push(xyMap5);
+	
+	var res = new Array(new Array(3413.137,268.1597),new Array(2177.681,1950.7717));
 	var tolerance = 3;
-	ok(Math.abs(xyMap4Trans[0] - 3413.137) < tolerance);
-	ok(Math.abs(xyMap4Trans[1] - 268.1597) < tolerance);
-	ok(Math.abs(xyMap5Trans[0] - 2177.681) < tolerance);
-	ok(Math.abs(xyMap5Trans[1] - 1950.7717) < tolerance);
+	
+	var xyMap4_5Trans = affTrans.transform(tmp);
+	ok(Math.abs(xyMap4_5Trans[0][0] - res[0][0]) < tolerance);
+	ok(Math.abs(xyMap4_5Trans[0][1] - res[0][1]) < tolerance);
+	ok(Math.abs(xyMap4_5Trans[1][0] - res[1][0]) < tolerance);
+	ok(Math.abs(xyMap4_5Trans[1][1] - res[1][1]) < tolerance);
+	
+	//Applies the reverse transformation
+	var xyMap4_5TransRev = affTrans.transformReverse(res);
+	ok(Math.abs(xyMap4_5TransRev[0][0] - xyMap4[0]) < tolerance);
+	ok(Math.abs(xyMap4_5TransRev[0][1] - xyMap4[1]) < tolerance);
+	ok(Math.abs(xyMap4_5TransRev[1][0] - xyMap5[0]) < tolerance);
+	ok(Math.abs(xyMap4_5TransRev[1][1] - xyMap5[1]) < tolerance);
 
 });
 
@@ -122,3 +143,4 @@ test("Area calculation", function(){
 	equal(resClosed, 60);
 	
 });
+

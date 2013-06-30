@@ -77,3 +77,33 @@ function calculatePolygonArea(xyArray){
 	}
 	return res;
 }
+
+function getBoundary(xyArray){
+	var xMin = Infinity;
+	var yMin = Infinity;
+	var xMax = -Infinity;
+	var yMax = -Infinity;
+
+	for(var i = 0; i < xyArray.length; i++){
+		var xy = xyArray[i];
+		var xMin = (xMin > xy[0]) ? xy[0] : xMin;
+		var yMin = (yMin > xy[1]) ? xy[1] : yMin;
+		var xMax = (xMax < xy[0]) ? xy[0] : xMax;
+		var yMax = (yMax < xy[1]) ? xy[1] : yMax;
+	}
+	var res = new Array(xMin, yMin, xMax, yMax);
+	return res;	
+}
+
+function zoomToSuggestion(lng, lat){
+	
+	map.panTo(new L.LatLng(lat, lng));
+	//
+	if(trans != null){
+		var tmp = new Array(new Array(lng, lat));
+		var imgCoords = trans.transformReverse(tmp);
+		var imgScaledCoords = imgModelScaled.scaleCoords(imgCoords[0][0], imgCoords[0][1]);
+		mapImage.panTo(new L.LatLng(imgScaledCoords[1], imgScaledCoords[0]));
+	}
+	
+}	

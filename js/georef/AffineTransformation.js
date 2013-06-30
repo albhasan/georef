@@ -69,6 +69,34 @@ function AffineTransformation(xyArraySource, xyArrayDestination){
 		return res;
 	}
 
+	
+	function reverseParameters(){
+		var res = new Array();
+		
+		var A = parameters[0][0];//a1
+		var B = parameters[0][1];//a2
+		var C = parameters[0][2];//a0
+		var D = parameters[1][0];//b1
+		var E = parameters[1][1];//b2
+		var F = parameters[1][2];//b0
+
+		var Crev = A * E - B * D;
+		var C_p = (B * F - E * C) / Crev;
+		var F_p = (D * C - A * F) / Crev;
+		var A_p = Math.abs(E / Crev);
+		var B_p = -1 * B / Crev;
+		var D_p = -1 * D / Crev;
+		var E_p = Math.abs(A / Crev);
+		
+		res.push(C_p);
+		res.push(F_p);
+		res.push(A_p);
+		res.push(B_p);
+		res.push(D_p);
+		res.push(E_p);
+		return res;
+	}
+	
 	//---------------------------------------------------------
 	//PRIVILEGED
 	//---------------------------------------------------------
@@ -107,7 +135,7 @@ function AffineTransformation(xyArraySource, xyArrayDestination){
 	 * @param {Number} ySource y coordinate in the source reference system
 	 * @returns {Array} Array of x and y in the destination reference system
 	 */
-	this.transform = function(xSource, ySource){
+	/*this.transform = function(xSource, ySource){
 		var res = new Array();
 		var A = parameters[0][0];
 		var B = parameters[0][1];
@@ -121,7 +149,7 @@ function AffineTransformation(xyArraySource, xyArrayDestination){
 		res.push(xTo);
 		res.push(yTo);
 		return res;
-	}
+	}*/
 
 	this.transform = function(xyArray){
 		var res = new Array();
@@ -144,6 +172,46 @@ function AffineTransformation(xyArraySource, xyArrayDestination){
 		return res;
 	}
 	
+	/*this.transformReverse = function(xTo, yTo){
+		var res = new Array();
+	
+		var revPar = reverseParameters();
+		var C_p = revPar[0];
+		var F_p = revPar[1];
+		var A_p = revPar[2];
+		var B_p = revPar[3];
+		var D_p = revPar[4];
+		var E_p = revPar[5];
+		
+		var xFrom = A_p * xTo + B_p * yTo + C_p;
+		var yFrom = D_p * xTo + E_p * yTo + F_p;
+		res.push(xFrom);
+		res.push(yFrom);
+		return res;
+	}*/
+	
+	this.transformReverse = function(xyArray){
+		var res = new Array();
+		
+		var revPar = reverseParameters();
+		var C_p = revPar[0];
+		var F_p = revPar[1];
+		var A_p = revPar[2];
+		var B_p = revPar[3];
+		var D_p = revPar[4];
+		var E_p = revPar[5];
+		
+		for(var i = 0; i < xyArray.length; i++){
+			var xy = xyArray[i];
+			var xTo = A_p * xy[0] + B_p * xy[1] + C_p;
+			var yTo = D_p * xy[0] + E_p * xy[1] + F_p;
+			var tmp = new Array();
+			tmp.push(xTo);
+			tmp.push(yTo);
+			res.push(tmp);
+		}
+		return res;
+	}
 }
 
 

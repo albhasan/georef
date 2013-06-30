@@ -66,6 +66,26 @@ function SimilarityTransformation(xyArraySource, xyArrayDestination){
 		return res;
 	}
 	
+	function reverseParameters(){
+		var res = new Array();
+		
+		var a0 = parameters[0];
+		var b0 = parameters[1]; 
+		var a =  parameters[2];
+		var b =  parameters[3];
+		
+		var C = Math.pow(a,2) + Math.pow(b,2);
+		var a_p = a / C;
+		var b_p = -1 * b / C;
+		var a0_p = (b * b0 - a * a0) / C;
+		var b0_p = -1 * (b * a0 + a * b0) / C;
+		
+		res.push(a_p);
+		res.push(b_p);
+		res.push(a0_p);
+		res.push(b0_p);
+		return res;
+	}
 	
 	//---------------------------------------------------------
 	//PRIVILEGED
@@ -80,7 +100,7 @@ function SimilarityTransformation(xyArraySource, xyArrayDestination){
 		return parameters;
 	}
 	
-	this.transform = function(xSource, ySource){
+	/*this.transform = function(xSource, ySource){
 		var res = new Array();
 		//a0 b0 a b
 		var a0 = parameters[0];
@@ -92,7 +112,7 @@ function SimilarityTransformation(xyArraySource, xyArrayDestination){
 		res.push(xTo);
 		res.push(yTo);
 		return res;
-	}
+	}*/
 
 	this.transform = function(xyArray){
 		var res = new Array();
@@ -113,5 +133,41 @@ function SimilarityTransformation(xyArraySource, xyArrayDestination){
 		return res;
 	}
 
+	/*this.transformReverse = function(xTo, yTo){
+		var res = new Array();
+		
+		var revPar = reverseParameters();
+		var a_p = revPar[0];
+		var b_p = revPar[1];
+		var a0_p = revPar[2];
+		var b0_p = revPar[3];
+		
+		var xFrom = a0_p + a_p * xTo + b_p * yTo;
+		var yFrom = b0_p - b_p * xTo + a_p * yTo;
+		res.push(xFrom);
+		res.push(yFrom);
+		return res;
+	}*/
+	
+	this.transformReverse = function(xyArray){
+		var res = new Array();
+		
+		var revPar = reverseParameters();
+		var a_p = revPar[0];
+		var b_p = revPar[1];
+		var a0_p = revPar[2];
+		var b0_p = revPar[3];
+
+		for(var i = 0; i < xyArray.length; i++){
+			var xy = xyArray[i];		
+			var xFrom = a0_p + a_p * xy[0] + b_p * xy[1];
+			var yFrom = b0_p - b_p * xy[0] + a_p * xy[1];
+			var tmp = new Array();
+			tmp.push(xFrom);
+			tmp.push(yFrom);
+			res.push(tmp);
+		}
+		return res;
+	}
 	
 }

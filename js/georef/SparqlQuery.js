@@ -6,14 +6,15 @@ as published by Sam Hocevar. See the COPYING file for more details.
 */
 function SparqlQuery(){
 
-	var queryCapitols = "Query for capitols";
-	var queryCities = "Query for cities";
-	var queryMonuments = "query for monuments";
-
 	//---------------------------------------------------------
 	//PRIVATE
 	//---------------------------------------------------------
-	function sendSparqlQuery(query, baseURL, defGraphUri) {
+	
+	
+	//---------------------------------------------------------
+	//PRIVILEGED
+	//---------------------------------------------------------
+	this.sendSparqlQuery = function(query, baseURL, defGraphUri) {
 		var format = "application/json";
 		var debug = "on";
 		var timeout = 0;
@@ -39,11 +40,5 @@ function SparqlQuery(){
 	  xmlhttp.send();
 	  return JSON.parse(xmlhttp.responseText);
 	}
-	
-	
-	//---------------------------------------------------------
-	//PRIVILEGED
-	//---------------------------------------------------------
-
 
 }

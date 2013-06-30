@@ -19,11 +19,11 @@ var imageBoundaryOnMap;
 var imageMapAreaOnMap;
 var drawnItemsImage = new L.FeatureGroup();
 var drawnItemsMap = new L.FeatureGroup();
-
-
+var c;//Constants
+var trans;//Transformation
 
 $(document).ready(function () {
-	
+	c = new Constants();
 	//------------------------------------------
 	// Initialization
 	//------------------------------------------
@@ -95,7 +95,8 @@ $(document).ready(function () {
 				}
 			},
 			edit: {
-				featureGroup: drawnItemsImage
+				featureGroup: drawnItemsImage,
+edit: false//Unables edition
 			}
 		});
 		var drawControlMap = new L.Control.Draw({
@@ -109,12 +110,12 @@ $(document).ready(function () {
 				}
 			},
 			edit: {
-				featureGroup: drawnItemsMap
+				featureGroup: drawnItemsMap,
+edit: false//Unables edition
 			}
 		});
 		mapImage.addControl(drawControlImage);
 		map.addControl(drawControlMap);
-		
 		mapImage.on('draw:created', function(e) {
 			var type = e.layerType;
 			var layer = e.layer;
@@ -166,8 +167,7 @@ $(document).ready(function () {
 				}
 			}
 		});
-//TODO:caargar geonames ?
-//TODO:cargar wikipedia ?
+
 		map.on('draw:deleted', function(e) {
 			var layers = e.layers.getLayers();
 			for(var i = 0; i < layers.length; i++){
@@ -230,25 +230,24 @@ $(document).ready(function () {
 	
 	
 	function projectImageBoundaries(cpManager, imgModelScaled, mapAreaLatLonArray, map){
-		var trans = createTransformation(cpManager);
+		trans = createTransformation(cpManager);
 		if(trans != null){
 			var imgBnd = new Array();
 			var mapAreaBnd = new Array();
-			
+			//Gets image coords
 			imgBnd.push(imgModelScaled.getImageModel().getCartesianLowerLeft_Image1Q());
 			imgBnd.push(imgModelScaled.getImageModel().getCartesianUpperLeft_Image1Q());
 			imgBnd.push(imgModelScaled.getImageModel().getCartesianUpperRight_Image1Q());
 			imgBnd.push(imgModelScaled.getImageModel().getCartesianLowerRight_Image1Q());
-			
+			//Projects coords
 			var xyProjArrayBnd = trans.transform(imgBnd);
-
+			//Gets rid of old boundary
 			if(imageBoundaryOnMap != null){
 				map.removeLayer(imageBoundaryOnMap);
 			}
 			if(imageMapAreaOnMap != null){
 				map.removeLayer(imageMapAreaOnMap);
 			}
-			
 			//Draws the image boundaries
 			imageBoundaryOnMap = L.polygon(xySwap(xyProjArrayBnd), {
 				"stroke" : false, 
@@ -257,7 +256,9 @@ $(document).ready(function () {
 				"fillOpacity" : 0.2,
 				"clickable" : false
 			}).addTo(map);
-
+var xyProjmapAreaBnd = getBoundary(xyProjArrayBnd);
+queryDbpedia(xyProjmapAreaBnd);
+			
 			//Draws the map area
 			if(mapAreaLatLonArray != null){
 				//Gets an XY number array from L.Latlng objects
@@ -283,6 +284,30 @@ $(document).ready(function () {
 			}
 		}
 	}
+	
+	function queryDbpedia(xybbox){
+		var sq = new SparqlQuery();
+		var query = c.getConstant("PREFIXES") + " " + c.getConstant("QUERY_CITYS");
+
+		var xMin = xybbox[0];
+		var yMin = xybbox[1];
+		var xMax = xybbox[2];
+		var yMax = xybbox[3];
+		query = query.replace("<PARAM_XMIN>", xMin);
+		query = query.replace("<PARAM_YMIN>", yMin);
+		query = query.replace("<PARAM_XMAX>", xMax);
+		query = query.replace("<PARAM_YMAX>", yMax);
+		var js = sq.sendSparqlQuery(query, c.getConstant("DBPEDIA_SPARQL"), "");
+		$("#suggestedControlPointsTableDiv").html("");
+		$("#suggestedControlPointsTableDiv").append("<b><i>POI Suggestions: </i></b>");
+		for(var i = 0; i < js.results.bindings.length; i++){
+			var lng = js.results.bindings[i].lg.value;
+			var lat = js.results.bindings[i].lt.value;
+			$("#suggestedControlPointsTableDiv").append('<a href="javascript: void(0)" onclick="zoomToSuggestion(&quot;' + lng + '&quot; , &quot;' + lat + '&quot;)">' + js.results.bindings[i].label.value + "</a>");
+			$("#suggestedControlPointsTableDiv").append(", ");
+		}
+	}
+
 	
 	//------------------------------------------
 	//DataTables http://www.datatables.net
@@ -358,19 +383,6 @@ $(document).ready(function () {
         }
     });
 
-//Add a click handler for the delete row 
-/*
-COntrol point deletion is taken care by leaflet draw in each map independently
-$('#delete').click( function() {
-	var anSelected = fnGetSelected( cpTable );
-	if(anSelected.length !== 0){
-		var selRow = cpTable.fnDeleteRow(anSelected[0]);
-		var cpId = selRow[0]._aData[0]
-		mkManager.removeMarker(cpId);
-projectImageBoundaries(cpManager, imgModelOriginal, imgModelScaled, L, map);
-	}
-} );
-*/
 
 	//------------------------------------------
 	//jQuery UI http://jqueryui.com/
