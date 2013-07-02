@@ -147,7 +147,9 @@ function MarkerManager(cpMngr, dwItmImage, dwItmMap){
 		//Removes any previous layers
 		drawnItemsImage.eachLayer(function (layer) {
 			if(layer instanceof L.Polyline){
-				drawnItemsImage.removeLayer(layer);
+				if(layer instanceof L.Polygon == false){
+					drawnItemsImage.removeLayer(layer);
+				}
 			}
 		});	
 		// add the new polyline
@@ -172,6 +174,27 @@ function MarkerManager(cpMngr, dwItmImage, dwItmMap){
 			return res;
 		}
 		res = mapArea.getLatLngs();
+		return res;
+	}
+	
+	//returns a L.LatLng array
+	this.getRulerCoords = function(){
+		var res;
+		var ruler;
+		var rlArray = new Array();
+		drawnItemsImage.eachLayer(function (layer) {
+			if(layer instanceof L.Polyline){
+				if(layer instanceof L.Polygon == false){
+					rlArray.push(layer);
+				}
+			}
+		});	
+		if(rlArray.length > 0){
+			ruler = rlArray[0];
+		}else{
+			return res;
+		}
+		res = ruler.getLatLngs();
 		return res;
 	}
 }

@@ -75,7 +75,8 @@ function calculatePolygonArea(xyArray){
 		}
 		res = (l2r - r2l) / 2;
 	}
-	return res;
+	//if(res < 0){}//Clockwise polygon
+	return Math.abs(res);
 }
 
 function getBoundary(xyArray){
@@ -96,7 +97,6 @@ function getBoundary(xyArray){
 }
 
 function zoomToSuggestion(lng, lat){
-	
 	map.panTo(new L.LatLng(lat, lng));
 	//
 	if(trans != null){
@@ -107,3 +107,77 @@ function zoomToSuggestion(lng, lat){
 	}
 	
 }	
+
+function xyProject(xyArray, proj){
+	var res = new Array();
+	for(var i = 0; i < xyArray.length; i++){
+		var xy = xyArray[i];
+		var ll = new L.LatLng(xy[1], xy[0]);
+		var p = proj.project(ll);//Leaflet doesn't make transformations!!! http://leafletjs.com/reference.html#icrs
+		var tmp = new Array(p.x, p.y);
+		res.push(tmp);
+	}
+	return res;
+}
+
+function latlon2xyArray(latlonArray){
+	var res = new Array();
+	for(var i = 0; i < latlonArray.length; i++){
+		var ll = latlonArray[i];
+		var tmpCoords = new Array(ll.lng, ll.lat);
+		res.push(tmpCoords);
+	}
+	return res;
+}
+
+function xyArray2latlon(xyArray){
+	var res = new Array();
+	for(var i = 0; i < xyArray.length; i++){
+		var xy = xyArray[i];
+		var latlng = new L.LatLng(xy[1], xy[0]);
+		res.push(latlng);
+	}
+	return res;
+}
+
+function point2xyArray(pointArray){
+	var res = new Array();
+	for(var i = 0; i < pointArray.length; i++){
+		var p = pointArray[i];
+		var tmpCoords = new Array(p.x, p.y);
+		res.push(tmpCoords);
+	}
+	return res;
+}
+
+function xyArray2point(xyArray){
+	var res = new Array();
+	for(var i = 0; i < xyArray.length; i++){
+		var xy = xyArray[i];
+		var point = new L.Point(xy[0], xy[1]);
+		res.push(point);
+	}
+	return res;
+}
+
+
+
+function latLngArrayDistance(latlonArray){
+	var res = 0;
+	for(var i = 1; i < latlonArray.length; i++){
+		var ll0 = latlonArray[i - 1];
+		var ll1 = latlonArray[i];
+		res = res + ll0.distanceTo(ll1);
+	}
+	return res;//Meters
+}
+
+function pointArrayDistance(pointArray){
+	var res = 0;
+	for(var i = 1; i < pointArray.length; i++){
+		var p0 = pointArray[i - 1];
+		var p1 = pointArray[i];
+		res = res + p0.distanceTo(p1);
+	}
+	return res;
+}

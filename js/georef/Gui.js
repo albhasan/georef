@@ -6,6 +6,18 @@ as published by Sam Hocevar. See the COPYING file for more details.
 */
 
 
+
+//TODO: Wire update event to update stuff accordingly
+
+//Georeference the map and the reference to dbpedia
+//Not only refefencing but enriching
+//Drop relevance, too advance for 
+//Use the ontology
+//Store usign the ontology
+//----MEETING ABOUT THE ONTOLOGY
+
+//Move into goereferencing
+
 var map;//Map container
 var mapImage;//Map container for the image
 var imageMapMaxSize = 10;//Maximum size of the image in map units
@@ -21,6 +33,9 @@ var drawnItemsImage = new L.FeatureGroup();
 var drawnItemsMap = new L.FeatureGroup();
 var c;//Constants
 var trans;//Transformation
+var imageMapArea;//Area of the mapArea in the image (pixels)
+//var mapAreaArea ;//Area of the mapArea in the map (depending on map projection, squared meters)
+
 
 $(document).ready(function () {
 	c = new Constants();
@@ -51,7 +66,7 @@ $(document).ready(function () {
 		//- The origin of the image in the map is 0,0
 		
 		//Map start
-		map = L.map('map').setView([51.96236,7.62571], 12);//Default CRS is EPSG3857 spherical mercator
+		map = L.map('map').setView([51.96236,7.62571], 12);//Default CRS is EPSG3857 spherical mercator -- http://www.epsg-registry.org/report.htm?type=selection&entity=urn:ogc:def:crs:EPSG::3857&reportDetail=short&style=urn:uuid:report-style:default-with-code&style_name=OGP%20Default%20With%20Code&title=EPSG:3857
 		mapImage = L.map('mapImage', {center: [imageMapMaxSize/2, imageMapMaxSize/2],zoom: 12,crs: L.CRS.Simple});	//Plane SRS to put the map-image
 		mkManager = new MarkerManager(cpManager, drawnItemsImage, drawnItemsMap);
 		
@@ -96,7 +111,7 @@ $(document).ready(function () {
 			},
 			edit: {
 				featureGroup: drawnItemsImage,
-edit: false//Unables edition
+				edit: false//TODO: Unables edition not working
 			}
 		});
 		var drawControlMap = new L.Control.Draw({
@@ -111,7 +126,7 @@ edit: false//Unables edition
 			},
 			edit: {
 				featureGroup: drawnItemsMap,
-edit: false//Unables edition
+				edit: false//TODO: Unables edition not working
 			}
 		});
 		mapImage.addControl(drawControlImage);
@@ -138,6 +153,7 @@ edit: false//Unables edition
 				}
 				if(type === 'polyline'){
 					mkManager.addRuler(layer);
+					printRulerProperties(mkManager.getRulerCoords(), imgModelScaled);
 				}
 			}
 		});	
@@ -181,19 +197,6 @@ edit: false//Unables edition
 			}
 		});
 
-//TODO: Wire update event to update stuff accordingly
-
-//Georeference the map and the reference to dbpedia
-//Not only refefencing but enriching
-//Drop relevance, too advance for 
-//Use the ontology
-//Store usign the ontology
-//----MEETING ABOUT THE ONTOLOGY
-
-//Move into goereferencing
-		
-		
-	
 	}
 
 	
@@ -212,22 +215,6 @@ edit: false//Unables edition
 		}
 		return res;
 	}
-	
-	
-	
-	
-	function latlon2xyArray(latlonArray){
-		var res = new Array();
-		for(var i = 0; i < latlonArray.length; i++){
-			var ll = latlonArray[i];
-			var tmpCoords = new Array();
-			tmpCoords.push(ll.lng);
-			tmpCoords.push(ll.lat);
-			res.push(tmpCoords);
-		}
-		return res;
-	}
-	
 	
 	function projectImageBoundaries(cpManager, imgModelScaled, mapAreaLatLonArray, map){
 		trans = createTransformation(cpManager);
@@ -256,17 +243,21 @@ edit: false//Unables edition
 				"fillOpacity" : 0.2,
 				"clickable" : false
 			}).addTo(map);
-var xyProjmapAreaBnd = getBoundary(xyProjArrayBnd);
-queryDbpedia(xyProjmapAreaBnd);
-			
+			var xyProjmapAreaBnd = getBoundary(xyProjArrayBnd);
+			queryDbpedia(xyProjmapAreaBnd);
 			//Draws the map area
 			if(mapAreaLatLonArray != null){
 				//Gets an XY number array from L.Latlng objects
 				mapAreaBnd = latlon2xyArray(mapAreaLatLonArray);
 				//Scale the coords from scaled image to image
 				var unScaledMapAreaBnd = imgModelScaled.unScaleCoordsArray(mapAreaBnd);
+				imageMapArea = calculatePolygonArea(unScaledMapAreaBnd);
 				//Transform the coords from image refsys to map refsys
-				var xyProjmapAreaBnd = trans.transform(unScaledMapAreaBnd);				
+				var xyProjmapAreaBnd = trans.transform(unScaledMapAreaBnd);
+				//mapAreaArea = calculatePolygonArea(xyProject(xyProjmapAreaBnd, L.Projection.SphericalMercator));//Leaflet transformation problem http://leafletjs.com/reference.html#icrs
+				$("#mapAreaDetails").html("");
+				$("#mapAreaDetails").html("<b><i>Map area:</i></b><br>" + roundNumber(imageMapArea,1) + " pixels<br>");
+				//$("#mapAreaDetails").append(roundNumber(mapAreaArea/1000000,1) + "squared kilometers");
 				imageMapAreaOnMap = L.polygon(xySwap(xyProjmapAreaBnd), {
 							"stroke" : true, 
 							"fill" : false, 
@@ -284,6 +275,35 @@ queryDbpedia(xyProjmapAreaBnd);
 			}
 		}
 	}
+	
+	function printRulerProperties(rulerCoords, imgModelScaled){
+		$("#rulerDetails").html("");
+		if(rulerCoords != null && imgModelScaled != null){
+			//Gets an XY number array from L.Latlng objects
+			var xyScaledRuler = latlon2xyArray(rulerCoords);
+			//Scale the coords from scaled image to image
+			var imgRuler = imgModelScaled.unScaleCoordsArray(xyScaledRuler);
+			//Transform the coords from image refsys to map refsys
+			var mapRuler = trans.transform(imgRuler);
+			//Distance estimation
+			var imageDistance = pointArrayDistance(xyArray2point(imgRuler));//Pixels
+			var mapDistance = latLngArrayDistance(xyArray2latlon(mapRuler));//Meters
+			//Scales
+			var factor = 100;//var measurement = 1 / factor;//1 cm
+			var mapScaleFactor = mapDistance * factor;
+			
+			var paperW = imgModelScaled.getImageModel().getWidth() / imageDistance;
+			var paperH = imgModelScaled.getImageModel().getHeight() / imageDistance;
+			
+			
+			$("#rulerDetails").html("<b><i>Ruler distance (1 cm):</i></b><br>");
+			$("#rulerDetails").append(roundNumber(imageDistance,1) + " pixels (approximated)<br>");
+			$("#rulerDetails").append(roundNumber(mapDistance,1) + " meters (approx)<br><br>");
+			$("#rulerDetails").append("<b><i>Map scale:</b></i> 1:" + roundNumber(mapScaleFactor,1) + " (approx)<br>");
+			$("#rulerDetails").append("<b><i>Paper map size:</b></i> " + roundNumber(paperW,1) + " x " + roundNumber(paperH,1) + " cms (approx)<br>");
+		}
+	}
+	
 	
 	function queryDbpedia(xybbox){
 		var sq = new SparqlQuery();
