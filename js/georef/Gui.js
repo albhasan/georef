@@ -7,16 +7,6 @@ as published by Sam Hocevar. See the COPYING file for more details.
 
 
 
-//TODO: Wire update event to update stuff accordingly
-
-//Georeference the map and the reference to dbpedia
-//Not only refefencing but enriching
-//Drop relevance, too advance for 
-//Use the ontology
-//Store usign the ontology
-//----MEETING ABOUT THE ONTOLOGY
-
-//Move into goereferencing
 
 var map;//Map container
 var mapImage;//Map container for the image
@@ -66,12 +56,14 @@ $(document).ready(function () {
 	//------------------------------------------
 	//LEAFLET http://leafletjs.com/
 	//------------------------------------------
+	
+	
+	/**
+	*Initialize the maps.
+	*/
 	function initmap(){
 
-		//NOTES:
-		//- The origin of the image in the map is 0,0
-		
-		//Map start
+		//Map start - The origin of the image in the map is 0,0 and it falls in the 1st quadrant.
 		map = L.map('map').setView([51.96236,7.62571], 12);//Default CRS is EPSG3857 spherical mercator -- http://www.epsg-registry.org/report.htm?type=selection&entity=urn:ogc:def:crs:EPSG::3857&reportDetail=short&style=urn:uuid:report-style:default-with-code&style_name=OGP%20Default%20With%20Code&title=EPSG:3857
 		mapImage = L.map('mapImage', {center: [imageMapMaxSize/2, imageMapMaxSize/2],zoom: 12,crs: L.CRS.Simple});	//Plane SRS to put the map-image
 		mkManager = new MarkerManager(cpManager, drawnItemsImage, drawnItemsMap);
@@ -117,7 +109,7 @@ $(document).ready(function () {
 			},
 			edit: {
 				featureGroup: drawnItemsImage,
-				edit: false//TODO: Unables edition not working
+				edit: false//TODO: Unables edition but it's not working
 			}
 		});
 		var drawControlMap = new L.Control.Draw({
@@ -207,7 +199,11 @@ $(document).ready(function () {
 
 	}
 
-	
+	/**
+	* Creates a transformation from the control points in the CP Manager object
+	* @param {ControlPointManager} cpManager - A control point manager object.
+	* @returns A transformation object (AffineTransformation, SimilarityTransformation) 
+	*/
 	function createTransformation(cpManager){
 		var res;
 		var matchCp = cpManager.getMatchedCP();
@@ -224,7 +220,12 @@ $(document).ready(function () {
 		return res;
 	}
 	
-	
+	/**
+	* Returns the limits of the image in map coordinates
+	* @param trans - A transformation object.
+	* @param {ScaledImage} imgModelScaled - Scaled image model.
+	* @returns An array of arrays [x,y]
+	*/
 	function getImageBoundariesInMapCoords(trans, imgModelScaled){
 		var imgBnd = new Array();
 		//Gets image coords
@@ -237,7 +238,13 @@ $(document).ready(function () {
 		return xyProjArrayBnd;
 	}
 	
-	
+	/**
+	* Draws the image boundaries and map area on the map.
+	* @param {ControlPointManager} cpManager - A control point manager object.
+	* @param {ScaledImage} imgModelScaled - Scaled image model.
+	* @param mapAreaLatLonArray - An array of Leaflet LatLng objects on scaled image's coordinates
+	* @param {L.Map} map - The map where the boundaries are going to be drawn.
+	*/
 	function projectImageBoundaries(cpManager, imgModelScaled, mapAreaLatLonArray, map){
 		trans = createTransformation(cpManager);
 		mapAreawkt = "";
@@ -293,6 +300,11 @@ $(document).ready(function () {
 		}
 	}
 	
+	/**
+	* Prints calculation derived from the ruler drawn by the user
+	* @param {L.LatLng} rulerCoords - Array of LatLng objects representing the ruler's vertexs
+	* @param {ScaledImage} imgModelScaled - Scaled image model.
+	*/
 	function printRulerProperties(rulerCoords, imgModelScaled){
 		$("#rulerDetails").html("");
 		paperMapSize = "";
@@ -325,6 +337,10 @@ $(document).ready(function () {
 		}
 	}
 	
+	/**
+	* Prints suggested Points of Interest taken from DBPedia 
+	* @param xybbox - Array of [x,y] with the map area's vertexs.
+	*/
 	function queryDbpedia(xybbox){
 		var sq = new SparqlQuery();
 		var query = c.getConstant("PREFIXES") + " " + c.getConstant("QUERY_CITYS");
@@ -354,10 +370,11 @@ $(document).ready(function () {
 			//alert(err);
 			console.log(err); 
 		}
-		
 	}
 	
-	
+	/**
+	* Updates the metadata form with some data derived from the georeferenciation.
+	*/
 	function updateMetadata(){
 		$("#paperMapSize").val(paperMapSize);
 		$("#paperMapScale").val(paperMapScale);
