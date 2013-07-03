@@ -5,21 +5,29 @@ terms of the Do What The Fuck You Want To Public License, Version 2,
 as published by Sam Hocevar. See the COPYING file for more details.
 */
 
+/**
+ * Keeps the control points.
+ * @constructor
+ */
 function ControlPointManager(){
 	var that = this;
 	var prefix = "CP_";//Prefix used for naming control points
 	var mapIndex = 0;//Helps building unique Ids for markers
 	var imageIndex = 0;
-	var mapArray = new Array();
-	var imageArray = new Array(); 
-	var notSet = "-";
+	var mapArray = new Array();//Internal array of map control points
+	var imageArray = new Array(); //Internal array of image control points
+	var notSet = "-";//Character used when there is no control point. 
 	var zeroLeft = 3;
 
-	
 	//---------------------------------------------------------
 	//PRIVATE
 	//---------------------------------------------------------
 	
+	/**
+	* Returns the array index for a control point
+	* @param {string} cpId - Control point's identifier.
+	* @returns Integer (when cpId is found) or null.
+	*/
 	function cpId2Index(cpId){
 		var res;
 		var len = (mapArray.length >= imageArray.length) ? mapArray.length : imageArray.length;
@@ -42,7 +50,12 @@ function ControlPointManager(){
 		return res;
 	}
 	
-	
+	/**
+	* Creates a map control point.
+	* @param {double} x - X coord.
+	* @param {double} y - Y coord.
+	* @returns The control point identifier (string)
+	*/
 	function createMapCp(x, y){
 		var res = new Array();
 		mapIndex++;
@@ -53,7 +66,13 @@ function ControlPointManager(){
 		mapArray.push(res);
 		return res[0];
 	}
-	
+
+	/**
+	* Creates an image control point.
+	* @param {double} x - X coord.
+	* @param {double} y - Y coord.
+	* @returns The control point identifier (string)
+	*/
 	function createImageCp(x, y){
 		var res = new Array();
 		imageIndex++;
@@ -65,6 +84,11 @@ function ControlPointManager(){
 		return res[0];
 	}
 	
+	/**
+	* Returns a map control point.
+	* @param {string} cpId - Control point's identifier.
+	* @returns An array with the control point data [id, x, y]
+	*/
 	function readMapCp(cpId){
 		var res;
 		var index = cpId2Index(cpId);
@@ -76,6 +100,11 @@ function ControlPointManager(){
 		return res;
 	}
 	
+	/**
+	* Returns an image control point.
+	* @param {string} cpId - Control point's identifier.
+	* @returns An array with the control point data [id, x, y]
+	*/
 	function readImageCp(cpId){
 		var res;
 		var index = cpId2Index(cpId);
@@ -87,6 +116,13 @@ function ControlPointManager(){
 		return res;
 	}
 
+	/**
+	* Updates a map control point's data.
+	* @param {string} cpId - Control point's identifier.
+	* @param {double} x - X coord.
+	* @param {double} y - Y coord.
+	* @returns True if success, false otherwise.
+	*/
 	function updateMapCp(cpId, x, y){
 		var res = false;
 		var index = cpId2Index(cpId);
@@ -101,6 +137,13 @@ function ControlPointManager(){
 		return res;
 	}
 	
+	/**
+	* Updates an image control point's data.
+	* @param {string} cpId - Control point's identifier.
+	* @param {double} x - X coord.
+	* @param {double} y - Y coord.
+	* @returns True if success, false otherwise.
+	*/
 	function updateImageCp(cpId, x, y){
 		var res = false;
 		var index = cpId2Index(cpId);
@@ -114,7 +157,11 @@ function ControlPointManager(){
 		return res;
 	}
 	
-	//Mark as deleted
+	/**
+	* Marks a map control point as deleted
+	* @param {string} cpId - Control point's identifier.
+	* @returns True if success, false otherwise.
+	*/
 	function deleteMapCp(cpId){
 		var res = false;
 		var index = cpId2Index(cpId);
@@ -126,7 +173,11 @@ function ControlPointManager(){
 		return res;
 	}
 	
-	//Mark as deleted
+	/**
+	* Marks an image control point as deleted
+	* @param {string} cpId - Control point's identifier.
+	* @returns True if success, false otherwise.
+	*/
 	function deleteImageCp(cpId){
 		var res = false;
 		var index = cpId2Index(cpId);
@@ -138,7 +189,9 @@ function ControlPointManager(){
 		return res;
 	}
 	
-	//Mark all as deleted
+	/**
+	* Marks all (map's and image's) control points as deleted.
+	*/
 	function deleteAll(){
 		var len = (mapIndex >= imageIndex) ? mapIndex : imageIndex;	
 		for (var i = 0; i < len; i++){
@@ -155,7 +208,9 @@ function ControlPointManager(){
 		}
 	}
 	
-	//
+	/**
+	* Deletes all (map's and image's) control points.
+	*/
 	function clear(){
 		mapIndex = 0;
 		imageIndex = 0;
@@ -166,31 +221,59 @@ function ControlPointManager(){
 	//---------------------------------------------------------
 	//PRIVILEGED
 	//---------------------------------------------------------
-	this.addMapControlPoint = function(xImg, yImg){
-		var res = createMapCp(xImg, yImg);
+	
+	/**
+	* Adds a new map control point.
+	* @param {double} x - X coord.
+	* @param {double} y - Y coord.
+	* @returns True if success, false otherwise.
+	*/
+	this.addMapControlPoint = function(x, y){
+		var res = createMapCp(x, y);
 		return res;
 	}
 
-	this.addImageControlPoint = function(xImg, yImg){
-		var res = createImageCp(xImg, yImg);
+	/**
+	* Adds a new image control point.
+	* @param {double} x - X coord.
+	* @param {double} y - Y coord.
+	* @returns True if success, false otherwise.
+	*/
+	this.addImageControlPoint = function(x, y){
+		var res = createImageCp(x, y);
 		return res;
 	}
 
+	/**
+	* Removes a control point (map and image).
+	* @param {string} cpId - Control point's identifier.
+	*/
 	this.removeControlPoint = function(cpId){
 		deleteImageCp(cpId);
 		deleteMapCp(cpId);
 	}
 
+	/**
+	* Removes a map control point.
+	* @param {string} cpId - Control point's identifier.
+	*/
 	this.removeMapControlPoint = function(cpId){
 		deleteMapCp(cpId);
 	}
 
+	/**
+	* Removes an image control point.
+	* @param {string} cpId - Control point's identifier.
+	*/
 	this.removeImageControlPoint = function(cpId){
 		deleteImageCp(cpId);
 	}
 
 
-	
+	/**
+	* Retrieves the control points (map and image) as an array.
+	* @returns An array of arrays [cpId, xImg, yImg, xMap, yMap]
+	*/	
 	this.toArray = function(){
 		var res = new Array();
 		var len = (mapIndex >= imageIndex) ? mapIndex : imageIndex;		
@@ -230,10 +313,17 @@ function ControlPointManager(){
 		return(res);
 	}
 	
+	/**
+	* Marks all the control points (map and image) as deleted.
+	*/
 	this.removeAll = function(){
 		deleteAll();
 	}
 	
+	/**
+	* Retrieves the control points where there is data for both image and map.
+	* @returns An array of 3 arrays: cpIds, xyImage [xImg, yImg] and xyMap [xMap, yMap].
+	*/
 	this.getMatchedCP = function(){
 		var res = new Array();
 		var cpIdArray = new Array();
