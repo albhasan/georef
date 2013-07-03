@@ -387,6 +387,13 @@ $(document).ready(function () {
 	//DataTables http://www.datatables.net
 	//------------------------------------------
 
+	/**
+	* Updates the table with data from a map control point.
+	* @param cpTable - Table for displaying control point data.
+	* @param {string} cpId - Control point's identifier.
+	* @param {double} xMap - Control point's x coord in the map.
+	* @param {double} yMap - Control point's y coord in the map.
+	*/
 	function updateMapControlPointInTable(cpTable, cpId, xMap, yMap){
 		if(cpId != null && cpTable != null){
 			var rowIndex = getRowIndexFromTable(cpTable, cpId);
@@ -399,6 +406,14 @@ $(document).ready(function () {
 			}
 		}
 	}
+	
+	/**
+	* Updates the table with data from a image control point.
+	* @param cpTable - Table for displaying control point data.
+	* @param {string} cpId - Control point's identifier.
+	* @param {double} xImg - Control point's x coord in the image.
+	* @param {double} yImg - Control point's y coord in the image.
+	*/
 	function updateImageControlPointInTable(cpTable, cpId, xImg, yImg){
 		if(cpId != null && cpTable != null){
 			var rowIndex = getRowIndexFromTable(cpTable, cpId);
@@ -412,8 +427,14 @@ $(document).ready(function () {
 		}
 	}
 
-	//Returns the index and the row values of the table 
-	function getRowFromTable(cpTable, cpId, xImg, yImg){
+	
+	/**
+	* Returns the index and the row values from the table for a given control point
+	* @param cpTable - Table displaying control point data.
+	* @param {string} cpId - Control point's identifier.
+	* @returns An array [index, {rowValue1, rowValue2,...}]
+	*/
+	function getRowFromTable(cpTable, cpId){//, xImg, yImg){
 		var res = new Array();
 		var data = cpTable.fnGetData();
 		var tmp = new Array();
@@ -428,7 +449,12 @@ $(document).ready(function () {
 		}
 	}
 	
-	//returns the index of the row in the table (aoData array index)
+	/**
+	* Returns the index of the row in the table (aoData array index)
+	* @param cpTable - Table displaying control point data.
+	* @param {string} cpId - Control point's identifier.
+	* @returns An integer indicating the position of the control point in the table's array.
+	*/
 	function getRowIndexFromTable(cpTable, cpId){
 		var res;
 		var data = cpTable.fnGetData();
@@ -490,7 +516,7 @@ $(document).ready(function () {
 	});
 
 	
-	//Button - store
+	//Button - store. Gets the data, builds triples and send them to the triple store
 	$(function(){
 		$( "#btStoreTriples" ).click(function(){
 			paperMapUri = $("#paperMapUri").val();
@@ -577,7 +603,7 @@ $(document).ready(function () {
 		});
 	});
 	
-	//Button - Get KML
+	//Button - Get KML. Opens a new window with KML code for displaying the image on Google Earth.
 	$(function(){
 		$( "#btGenerateKml" ).click(function(){
 			trans = createTransformation(cpManager);
@@ -604,7 +630,7 @@ $(document).ready(function () {
 		});
 	});
 
-	//Button - load image
+	//Button - load image. Loads teh image to the map
 	$(function(){
 		$( "#btLoadImage" ).click(function(){
 			var imageUrl = $( "#imgMapInput" ).val();
@@ -632,7 +658,7 @@ $(document).ready(function () {
 	});
 });	
 
-//Returns the selected row. It must be outside of the ready function
+//Returns the selected row in the table. It must be outside of the ready function
 function fnGetSelected( oTableLocal ){
     return oTableLocal.$('tr.row_selected');
 }
