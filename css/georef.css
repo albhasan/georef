@@ -156,3 +156,8 @@ as published by Sam Hocevar. See the COPYING file for more details.
 	color: #8e141c;
 	text-align: center;
 }
+
+#label {
+	display: inline-block;
+	width: 5em;
+}

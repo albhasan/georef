@@ -34,11 +34,17 @@ var drawnItemsMap = new L.FeatureGroup();
 var c;//Constants
 var trans;//Transformation
 var imageMapArea;//Area of the mapArea in the image (pixels)
-//var mapAreaArea ;//Area of the mapArea in the map (depending on map projection, squared meters)
 
+//Metadata holding variables
+var paperMapSize;
+var paperMapScale;
+var paperMapPlaces;
+var mapAreawkt;
 
 $(document).ready(function () {
 	c = new Constants();
+	$( document ).tooltip();//enables JQuery UI tooltips
+	
 	//------------------------------------------
 	// Initialization
 	//------------------------------------------
@@ -156,6 +162,7 @@ $(document).ready(function () {
 					printRulerProperties(mkManager.getRulerCoords(), imgModelScaled);
 				}
 			}
+			updateMetadata();
 		});	
 
 		map.on('draw:created', function(e) {
@@ -182,6 +189,7 @@ $(document).ready(function () {
 					projectImageBoundaries(cpManager, imgModelScaled, mkManager.getMapAreaCoords(), map);
 				}
 			}
+			updateMetadata();
 		});
 
 		map.on('draw:deleted', function(e) {
@@ -216,18 +224,26 @@ $(document).ready(function () {
 		return res;
 	}
 	
+	
+	function getImageBoundariesInMapCoords(trans, imgModelScaled){
+		var imgBnd = new Array();
+		//Gets image coords
+		imgBnd.push(imgModelScaled.getImageModel().getCartesianLowerLeft_Image1Q());
+		imgBnd.push(imgModelScaled.getImageModel().getCartesianUpperLeft_Image1Q());
+		imgBnd.push(imgModelScaled.getImageModel().getCartesianUpperRight_Image1Q());
+		imgBnd.push(imgModelScaled.getImageModel().getCartesianLowerRight_Image1Q());
+		//Projects coords
+		var xyProjArrayBnd = trans.transform(imgBnd);
+		return xyProjArrayBnd;
+	}
+	
+	
 	function projectImageBoundaries(cpManager, imgModelScaled, mapAreaLatLonArray, map){
 		trans = createTransformation(cpManager);
+		mapAreawkt = "";
 		if(trans != null){
-			var imgBnd = new Array();
 			var mapAreaBnd = new Array();
-			//Gets image coords
-			imgBnd.push(imgModelScaled.getImageModel().getCartesianLowerLeft_Image1Q());
-			imgBnd.push(imgModelScaled.getImageModel().getCartesianUpperLeft_Image1Q());
-			imgBnd.push(imgModelScaled.getImageModel().getCartesianUpperRight_Image1Q());
-			imgBnd.push(imgModelScaled.getImageModel().getCartesianLowerRight_Image1Q());
-			//Projects coords
-			var xyProjArrayBnd = trans.transform(imgBnd);
+			var xyProjArrayBnd = getImageBoundariesInMapCoords(trans, imgModelScaled);
 			//Gets rid of old boundary
 			if(imageBoundaryOnMap != null){
 				map.removeLayer(imageBoundaryOnMap);
@@ -254,6 +270,7 @@ $(document).ready(function () {
 				imageMapArea = calculatePolygonArea(unScaledMapAreaBnd);
 				//Transform the coords from image refsys to map refsys
 				var xyProjmapAreaBnd = trans.transform(unScaledMapAreaBnd);
+				mapAreawkt = xyArray2wktPolygon(xyProjmapAreaBnd, "http://www.opengis.net/def/crs/OGC/1.3/CRS84");
 				//mapAreaArea = calculatePolygonArea(xyProject(xyProjmapAreaBnd, L.Projection.SphericalMercator));//Leaflet transformation problem http://leafletjs.com/reference.html#icrs
 				$("#mapAreaDetails").html("");
 				$("#mapAreaDetails").html("<b><i>Map area:</i></b><br>" + roundNumber(imageMapArea,1) + " pixels<br>");
@@ -278,7 +295,9 @@ $(document).ready(function () {
 	
 	function printRulerProperties(rulerCoords, imgModelScaled){
 		$("#rulerDetails").html("");
-		if(rulerCoords != null && imgModelScaled != null){
+		paperMapSize = "";
+		paperMapScale = "";
+		if(rulerCoords != null && imgModelScaled != null && trans != null){
 			//Gets an XY number array from L.Latlng objects
 			var xyScaledRuler = latlon2xyArray(rulerCoords);
 			//Scale the coords from scaled image to image
@@ -295,15 +314,16 @@ $(document).ready(function () {
 			var paperW = imgModelScaled.getImageModel().getWidth() / imageDistance;
 			var paperH = imgModelScaled.getImageModel().getHeight() / imageDistance;
 			
+			paperMapSize = roundNumber(paperW,1) + " * " + roundNumber(paperH,1) + " cm";//74 * 95 cm
+			paperMapScale = "1:" + roundNumber(mapScaleFactor,1);
 			
 			$("#rulerDetails").html("<b><i>Ruler distance (1 cm):</i></b><br>");
 			$("#rulerDetails").append(roundNumber(imageDistance,1) + " pixels (approximated)<br>");
 			$("#rulerDetails").append(roundNumber(mapDistance,1) + " meters (approx)<br><br>");
-			$("#rulerDetails").append("<b><i>Map scale:</b></i> 1:" + roundNumber(mapScaleFactor,1) + " (approx)<br>");
-			$("#rulerDetails").append("<b><i>Paper map size:</b></i> " + roundNumber(paperW,1) + " x " + roundNumber(paperH,1) + " cms (approx)<br>");
+			$("#rulerDetails").append("<b><i>Map scale:</b></i>: " + paperMapScale + " (approx)<br>");
+			$("#rulerDetails").append("<b><i>Paper map size:</b></i> " + paperMapSize + " (approx)<br>");
 		}
 	}
-	
 	
 	function queryDbpedia(xybbox){
 		var sq = new SparqlQuery();
@@ -317,15 +337,32 @@ $(document).ready(function () {
 		query = query.replace("<PARAM_YMIN>", yMin);
 		query = query.replace("<PARAM_XMAX>", xMax);
 		query = query.replace("<PARAM_YMAX>", yMax);
-		var js = sq.sendSparqlQuery(query, c.getConstant("DBPEDIA_SPARQL"), "");
-		$("#suggestedControlPointsTableDiv").html("");
-		$("#suggestedControlPointsTableDiv").append("<b><i>POI Suggestions: </i></b>");
-		for(var i = 0; i < js.results.bindings.length; i++){
-			var lng = js.results.bindings[i].lg.value;
-			var lat = js.results.bindings[i].lt.value;
-			$("#suggestedControlPointsTableDiv").append('<a href="javascript: void(0)" onclick="zoomToSuggestion(&quot;' + lng + '&quot; , &quot;' + lat + '&quot;)">' + js.results.bindings[i].label.value + "</a>");
-			$("#suggestedControlPointsTableDiv").append(", ");
+		try{
+			//Fails when DBpedia is offline
+			var js = sq.sendSparqlQuery(query, c.getConstant("DBPEDIA_SPARQL"), "");
+			$("#suggestedControlPointsTableDiv").html("");
+			$("#suggestedControlPointsTableDiv").append("<b><i>POI Suggestions: </i></b>");
+			paperMapPlaces = "";
+			for(var i = 0; i < js.results.bindings.length; i++){
+				var lng = js.results.bindings[i].lg.value;
+				var lat = js.results.bindings[i].lt.value;
+				$("#suggestedControlPointsTableDiv").append('<a href="javascript: void(0)" onclick="zoomToSuggestion(&quot;' + lng + '&quot; , &quot;' + lat + '&quot;)">' + js.results.bindings[i].label.value + "</a>");
+				$("#suggestedControlPointsTableDiv").append(", ");
+				paperMapPlaces = (paperMapPlaces != "") ? paperMapPlaces + " , " + js.results.bindings[i].label.value : paperMapPlaces;
 		}
+		}catch(err){
+			//alert(err);
+			console.log(err); 
+		}
+		
+	}
+	
+	
+	function updateMetadata(){
+		$("#paperMapSize").val(paperMapSize);
+		$("#paperMapScale").val(paperMapScale);
+		$("#paperMapPlaces").val(paperMapPlaces);
+		$("#mapAreawkt").val(mapAreawkt);
 	}
 
 	
@@ -435,6 +472,120 @@ $(document).ready(function () {
 		$( ".tabs-bottom .ui-tabs-nav" ).appendTo( ".tabs-bottom" );
 	});
 
+	
+	//Button - store
+	$(function(){
+		$( "#btStoreTriples" ).click(function(){
+			paperMapUri = $("#paperMapUri").val();
+			var imageMapUri;
+			if(imgModelOriginal != null){
+				imageMapUri = imgModelOriginal.getUrl()
+			}
+			if(isUrlOfImage(imageMapUri)){
+				if(isUrlValid(paperMapUri)){
+					paperMapCreator = $.trim($("#paperMapCreator").val());
+					paperMapSize = $.trim($("#paperMapSize").val());
+					paperMapTitle = $.trim($("#paperMapTitle").val());
+					paperMapTime = $.trim($("#paperMapTime").val());
+					paperMapScale = $.trim($("#paperMapScale").val());
+					paperMapPlaces = $.trim($("#paperMapPlaces").val());
+					mapAreawkt = $.trim($("#mapAreawkt").val());
+					
+					var tmp;
+					tmp = paperMapPlaces.replace(" , ", "@@@");
+					tmp = tmp.replace(", ", "@@@");
+					tmp = tmp.replace(",", "@@@");
+					tmp = tmp.replace("  ", "@@@");
+					var paperMapPlacesArray = tmp.split("@@@");
+					
+					var c = new Constants();
+					var baseUri = c.getConstant("HOME_URI");
+					
+					//Triples for map
+					var cMapTriples = "";
+					cMapTriples = "<" + paperMapUri + "> a <http://www.geographicknowledge.de/vocab/maps#Map> . " + String.fromCharCode(13);
+					cMapTriples = "<" + paperMapUri + "> <http://www.geographicknowledge.de/vocab/maps#medium> <http://www.geographicknowledge.de/vocab/maps#Paper> . " + String.fromCharCode(13);
+					if(paperMapSize != null && paperMapSize.length > 0){
+						cMapTriples = "<" + paperMapUri + "> <http://www.geographicknowledge.de/vocab/maps#mapSize> '" + paperMapSize + "'^^xsd:string . " + String.fromCharCode(13);
+					}
+					if(paperMapTitle != null && paperMapTitle.length > 0){
+						cMapTriples = "<" + paperMapUri + "> <http://www.geographicknowledge.de/vocab/maps#title> '" + paperMapTitle + "'^^xsd:string . " + String.fromCharCode(13);
+					}
+					if(paperMapTime != null && paperMapTime.length > 0){
+						cMapTriples = "<" + paperMapUri + "> <http://www.geographicknowledge.de/vocab/maps#mapsTime> '" + paperMapTime + "' . " + String.fromCharCode(13);
+					}
+					if(paperMapScale != null && paperMapScale.length > 0){
+						cMapTriples = "<" + paperMapUri + "> <http://www.geographicknowledge.de/vocab/maps#hasScale> '" + paperMapScale + "'^^xsd:string . " +  String.fromCharCode(13);
+					}
+					if(mapAreawkt != null && mapAreawkt.length > 0){
+						cMapTriples = "<" + paperMapUri + "> <http://www.geographicknowledge.de/vocab/maps#mapsArea> '" + mapAreawkt + "'^^sf:wktLiteral . " +  String.fromCharCode(13);
+					}
+					
+					//Triples for place				
+					var cPlaceTriples = "";					
+					for(var i = 0; i < paperMapPlacesArray.length; i++){
+						cPlaceTriples = cPlaceTriples + "<" + encodeURI(baseUri + paperMapPlacesArray[i]) + "> a <http://www.geographicknowledge.de/vocab/maps#Place> . " + String.fromCharCode(13) + 
+														"<" + encodeURI(baseUri + paperMapPlacesArray[i]) + "> foaf:name '" + paperMapPlacesArray[i] + "'^^xsd:string . " + String.fromCharCode(13);
+						cMapTriples = cMapTriples + "<" + paperMapUri + "> <http://www.geographicknowledge.de/vocab/maps#mapsPlace> " + "<" + encodeURI(baseUri + paperMapPlacesArray[i]) + "> . " + String.fromCharCode(13);
+					}
+					var cAgentTriples = "";
+					if(paperMapCreator != null && paperMapCreator.length > 0){
+					cAgentTriples = "<" + encodeURI(baseUri + paperMapCreator) + "> a <http://purl.org/dc/terms/Agent> . " + String.fromCharCode(13) +
+									"<" + encodeURI(baseUri + paperMapCreator) + "> foaf:name '" + paperMapCreator + "'^^xsd:string ." + String.fromCharCode(13);
+					}
+					
+					var graph = c.getConstant("HOME_GRAPH");
+					var prefix = c.getConstant("PREFIXES");
+					var insertTemplate = c.getConstant("QUERY_INSERT");
+					
+					insertTemplate = insertTemplate.replace("PARAM_GRAPH", graph);
+					insertTemplate = insertTemplate.replace("PARAM_TRIPLES", cMapTriples + cPlaceTriples + cAgentTriples);
+					
+					var queryInsert = prefix + " " + insertTemplate;
+
+					try{
+						var sq = new SparqlQuery();
+						var js = sq.sendSparqlUpdate(queryInsert, c.getConstant("HOME_SPARQLENDPOINT"), graph);
+						alert("Map data inserted!");
+					}catch(err){
+						alert(err);
+						console.log(err); 
+					}
+				}else{
+					alert("The map URI is invalid. Please review it in the Map Metadata tab.");
+				}
+			}else{
+				alert("The image URL is invalid. Please review it in the image tab.");
+			}
+		});
+	});
+	
+	//Button - Get KML
+	$(function(){
+		$( "#btGenerateKml" ).click(function(){
+			trans = createTransformation(cpManager);
+			if(trans != null && imgModelScaled != null){
+				var imgUrl = imgModelScaled.getImageModel().getUrl();
+				var xyProjArrayBnd = getImageBoundariesInMapCoords(trans, imgModelScaled);
+				var xyProjmapAreaBnd = getBoundary(xyProjArrayBnd);
+				
+				var west = xyProjmapAreaBnd[0];
+				var south = xyProjmapAreaBnd[1];
+				var east = xyProjmapAreaBnd[2];
+				var north = xyProjmapAreaBnd[3];
+				var rotation = calculateRotation(xyProjArrayBnd);
+				
+				var kml = getOverlayText(imgUrl, north, south, east, west, rotation);
+				//var win = window.open();
+				var win = window.open("www.ulb.uni-muenster.de","_blank","toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=no, resizable=yes, copyhistory=no, width=600, height=400");
+				win.document.write(kml);
+				win.document.close(); 
+			}else{
+				alert("Please add at least 3 control points to continue!");
+			}
+			
+		});
+	});
 
 	//Button - load image
 	$(function(){
@@ -455,8 +606,6 @@ $(document).ready(function () {
 					imageMapLayer = new L.imageOverlay(imageUrl, scaleBounds);
 					imageMapLayer.addTo(mapImage);
 					mapImage.setView([imgModelScaled.getScaledImage().getHeight()/2, imgModelScaled.getScaledImage().getWidth()/2], 5);//Zoom to image center
-//TODO: remove all control points when a new image is loaded
-//removeAllControlPoints();
 				}
 				image.src = imageUrl;	
 			}else{
@@ -464,8 +613,6 @@ $(document).ready(function () {
 			}
 		});
 	});
-
-	
 });	
 
 //Returns the selected row. It must be outside of the ready function

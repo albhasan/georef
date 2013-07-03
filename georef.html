@@ -124,22 +124,23 @@ as published by Sam Hocevar. See the COPYING file for more details.
 						<h3>3 - Map area</h3>
 						<div>
 							<div id="mapAreaDetails">
-								Polygon with the efective map area
+								Please use the "<i>Draw a Map Area on Image</i>" tool to draw a polygon on the map image.
 							</div>
 						</div>
 						<h3>4 - Ruler</h3>
 						<div>
 							<div id="rulerDetails">
-								Captures a measure on the ruler scanned along the map
+								Please use the "<i>Draw an 1cm line</i>" tool to draw a line on the map image. Use the ruler scanned along the map (if any).
 							</div>
 						</div>
-						<h3>Help</h3>
+						<h3>5 - Results</h3>
 						<div>
-						<ul>
-						<li>List item one</li>
-						<li>List item two</li>
-						<li>List item three</li>
-						</ul>
+							You can view the map on its approximated location on Google Earth by pressing this button:<bt>
+							<button id="btGenerateKml">Get KML</button> 
+							<br>
+							<br>
+							You can store you work by pressing this button. The map geometric properties along with its metadata (from the "<i>Map metadata</i>" tab) will be stored. The map image is not copied but "<b>linked</b>".<br>
+							<button id="btStoreTriples">Store map data</button>
 						</div>
 					</div>
 				</div>
@@ -150,8 +151,7 @@ as published by Sam Hocevar. See the COPYING file for more details.
 					<div id="tabs" class="tabs-bottom" >
 						<ul>
 							<li><a href="#tabs-1">Map</a></li>
-							<li><a href="#tabs-2">Dbpedia LOD</a></li>
-							<li><a href="#tabs-3">LOD view</a></li>
+							<li><a href="#tabs-2">Map metadata</a></li>
 						</ul>
 						<div class="tabs-spacer"></div>
 						<div id="tabs-1">
@@ -160,11 +160,18 @@ as published by Sam Hocevar. See the COPYING file for more details.
 							</div>
 						</div>
 						<div id="tabs-2">
-							<p>Morbi tincidunt, dui sit amet facilisis feugiat, odio metus gravida ante, ut pharetra massa metus id nunc. Duis scelerisque molestie turpis. Sed fringilla, massa eget luctus malesuada, metus eros molestie lectus, ut tempus eros massa ut dolor. Aenean aliquet fringilla sem. Suspendisse sed ligula in ligula suscipit aliquam. Praesent in eros vestibulum mi adipiscing adipiscing. Morbi facilisis. Curabitur ornare consequat nunc. Aenean vel metus. Ut posuere viverra nulla. Aliquam erat volutpat. Pellentesque convallis. Maecenas feugiat, tellus pellentesque pretium posuere, felis lorem euismod felis, eu ornare leo nisi vel felis. Mauris consectetur tortor et purus.</p>
-						</div>
-						<div id="tabs-3">
-							<p>Mauris eleifend est et turpis. Duis id erat. Suspendisse potenti. Aliquam vulputate, pede vel vehicula accumsan, mi neque rutrum erat, eu congue orci lorem eget lorem. Vestibulum non ante. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Fusce sodales. Quisque eu urna vel enim commodo pellentesque. Praesent eu risus hendrerit ligula tempus pretium. Curabitur lorem enim, pretium nec, feugiat nec, luctus a, lacus.</p>
-							<p>Duis cursus. Maecenas ligula eros, blandit nec, pharetra at, semper at, magna. Nullam ac lacus. Nulla facilisi. Praesent viverra justo vitae neque. Praesent blandit adipiscing velit. Suspendisse potenti. Donec mattis, pede vel pharetra blandit, magna ligula faucibus eros, id euismod lacus dolor eget odio. Nam scelerisque. Donec non libero sed nulla mattis commodo. Ut sagittis. Donec nisi lectus, feugiat porttitor, tempor ac, tempor vitae, pede. Aenean vehicula velit eu tellus interdum rutrum. Maecenas commodo. Pellentesque nec elit. Fusce in lacus. Vivamus a libero vitae lectus hendrerit hendrerit.</p>
+							<p>Please fill in the blanks with the pertinent information.</p>
+							<br>
+							<form>
+								Map (URI): <input type="text" id="paperMapUri" title="Paper map unique identifier. Please use a URI." /><br>
+								Map creator: <input type="text" id="paperMapCreator" title="The creator (author or cartographer) of a map."/><br>
+								Map size: <input type="text" id="paperMapSize" title="e g. 74 * 95 cm" /><br>
+								Map title: <input type="text" id="paperMapTitle" title="Map title." /><br>
+								Map time: <input type="text" id="paperMapTime" title="The time interval or moment which it represents." /><br>
+								Map scale: <input type="text" id="paperMapScale" title="The scale of the paper map." /><br>
+								Map places: <input type="text" id="paperMapPlaces" title="Places (administrative or other) and geographic features represented in a map." /><br>
+								Map area : <textarea id="mapAreawkt" title="The area in a spatial coordinate system which corresponds to the map window of the map" /><!--<input type="text" id="mapAreawkt" title="The area in a spatial coordinate system which corresponds to the map window of the map" /><-->br>
+							</form> 							
 						</div>
 					</div>				
 				</div>

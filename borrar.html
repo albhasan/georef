@@ -1,107 +1,94 @@
-<!DOCTYPE html>
-<html>
-<head>
-	<title>Leaflet.draw drawing and editing tools</title>
+<html> 
+  <head> 
+    <title> SPARQL JavaScript </title>
+    <script>
+    /**
+     * Author: Mark Wallace
+     *
+     * This function asynchronously issues a SPARQL query to a
+     * SPARQL endpoint, and invokes the callback function with the JSON 
+     * Format [1] results.
+     *
+     * Refs:
+     * [1] http://www.w3.org/TR/sparql11-results-json/
+     */
+    function sparqlQueryJson(queryStr, endpoint, callback, isDebug) {
+      var querypart = "update=" + queryStr;
+    
+      // Get our HTTP request object.
+      var xmlhttp = null;
+      if(window.XMLHttpRequest) {
+        xmlhttp = new XMLHttpRequest();
+     } else if(window.ActiveXObject) {
+       // Code for older versions of IE, like IE6 and before.
+       xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+     } else {
+       alert('Perhaps your browser does not support XMLHttpRequests?');
+     }
+    
+     // Set up a POST with JSON result format.
+     xmlhttp.open('POST', endpoint, true); // GET can have caching probs, so POST
+     xmlhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+	 xmlhttp.setRequestHeader("Accept", "application/sparql-results+json");
+									   
+    
+     // Set up callback to get the response asynchronously.
+     xmlhttp.onreadystatechange = function() {
+       if(xmlhttp.readyState == 4) {
+         if(xmlhttp.status == 200) {
+           // Do something with the results
+           if(isDebug) alert(xmlhttp.responseText);
+           callback(xmlhttp.responseText);
+         } else {
+           // Some kind of error occurred.
+           alert("Sparql query error: " + xmlhttp.status + " "
+               + xmlhttp.responseText);
+         }
+       }
+     };
+     // Send the query to the endpoint.
+     xmlhttp.send(querypart);
+    
+     // Done; now just wait for the callback to be called.
+    };
+    </script>
+  </head>
 
-	<link rel="stylesheet" href="./js/Leaflet.draw/examples/libs/leaflet.css" />
-	<!--[if lte IE 8]><link rel="stylesheet" href="libs/leaflet.ie.css" /><![endif]-->
-	<link rel="stylesheet" href="./js/Leaflet.draw/dist/leaflet.draw.css" />
-	<!--[if lte IE 8]><link rel="stylesheet" href="../dist/leaflet.draw.ie.css" /><![endif]-->
+  <body>
+    <script>
+      var endpoint = "http://giv-siidemo.uni-muenster.de:8081/parliament/sparql";
+      var query = 'INSERT DATA {GRAPH<http://ifgi.uni-muenster.de/historicmaps/>{<http://example/book3> <http://purl.org/dc/elements/1.1/title>    "A new book666" . }}' ;
+//INSERT DATA {GRAPH<http://ifgi.uni-muenster.de/historicmaps/>{<http://example/book3> <http://purl.org/dc/elements/1.1/title>    "A new book00000001" . }}
+	  
+	  
+	  
+      // Define a callback function to receive the SPARQL JSON result.
+      function myCallback(str) {
+        // Convert result to JSON
+        var jsonObj = eval('(' + str + ')');
 
-	
-	
-	
-	
-	<script src="./js/Leaflet/dist/leaflet.js"></script>
+        // Build up a table of results.
+        var result = " <table border='2' cellpadding='9'>" ;
+        for(var i = 0; i<  jsonObj.results.bindings.length; i++) {
+          result += " <tr> <td>" + jsonObj.results.bindings[i].s.value;
+          result += " </td><td>" + jsonObj.results.bindings[i].p.value;
+          result += " </td><td>" + jsonObj.results.bindings[i].o.value;
+          result += " </td></tr>"; 
+        } 
+        result += "</table>" ;
+        document.getElementById("results").innerHTML = result;
+     }
+      
+     // Make the query.
+     sparqlQueryJson(query, endpoint, myCallback, true);
+      
+    </script>
 
-	
-	
-	<script src="./js/Leaflet.draw/src/Leaflet.draw.js"></script>
-	<script src="./js/Leaflet.draw/src/edit/handler/Edit.Poly.js"></script>
-	<script src="./js/Leaflet.draw/src/edit/handler/Edit.SimpleShape.js"></script>
-	<script src="./js/Leaflet.draw/src/edit/handler/Edit.Circle.js"></script>
-	<script src="./js/Leaflet.draw/src/edit/handler/Edit.Rectangle.js"></script>
-	<script src="./js/Leaflet.draw/src/draw/handler/Draw.Feature.js"></script>
-	<script src="./js/Leaflet.draw/src/draw/handler/Draw.Polyline.js"></script>
-	<script src="./js/Leaflet.draw/src/draw/handler/Draw.Polygon.js"></script>
-	<script src="./js/Leaflet.draw/src/draw/handler/Draw.SimpleShape.js"></script>
-	<script src="./js/Leaflet.draw/src/draw/handler/Draw.Rectangle.js"></script>
-	<script src="./js/Leaflet.draw/src/draw/handler/Draw.Circle.js"></script>
-	<script src="./js/Leaflet.draw/src/draw/handler/Draw.Marker.js"></script>
-	<script src="./js/Leaflet.draw/src/ext/LatLngUtil.js"></script>
-	<script src="./js/Leaflet.draw/src/ext/LineUtil.Intersect.js"></script>
-	<script src="./js/Leaflet.draw/src/ext/Polygon.Intersect.js"></script>
-	<script src="./js/Leaflet.draw/src/ext/Polyline.Intersect.js"></script>
-	<script src="./js/Leaflet.draw/src/Control.Draw.js"></script>
-	<script src="./js/Leaflet.draw/src/Tooltip.js"></script>
-	<script src="./js/Leaflet.draw/src/Toolbar.js"></script>
-	<script src="./js/Leaflet.draw/src/draw/DrawToolbar.js"></script>
-	<script src="./js/Leaflet.draw/src/edit/EditToolbar.js"></script>
-	<script src="./js/Leaflet.draw/src/edit/handler/EditToolbar.Edit.js"></script>
-	<script src="./js/Leaflet.draw/src/edit/handler/EditToolbar.Delete.js"></script>
-</head>
-<body>
-	<div id="map" style="width: 800px; height: 600px; border: 1px solid #ccc"></div>
-	<button id="changeColor">Rectangle -> Blue</button>
-	<script>
-		
-		var cloudmadeUrl = 'http://{s}.tile.cloudmade.com/BC9A493B41014CAABB98F0471D759707/997/256/{z}/{x}/{y}.png',
-			cloudmade = new L.TileLayer(cloudmadeUrl, {maxZoom: 18}),
-			map = new L.Map('map', {layers: [cloudmade], center: new L.LatLng(-37.7772, 175.2756), zoom: 15 });
-
-		var drawnItems = new L.FeatureGroup();
-		map.addLayer(drawnItems);
-
-		var drawControl = new L.Control.Draw({
-			draw: {
-				position: 'topleft',
-				polygon: {
-					title: 'Draw a sexy polygon!',
-					allowIntersection: false,
-					drawError: {
-						color: '#b00b00',
-						timeout: 1000
-					},
-					shapeOptions: {
-						color: '#bada55'
-					}
-				},
-				circle: {
-					shapeOptions: {
-						color: '#662d91'
-					}
-				}
-			},
-			edit: {
-				featureGroup: drawnItems
-			}
-		});
-		map.addControl(drawControl);
-
-		map.on('draw:created', function (e) {
-			var type = e.layerType,
-				layer = e.layer;
-
-			if (type === 'marker') {
-				layer.bindPopup('A popup!');
-			}
-
-			drawnItems.addLayer(layer);
-		});
-
-		map.on('draw:edited', function (e) {
-			var layers = e.layers;
-			var countOfEditedLayers = 0;
-			layers.eachLayer(function(layer) {
-				countOfEditedLayers++;
-			});
-			console.log("Edited " + countOfEditedLayers + " layers");
-		});
-
-		L.DomUtil.get('changeColor').onclick = function () {
-			drawControl.setDrawingOptions({ rectangle: { shapeOptions: { color: '#004a80' } } });
-		};
-
-	</script>
-</body>
+    <div id="results">
+      It may take a few moments for the info to be displayed here...
+      <br/><br/>
+      Run me in Internet Explorer or I get Cross Domain HTTP Request errors!
+    </div>
+  
+  </body>
 </html>

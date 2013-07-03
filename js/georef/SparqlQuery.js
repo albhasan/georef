@@ -23,22 +23,50 @@ function SparqlQuery(){
 			"debug": debug, "timeout": timeout, "format": format,
 			"save": "display", "fname": ""
 		};
-		
 		var querypart="";
 		for(var k in params) {
 			querypart+=k+"="+encodeURIComponent(params[k])+"&";
 		}
 		var queryURL=baseURL + '?' + querypart;
 		if (window.XMLHttpRequest) {
-		xmlhttp=new XMLHttpRequest();
-	  }
-	  else {
-		xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
-	  }
-
-	  xmlhttp.open("GET",queryURL,false);
-	  xmlhttp.send();
-	  return JSON.parse(xmlhttp.responseText);
+			xmlhttp=new XMLHttpRequest();
+		}else {
+			xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+		}
+		try{
+			xmlhttp.open("GET",queryURL,false);
+			xmlhttp.send();
+		}catch(err){
+			throw "Server not responsing: " + baseURL;
+		}
+		return JSON.parse(xmlhttp.responseText);
+	}
+	
+	this.sendSparqlUpdate = function(query, baseURL, defGraphUri) {
+		var format = "application/json";
+		var debug = "on";
+		var timeout = 0;
+		var params={
+			"default-graph-uri": defGraphUri, "should-sponge": "soft", "update": query,
+			"debug": debug, "timeout": timeout, "format": format,
+			"save": "display", "fname": ""
+		};
+		var querypart="";
+		for(var k in params) {
+			querypart+=k+"="+encodeURIComponent(params[k])+"&";
+		}
+		var queryURL=baseURL + '?' + querypart;
+		if (window.XMLHttpRequest) {
+			xmlhttp=new XMLHttpRequest();
+		}else {
+			xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+		}
+		try{
+			xmlhttp.open("GET",queryURL,false);
+			xmlhttp.send();
+		}catch(err){
+			throw "Server not responsing: " + baseURL;
+		}
 	}
 
 }

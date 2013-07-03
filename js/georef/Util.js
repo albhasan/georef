@@ -7,7 +7,23 @@ as published by Sam Hocevar. See the COPYING file for more details.
 
 
 function isUrlOfImage(testUrl){
-	return /^.*\.(jpg|JPG|jpeg|JPEG|gif|GIF|bmp|BMP)$/.test(testUrl);
+	res = false;
+	if(isUrlValid(testUrl)){
+		return /^.*\.(jpg|JPG|jpeg|JPEG|gif|GIF|bmp|BMP)$/.test(testUrl);
+	}
+	return res;
+}
+
+function isUrlValid(url){
+	var res = false;
+	if(url != null){
+		if (url.length == 0) { return false; }
+		var urlregex = new RegExp("^(http:\/\/www.|https:\/\/www.|ftp:\/\/www.|www.){1}([0-9A-Za-z]+\.)");
+		if (urlregex.test(url)) {
+			res = true;
+		}
+	}
+    return res;
 }
 
 function padNumber(number, size) {
@@ -160,8 +176,6 @@ function xyArray2point(xyArray){
 	return res;
 }
 
-
-
 function latLngArrayDistance(latlonArray){
 	var res = 0;
 	for(var i = 1; i < latlonArray.length; i++){
@@ -181,3 +195,74 @@ function pointArrayDistance(pointArray){
 	}
 	return res;
 }
+
+function getOverlayText(imgUrl, north, south, east, west, rotation){
+	var res = "";
+	var c = new Constants();
+	var template = c.getConstant("KML_OVERLAY");
+	
+	res = template.replace("<PARAM_URL>", imgUrl);
+	res = res.replace("<PARAM_NORTH>", north);
+	res = res.replace("<PARAM_SOUTH>", south);
+	res = res.replace("<PARAM_EAST>", east);
+	res = res.replace("<PARAM_WEST>", west);
+	res = res.replace("<PARAM_ROTATION>", rotation);
+	
+	return res;
+}
+
+function calculateRotation(xyImgProjectedBorders){
+	var res;
+	var tmpArray = new Array();
+	for(var i = 1; i < xyImgProjectedBorders.length; i++){
+		var xyFrom  = xyImgProjectedBorders[0];
+		var xyTo = xyImgProjectedBorders[1];
+		var slope = (xyTo[1] - xyFrom[1])-(xyTo[0] - xyFrom[0]);
+		var angle = Math.atan(slope);
+		tmpArray.push(angle);
+	}
+	//Angle average
+	var sum = 0;
+	var count = 0;
+	for(var i = 0; i < tmpArray.length; i++){
+		sum += tmpArray[i];
+		count++;
+	}
+	res = sum/count;
+	
+	return res;
+}
+
+//Single polygon
+//Beware: Some srs require you to switch xy to yx. This function does not do that
+function xyArray2wktPolygon(xyArray, srsUrl){
+	var res;
+	var first;
+	var last;
+	var closed = true;
+	for(var i = 0; i < xyArray.length; i++){
+		var xy = xyArray[i];
+		if(i == 0){
+			res = xy[0] + " " + xy[1];
+			first = xy;
+		}else{
+			res = res + "," + xy[0] + " " + xy[1];
+		}
+		last = xy;
+	}
+	if(first[0] != last[0]){
+		closed = false;
+	}
+	if(first[1] != last[1]){
+		closed = false;
+	}
+	if(closed == false){
+		res = res + "," + first[0] + " " + first[1];
+	}
+	res = "POLYGON((" + res + "))";
+	if(srsUrl != null && srsUrl != ""){
+		res = "<" + srsUrl + ">" + res;
+	}
+	return res;
+}
+
