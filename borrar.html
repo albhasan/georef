@@ -1,94 +1,11 @@
 <html> 
   <head> 
     <title> SPARQL JavaScript </title>
-    <script>
-    /**
-     * Author: Mark Wallace
-     *
-     * This function asynchronously issues a SPARQL query to a
-     * SPARQL endpoint, and invokes the callback function with the JSON 
-     * Format [1] results.
-     *
-     * Refs:
-     * [1] http://www.w3.org/TR/sparql11-results-json/
-     */
-    function sparqlQueryJson(queryStr, endpoint, callback, isDebug) {
-      var querypart = "update=" + queryStr;
-    
-      // Get our HTTP request object.
-      var xmlhttp = null;
-      if(window.XMLHttpRequest) {
-        xmlhttp = new XMLHttpRequest();
-     } else if(window.ActiveXObject) {
-       // Code for older versions of IE, like IE6 and before.
-       xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
-     } else {
-       alert('Perhaps your browser does not support XMLHttpRequests?');
-     }
-    
-     // Set up a POST with JSON result format.
-     xmlhttp.open('POST', endpoint, true); // GET can have caching probs, so POST
-     xmlhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-	 xmlhttp.setRequestHeader("Accept", "application/sparql-results+json");
-									   
-    
-     // Set up callback to get the response asynchronously.
-     xmlhttp.onreadystatechange = function() {
-       if(xmlhttp.readyState == 4) {
-         if(xmlhttp.status == 200) {
-           // Do something with the results
-           if(isDebug) alert(xmlhttp.responseText);
-           callback(xmlhttp.responseText);
-         } else {
-           // Some kind of error occurred.
-           alert("Sparql query error: " + xmlhttp.status + " "
-               + xmlhttp.responseText);
-         }
-       }
-     };
-     // Send the query to the endpoint.
-     xmlhttp.send(querypart);
-    
-     // Done; now just wait for the callback to be called.
-    };
-    </script>
+    <link rel="stylesheet" type="text/css" href="http://annotorious.github.com/latest/annotorious.css" />
+    <script type="text/javascript" src="http://annotorious.github.com/latest/annotorious.min.js"></script>
   </head>
 
   <body>
-    <script>
-      var endpoint = "http://giv-siidemo.uni-muenster.de:8081/parliament/sparql";
-      var query = 'INSERT DATA {GRAPH<http://ifgi.uni-muenster.de/historicmaps/>{<http://example/book3> <http://purl.org/dc/elements/1.1/title>    "A new book666" . }}' ;
-//INSERT DATA {GRAPH<http://ifgi.uni-muenster.de/historicmaps/>{<http://example/book3> <http://purl.org/dc/elements/1.1/title>    "A new book00000001" . }}
-	  
-	  
-	  
-      // Define a callback function to receive the SPARQL JSON result.
-      function myCallback(str) {
-        // Convert result to JSON
-        var jsonObj = eval('(' + str + ')');
-
-        // Build up a table of results.
-        var result = " <table border='2' cellpadding='9'>" ;
-        for(var i = 0; i<  jsonObj.results.bindings.length; i++) {
-          result += " <tr> <td>" + jsonObj.results.bindings[i].s.value;
-          result += " </td><td>" + jsonObj.results.bindings[i].p.value;
-          result += " </td><td>" + jsonObj.results.bindings[i].o.value;
-          result += " </td></tr>"; 
-        } 
-        result += "</table>" ;
-        document.getElementById("results").innerHTML = result;
-     }
-      
-     // Make the query.
-     sparqlQueryJson(query, endpoint, myCallback, true);
-      
-    </script>
-
-    <div id="results">
-      It may take a few moments for the info to be displayed here...
-      <br/><br/>
-      Run me in Internet Explorer or I get Cross Domain HTTP Request errors!
-    </div>
-  
+	<img src="http://www.earlyamerica.com/earlyamerica/maps/bostonmap/bostonmap.jpeg" class="annotatable" />
   </body>
 </html>

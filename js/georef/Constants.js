@@ -17,52 +17,53 @@ function Constants(){
 	
 	var HOME_SPARQLENDPOINT = 'http://giv-siidemo.uni-muenster.de:8081/parliament/sparql';
 	
-	var PREFIXES =	'PREFIX owl: <http://www.w3.org/2002/07/owl#> ' + 
-					'PREFIX xsd: <http://www.w3.org/2001/XMLSchema#> ' + 
-					'PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> ' + 
-					'PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> ' + 
-					'PREFIX foaf: <http://xmlns.com/foaf/0.1/> ' + 
-					'PREFIX dc: <http://purl.org/dc/elements/1.1/> ' + 
-					'PREFIX : <http://dbpedia.org/resource/> ' + 
-					'PREFIX dbpedia2: <http://dbpedia.org/property/> ' + 
-					'PREFIX dbpedia: <http://dbpedia.org/> ' + 
-					'PREFIX skos: <http://www.w3.org/2004/02/skos/core#> ' + 
-					'PREFIX sf: <http://www.opengis.net/ont/sf#>' + 
-					'PREFIX geof: <http://www.opengis.net/def/function/geosparql/>' + 
-					'PREFIX geo: <http://www.opengis.net/ont/geosparql#>';
+	var PREFIXES =	'PREFIX owl: <http://www.w3.org/2002/07/owl#> ' + String.fromCharCode(13) +
+					'PREFIX xsd: <http://www.w3.org/2001/XMLSchema#> ' + String.fromCharCode(13) +
+					'PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> ' + String.fromCharCode(13) +
+					'PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> ' + String.fromCharCode(13) +
+					'PREFIX foaf: <http://xmlns.com/foaf/0.1/> ' + String.fromCharCode(13) +
+					'PREFIX dc: <http://purl.org/dc/elements/1.1/> ' + String.fromCharCode(13) +
+					'PREFIX : <http://dbpedia.org/resource/> ' + String.fromCharCode(13) +
+					'PREFIX dbpedia2: <http://dbpedia.org/property/> ' + String.fromCharCode(13) +
+					'PREFIX dbpedia: <http://dbpedia.org/> ' + String.fromCharCode(13) +
+					'PREFIX skos: <http://www.w3.org/2004/02/skos/core#> ' + String.fromCharCode(13) +
+					'PREFIX sf: <http://www.opengis.net/ont/sf#> ' + String.fromCharCode(13) +
+					'PREFIX geof: <http://www.opengis.net/def/function/geosparql/> ' + String.fromCharCode(13) +
+					'PREFIX geo: <http://www.opengis.net/ont/geosparql#> ' + String.fromCharCode(13) +
+					'PREFIX geoWgs84: <http://www.w3.org/2003/01/geo/wgs84_pos#> ' + String.fromCharCode(13);
 					
-	var QUERY_INSERT = 	'INSERT DATA{' + 
-						'GRAPH<PARAM_GRAPH>{' + 
-						'PARAM_TRIPLES' + 
+	var QUERY_INSERT = 	'INSERT DATA{' + String.fromCharCode(13) +
+						'GRAPH<PARAM_GRAPH>{' + String.fromCharCode(13) +
+						'PARAM_TRIPLES' + String.fromCharCode(13) +
 						'}}';
 	
-	var QUERY_CITYS = 	'SELECT ?subject ?label (AVG(?lat) AS ?lt) (AVG(?long) AS ?lg) ' + 
-						'WHERE { ' + 
-						'	?subject rdfs:label ?label. ' + 
-						'	?subject geo:lat ?lat.  ' + 
-						'	?subject geo:long ?long.  ' + 
-						'	?subject <http://dbpedia.org/ontology/populationUrban> ?population.  ' + 
-						'	{ ' + 
-						'		SELECT DISTINCT ?subject ' + 
-						'		WHERE {  ' + 
-						'			?subject rdf:type <http://dbpedia.org/ontology/City>.  ' + 
-						'			?subject <http://dbpedia.org/ontology/populationUrban> ?population.  ' + 
-						'			?subject geo:lat ?lat.  ' + 
-						'			?subject geo:long ?long.  ' + 
-						'			FILTER (  ' + 
-						'				xsd:double(?lat) >= <PARAM_YMIN> &&  ' + 
-						'				xsd:double(?lat) <= <PARAM_YMAX> &&  ' + 
-						'				xsd:double(?long) >= <PARAM_XMIN> &&  ' + 
-						'				xsd:double(?long) <= <PARAM_XMAX> ' + 
-						'			)  ' + 
-						'		} ' + 
-						'		ORDER BY DESC(xsd:integer(?population))  ' + 
-						'		LIMIT 10  ' + 
-						'	} ' + 
-						'	FILTER (  ' + 
-						'		lang(?label) = "en" ' + 
-						'	) ' + 
-						'}ORDER BY DESC(xsd:integer(?population))  ';
+	var QUERY_CITYS = 	'SELECT ?subject ?label (AVG(?lat) AS ?lt) (AVG(?long) AS ?lg) ' + String.fromCharCode(13) +
+						'WHERE { ' + String.fromCharCode(13) +
+						'	?subject rdfs:label ?label. ' + String.fromCharCode(13) +
+						'	?subject geoWgs84:lat ?lat.  ' + String.fromCharCode(13) +
+						'	?subject geoWgs84:long ?long.  ' + String.fromCharCode(13) +
+						'	?subject <http://dbpedia.org/ontology/populationUrban> ?population.  ' + String.fromCharCode(13) +
+						'	{ ' + String.fromCharCode(13) +
+						'		SELECT DISTINCT ?subject ' + String.fromCharCode(13) +
+						'		WHERE {  ' + String.fromCharCode(13) +
+						'			?subject rdf:type <http://dbpedia.org/ontology/City>.  ' + String.fromCharCode(13) +
+						'			?subject <http://dbpedia.org/ontology/populationUrban> ?population.  ' + String.fromCharCode(13) +
+						'			?subject geoWgs84:lat ?lat.  ' + String.fromCharCode(13) +
+						'			?subject geoWgs84:long ?long.  ' + String.fromCharCode(13) +
+						'			FILTER (  ' + String.fromCharCode(13) +
+						'				xsd:double(?lat) >= <PARAM_YMIN> &&  ' + String.fromCharCode(13) +
+						'				xsd:double(?lat) <= <PARAM_YMAX> &&  ' + String.fromCharCode(13) +
+						'				xsd:double(?long) >= <PARAM_XMIN> &&  ' + String.fromCharCode(13) +
+						'				xsd:double(?long) <= <PARAM_XMAX> ' + String.fromCharCode(13) +
+						'			)  ' + String.fromCharCode(13) +
+						'		} ' + String.fromCharCode(13) +
+						'		ORDER BY DESC(xsd:integer(?population))  ' + String.fromCharCode(13) +
+						'		LIMIT 10  ' + String.fromCharCode(13) +
+						'	} ' + String.fromCharCode(13) +
+						'	FILTER (  ' + String.fromCharCode(13) +
+						'		lang(?label) = "en" ' + String.fromCharCode(13) +
+						'	) ' + String.fromCharCode(13) +
+						'}ORDER BY DESC(xsd:integer(?population)) ';
 
 	var KML_OVERLAY = 	'<html><head><title>KML</title></head><body><textarea rows="27" cols="400">' +
 						'<?xml version="1.0" encoding="UTF-8"?> ' + String.fromCharCode(13) +
