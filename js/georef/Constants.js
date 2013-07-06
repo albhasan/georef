@@ -32,10 +32,14 @@ function Constants(){
 					'PREFIX geo: <http://www.opengis.net/ont/geosparql#> ' + String.fromCharCode(13) +
 					'PREFIX geoWgs84: <http://www.w3.org/2003/01/geo/wgs84_pos#> ' + String.fromCharCode(13);
 					
-	var QUERY_INSERT = 	'INSERT DATA{' + String.fromCharCode(13) +
-						'GRAPH<PARAM_GRAPH>{' + String.fromCharCode(13) +
-						'PARAM_TRIPLES' + String.fromCharCode(13) +
-						'}}';
+	var QUERY_INSERT = 	'#************************************************************************' + String.fromCharCode(13) +
+						'# YOU CAN USE THIS SPARQL QUERY TO INSERT MAP METADATA IN A TRIPLE STORE' + String.fromCharCode(13) +
+						'#************************************************************************' + String.fromCharCode(13) +
+						'INSERT DATA{' + String.fromCharCode(13) + String.fromCharCode(13) +
+						'	GRAPH<PARAM_GRAPH>{' + String.fromCharCode(13) + String.fromCharCode(13) +
+						'	PARAM_TRIPLES' + String.fromCharCode(13) + String.fromCharCode(13) +
+						'	}' + String.fromCharCode(13) +
+						'}' + String.fromCharCode(13);
 	
 	var QUERY_CITYS = 	'SELECT ?subject ?label (AVG(?lat) AS ?lt) (AVG(?long) AS ?lg) ' + String.fromCharCode(13) +
 						'WHERE { ' + String.fromCharCode(13) +
@@ -65,8 +69,7 @@ function Constants(){
 						'	) ' + String.fromCharCode(13) +
 						'}ORDER BY DESC(xsd:integer(?population)) ';
 
-	var KML_OVERLAY = 	'<html><head><title>KML</title></head><body><textarea rows="27" cols="400">' +
-						'<?xml version="1.0" encoding="UTF-8"?> ' + String.fromCharCode(13) +
+	var KML_OVERLAY = 	'<?xml version="1.0" encoding="UTF-8"?> ' + String.fromCharCode(13) +
 						'<!-- ' + String.fromCharCode(13) +
 						'******************************************************************' + String.fromCharCode(13) +
 						'PLEASE SAVE THIS TEXT AS KML (*.kml) AND OPEN IT WITH GOOGLE EARTH' + String.fromCharCode(13) +
@@ -91,10 +94,12 @@ function Constants(){
 						'			</LatLonBox> ' + String.fromCharCode(13) +
 						'		</GroundOverlay> ' + String.fromCharCode(13) +
 						'	</Folder> ' + String.fromCharCode(13) +
-						'</kml>' + 
-						'</textarea></body></html>'; 
+						'</kml>';
 
-
+				
+	var CODE_WINDOW_HTML_PREFIX = '<html><head><title>KML</title></head><body><textarea rows="27" cols="400">';
+	var CODE_WINDOW_HTML_SUFIX = '</textarea></body></html>'; 
+	var CODE_WINDOW_PROPERTIES = 'www.ulb.uni-muenster.de","_blank","toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=no, resizable=yes, copyhistory=no, width=600, height=400';
 	//---------------------------------------------------------
 	//PRIVILEGED
 	//---------------------------------------------------------
@@ -116,6 +121,12 @@ function Constants(){
 			res = HOME_GRAPH;
 		}else if(name =="HOME_SPARQLENDPOINT"){
 			res = HOME_SPARQLENDPOINT;
+		}else if(name =="CODE_WINDOW_PROPERTIES"){
+			res = CODE_WINDOW_PROPERTIES;
+		}else if(name =="CODE_WINDOW_HTML_PREFIX"){
+			res = CODE_WINDOW_HTML_PREFIX;
+		}else if(name =="CODE_WINDOW_HTML_SUFIX"){
+			res = CODE_WINDOW_HTML_SUFIX;
 		}
 		
 		return res;

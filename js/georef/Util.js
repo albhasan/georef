@@ -266,3 +266,16 @@ function xyArray2wktPolygon(xyArray, srsUrl){
 	return res;
 }
 
+
+function csv2array(commaSeparatedValuesString){	
+	var res;
+	if(commaSeparatedValuesString != null && commaSeparatedValuesString.length > 0){
+		var tmp = commaSeparatedValuesString.replace(" , ", "@@@");
+		tmp = tmp.replace(", ", "@@@");
+		tmp = tmp.replace(",", "@@@");
+		tmp = tmp.replace("  ", "@@@");
+		res = tmp;
+	}
+	return res;
+
+}
