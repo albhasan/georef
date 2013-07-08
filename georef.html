@@ -52,7 +52,7 @@ as published by Sam Hocevar. See the COPYING file for more details.
 		<script src="http://code.jquery.com/jquery-migrate-1.1.1.min.js"></script>
 		*********************************-->
 		<script src="./js/jquery-1.9.1.min.js"></script>
-		<script src="./js/jquery-ui-1.10.2/ui/jquery-ui.js"></script>
+		<script src="./js/jquery-ui-1.10.2/ui/minified/jquery-ui.min.js"></script><!--<script src="./js/jquery-ui-1.10.2/ui/jquery-ui.js"></script>-->
 		<link rel="stylesheet" type="text/css" href="./js/jquery-ui-1.10.2/themes/base/jquery-ui.css" />
 
 		<!--
@@ -64,7 +64,8 @@ as published by Sam Hocevar. See the COPYING file for more details.
 			@import "./js/DataTables-1.9.4/media/css/demo_page.css";
 			@import "./js/DataTables-1.9.4/media/css/demo_table.css";
 		</style>
-		<script class="jsbin" src="./js/DataTables-1.9.4/media/js/jquery-dataTables.js"></script>
+		<script class="jsbin" src="./js/DataTables-1.9.4/media/js/jquery-dataTables.min.js"></script><!--<script class="jsbin" src="./js/DataTables-1.9.4/media/js/jquery-dataTables.js"></script>-->
+		
 		
 		<!--
 		*********************************
@@ -118,7 +119,10 @@ as published by Sam Hocevar. See the COPYING file for more details.
 						</div>
 						<h3>2 - Control Points</h3>
 						<div>
-							<div id="suggestedControlPointsTableDiv"></div>
+							<div>
+								<button type="button" id="btSuggestPois">Suggest POIs</button> 
+								<div id="suggestedControlPointsTableDiv"></div>
+							</div>
 							<div id="controlPointsTableDiv"></div>
 						</div>
 						<h3>3 - Map area</h3>
@@ -126,6 +130,7 @@ as published by Sam Hocevar. See the COPYING file for more details.
 							<div id="mapAreaDetails">
 								Please use the "<i>Draw a Map Area on Image</i>" tool to draw a polygon on the map image.
 							</div>
+							<div id="mapAreaVertexTableDiv"></div>
 						</div>
 						<h3>4 - Ruler</h3>
 						<div>
@@ -155,7 +160,10 @@ as published by Sam Hocevar. See the COPYING file for more details.
 					<div id="tabs" class="tabs-bottom" >
 						<ul>
 							<li><a href="#tabs-1">Map</a></li>
-							<li><a href="#tabs-2">Map metadata</a></li>
+							<li><a href="#tabs-2">Metadata</a></li>
+							<li><a href="#tabs-3">Places</a></li>
+							<li><a href="#tabs-4">Links</a></li>
+							<li><a href="#tabs-5">Description</a></li>
 						</ul>
 						<div class="tabs-spacer"></div>
 						<div id="tabs-1">
@@ -164,28 +172,64 @@ as published by Sam Hocevar. See the COPYING file for more details.
 							</div>
 						</div>
 						<div id="tabs-2">
-							<p>Please fill in the blanks with the pertinent information.</p>
-							<br>
-							<form>
-								Map (URI): <input type="text" id="paperMapUri" title="Paper map unique identifier. Please use a URI." /><br>
-								Map creator: <input type="text" id="paperMapCreator" title="The creator (author or cartographer) of a map."/><br>
-								Map size: <input type="text" id="paperMapSize" title="e g. 74 * 95 cm" /><br>
-								Map title: <input type="text" id="paperMapTitle" title="Map title." /><br>
-								Map time: <input type="text" id="paperMapTime" title="The time interval or moment which it represents." /><br>
-								Map scale: <input type="text" id="paperMapScale" title="The scale of the paper map." /><br>
-								Map places: <input type="text" id="paperMapPlaces" title="Places (administrative or other) and geographic features represented in a map." /><br>
-								Map area : <textarea id="mapAreawkt" title="The area in a spatial coordinate system which corresponds to the map window of the map" /><!--<input type="text" id="mapAreawkt" title="The area in a spatial coordinate system which corresponds to the map window of the map" /><-->br>
-							</form> 							
+							<form id="frMetadata" autocomplete="off">
+								<fieldset>
+									<legend>Metadata</legend>
+									<p>Please fill in the blanks with the pertinent information.</p>
+									Map (URI): <input type="text" id="paperMapUri" title="Paper map unique identifier. Please use a URI." /><br>
+									Map title: <input type="text" id="paperMapTitle" title="Map title." /><br>
+									Map creator: <input type="text" id="paperMapCreator" title="The creator (author or cartographer) of a map."/><br>
+									Map size: <input type="text" id="paperMapSize" title="e g. 74 * 95 cm" /><br>
+									Map time: <input type="text" id="paperMapTime" title="The publication year." /><br>
+									Map scale: <input type="text" id="paperMapScale" title="The scale of the paper map." /><br>
+									Map area : <textarea id="mapAreawkt" title="The area in a spatial coordinate system which corresponds to the map window of the map" ></textarea><br>
+								</fieldset>
+							</form>
+						</div>
+						<div id="tabs-3">
+							<form id="frMapPlaces" autocomplete="off">
+								<fieldset id="fsPlaceTags">
+									<legend>Map places</legend>
+									<p>Please type a comma separated list of places.</p>
+									<input type="text" id="paperMapPlaces" title="Places (administrative or other) and geographic features represented in a map." />
+									<button type="button" id="btFindPlaceMatches">Find matches</button><br>
+									<div id="placeTags">
+									</div>
+								</fieldset>
+							</form>
+						</div>
+						<div id="tabs-4">
+							<form id="frTags">
+								<fieldset id="fsTags">
+									<legend>Suggested tags</legend>
+									<button type="button" id="btUpdateMapLinks">Suggest tags</button> <br>
+									<p>Please select the tags relevant to the map.</p>
+									<div id="stSuggestions">
+									</div>
+								</fieldset>
+							</form>
+						</div>
+						<div id="tabs-5">
+							<form id="frDescription">
+								<fieldset id="fsDescriptionTags">
+									<legend>Map description</legend>
+									<p>Please type a description for the map.</p>
+									<textarea id="taMapDescription" title="Type a description of the map."  rows="6" cols="50" ></textarea><br>
+									<button type="button" id="btFindDescriptionMatches">Find matches</button><br>
+									<div id="descriptionTags">
+									</div>
+								</fieldset>
+							</form>
 						</div>
 					</div>				
 				</div>
 			</div>
 			<div id="bottom">
 				<div id="bottom-left" >
-					Visit the code project in <a href="http://github.com/albhasan/georef"><img src="https://raw.github.com/github/media/master/logos/github_logo_social_coding_outlined.png" width="120" height="53"/></a>
-					<a href="http://lodum.de/"><img src="http://lodum.de/wp-content/themes/LODUM-WordPress-Theme-0.5/bootstrap/img/lodum-logo-s.png" width="147" height="40"/></a>
-					<a href="http://lodum.de/life/"><img src="http://lodum.de/wp-content/uploads/sites/2/2013/02/life-300x194.png" width="20%" height="20%"/></a>
-					<a href="http://www.wtfpl.net/"><img src="http://www.wtfpl.net/wp-content/uploads/2012/12/wtfpl-badge-4.png" width="80" height="15" alt="WTFPL" /></a>
+					<a href="http://lodum.de/" target="_blank"><img src="http://lodum.de/wp-content/themes/LODUM-WordPress-Theme-0.5/bootstrap/img/lodum-logo-s.png" width="147" height="40"/></a>
+					<a href="http://lodum.de/life/" target="_blank"><img src="http://lodum.de/wp-content/uploads/sites/2/2013/02/life-300x194.png" width="20%" height="20%"/></a>
+					<a href="http://www.wtfpl.net/" target="_blank"><img src="http://www.wtfpl.net/wp-content/uploads/2012/12/wtfpl-badge-4.png" width="80" height="15" alt="WTFPL" /></a>
+					Project in <a href="http://github.com/albhasan/georef" target="_blank"><img src="https://raw.github.com/github/media/master/logos/github_logo_social_coding_outlined.png" width="60" height="26"/></a>
 				</div>
 				<div id="bottom-center">
 				</div>

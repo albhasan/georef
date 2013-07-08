@@ -274,8 +274,25 @@ function csv2array(commaSeparatedValuesString){
 		tmp = tmp.replace(", ", "@@@");
 		tmp = tmp.replace(",", "@@@");
 		tmp = tmp.replace("  ", "@@@");
-		res = tmp;
+		var tmpSplit = tmp.split("@@@");
+		for(var i = 0; i < tmpSplit.length; i++){
+			tmpSplit[i] = tmpSplit[i].trim();//TODO: This could fail with old browsers
+		}
+		res = tmpSplit;
 	}
 	return res;
+}
 
+function isPositiveInteger(n){
+//http://stackoverflow.com/questions/10834796/validate-that-a-string-is-a-positive-integer
+	return n >>> 0 === parseFloat(n);
+}
+
+function replaceAll(find, replace, str) {
+http://stackoverflow.com/questions/1144783/replacing-all-occurrences-of-a-string-in-javascript
+	return str.replace(new RegExp(find, 'g'), replace);
+}
+
+function removeElement(id){
+	$('#' + id).remove();
 }

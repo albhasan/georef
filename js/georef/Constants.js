@@ -26,6 +26,7 @@ function Constants(){
 					'PREFIX : <http://dbpedia.org/resource/> ' + String.fromCharCode(13) +
 					'PREFIX dbpedia2: <http://dbpedia.org/property/> ' + String.fromCharCode(13) +
 					'PREFIX dbpedia: <http://dbpedia.org/> ' + String.fromCharCode(13) +
+					'PREFIX dbpedia-owl: <http://dbpedia.org/ontology/> ' + String.fromCharCode(13) +
 					'PREFIX skos: <http://www.w3.org/2004/02/skos/core#> ' + String.fromCharCode(13) +
 					'PREFIX sf: <http://www.opengis.net/ont/sf#> ' + String.fromCharCode(13) +
 					'PREFIX geof: <http://www.opengis.net/def/function/geosparql/> ' + String.fromCharCode(13) +
@@ -68,7 +69,45 @@ function Constants(){
 						'		lang(?label) = "en" ' + String.fromCharCode(13) +
 						'	) ' + String.fromCharCode(13) +
 						'}ORDER BY DESC(xsd:integer(?population)) ';
-
+						
+	var QUERY_COMPLETE_SUBJECT = 	'SELECT ?subject ?label ?abst ' + String.fromCharCode(13) + 
+									'WHERE { ' + String.fromCharCode(13) +
+										'?subject rdfs:label ?label . ' + String.fromCharCode(13) +
+										'?subject dbpedia-owl:abstract ?abst . ' + String.fromCharCode(13) +
+										'FILTER( ' + String.fromCharCode(13) +
+										'	str(?subject) = "<PARAM_URI>" && ' + String.fromCharCode(13) +
+										'	lang(?label) = "en" && ' + String.fromCharCode(13) +
+										'	lang(?abst) = "en" ' + String.fromCharCode(13) +
+										') ' + String.fromCharCode(13) +
+									'} LIMIT 1';
+						
+	var QUERY_BOX_YEAR = 	'SELECT ?subject ?label ?abst ' + String.fromCharCode(13) +
+							'WHERE { ' + String.fromCharCode(13) +
+							'	?subject rdfs:label ?label . ' + String.fromCharCode(13) +
+							'	?subject dbpedia-owl:abstract ?abst . ' + String.fromCharCode(13) +
+							'	{ ' + String.fromCharCode(13) +
+							'		SELECT DISTINCT ?subject ' + String.fromCharCode(13) +
+							'		WHERE { ' + String.fromCharCode(13) +
+							'			?subject geoWgs84:lat ?lat. ' + String.fromCharCode(13) +
+							'			?subject geoWgs84:long ?long. ' + String.fromCharCode(13) +
+							'			?subject dbpedia-owl:foundingYear ?start . ' + String.fromCharCode(13) +
+							'			?subject dbpedia-owl:dissolutionYear ?end . ' + String.fromCharCode(13) +
+							'			FILTER( ' + String.fromCharCode(13) +
+							'				xsd:double(?lat) >= <PARAM_YMIN> && ' + String.fromCharCode(13) +
+							'				xsd:double(?lat) <= <PARAM_YMAX> && ' + String.fromCharCode(13) +
+							'				xsd:double(?long) >= <PARAM_XMIN> && ' + String.fromCharCode(13) +
+							'				xsd:double(?long) <= <PARAM_XMAX> && ' + String.fromCharCode(13) +
+							'				?start < "<PARAM_YEAR>"^^xsd:gYear && ' + String.fromCharCode(13) +
+							'				?end > "<PARAM_YEAR>"^^xsd:gYear ' + String.fromCharCode(13) +
+							'			). ' + String.fromCharCode(13) +
+							'		}LIMIT 10 ' + String.fromCharCode(13) +
+							'	} ' + String.fromCharCode(13) +
+							'	FILTER( ' + String.fromCharCode(13) +
+							'		lang(?label) = "en"	&& ' + String.fromCharCode(13) +
+							'		lang(?abst) = "en" ' + String.fromCharCode(13) +
+							'	) ' + String.fromCharCode(13) +
+							'}';					
+						
 	var KML_OVERLAY = 	'<?xml version="1.0" encoding="UTF-8"?> ' + String.fromCharCode(13) +
 						'<!-- ' + String.fromCharCode(13) +
 						'******************************************************************' + String.fromCharCode(13) +
@@ -100,6 +139,29 @@ function Constants(){
 	var CODE_WINDOW_HTML_PREFIX = '<html><head><title>KML</title></head><body><textarea rows="27" cols="400">';
 	var CODE_WINDOW_HTML_SUFIX = '</textarea></body></html>'; 
 	var CODE_WINDOW_PROPERTIES = 'www.ulb.uni-muenster.de","_blank","toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=no, resizable=yes, copyhistory=no, width=600, height=400';
+	
+	var ABSTRACT_LENGTH = '197';
+
+	
+	
+	var IMAGE_BOUNDARY_POLYGON = {
+				"stroke" : false, 
+				"fill" : true, 
+				"fillColor" : "#03f",
+				"fillOpacity" : 0.2,
+				"clickable" : false
+			}
+	
+	var MAP_AREA_POLYGON = {
+					"stroke" : true, 
+					"fill" : false, 
+					"fillColor" : "#03f",
+					"fillOpacity" : 0.2,
+					"clickable" : false
+				}
+	
+
+	
 	//---------------------------------------------------------
 	//PRIVILEGED
 	//---------------------------------------------------------
@@ -127,7 +189,19 @@ function Constants(){
 			res = CODE_WINDOW_HTML_PREFIX;
 		}else if(name =="CODE_WINDOW_HTML_SUFIX"){
 			res = CODE_WINDOW_HTML_SUFIX;
+		}else if(name =="IMAGE_BOUNDARY_POLYGON"){
+			res = IMAGE_BOUNDARY_POLYGON;
+		}else if(name =="MAP_AREA_POLYGON"){
+			res = MAP_AREA_POLYGON;
+		}else if(name =="QUERY_BOX_YEAR"){
+			res = QUERY_BOX_YEAR;
+		}else if(name =="QUERY_COMPLETE_SUBJECT"){
+			res = QUERY_COMPLETE_SUBJECT;
+		}else if(name =="ABSTRACT_LENGTH"){
+			res = ABSTRACT_LENGTH;
 		}
+		
+		
 		
 		return res;
 	}

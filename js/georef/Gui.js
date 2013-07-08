@@ -17,6 +17,11 @@ var cpManager = new ControlPointManager();
 var mkManager;
 var imageMapLayer;
 var cpTable;//Table of control points. It must be outside of the ready function
+
+
+var mapAreaVertexTable;//
+
+
 var imageBoundaryOnMap;
 var imageMapAreaOnMap;
 var drawnItemsImage = new L.FeatureGroup();
@@ -51,7 +56,18 @@ $(document).ready(function () {
 			{ "sTitle": "Map Y", "sClass": "center" }
 		]
 	} ); 
-
+	
+	$('#mapAreaVertexTableDiv').html( '<table cellpadding="0" cellspacing="0" border="0" class="display" id="mapAreaVertexTable"></table>' );
+	mapAreaVertexTable = $('#mapAreaVertexTable').dataTable( {
+		"bFilter": false,
+		"bSort": false,
+		"bPaginate": false,
+		"aaData": null,
+		"aoColumns": [
+			{ "sTitle": "X", "sClass": "center" },
+			{ "sTitle": "Y", "sClass": "center" },
+		]
+	} ); 
 	
 	//------------------------------------------
 	//LEAFLET http://leafletjs.com/
@@ -251,7 +267,7 @@ $(document).ready(function () {
 		if(trans != null){
 			var mapAreaBnd = new Array();
 			var xyProjArrayBnd = getImageBoundariesInMapCoords(trans, imgModelScaled);
-			//Gets rid of old boundary
+			//Gets rid of old boundaries
 			if(imageBoundaryOnMap != null){
 				map.removeLayer(imageBoundaryOnMap);
 			}
@@ -259,36 +275,24 @@ $(document).ready(function () {
 				map.removeLayer(imageMapAreaOnMap);
 			}
 			//Draws the image boundaries
-			imageBoundaryOnMap = L.polygon(xySwap(xyProjArrayBnd), {
-				"stroke" : false, 
-				"fill" : true, 
-				"fillColor" : "#03f",
-				"fillOpacity" : 0.2,
-				"clickable" : false
-			}).addTo(map);
+			imageBoundaryOnMap = L.polygon(xySwap(xyProjArrayBnd), c.getConstant("IMAGE_BOUNDARY_POLYGON")).addTo(map);
 			var xyProjmapAreaBnd = getBoundary(xyProjArrayBnd);
-			queryDbpedia(xyProjmapAreaBnd);
 			//Draws the map area
 			if(mapAreaLatLonArray != null){
 				//Gets an XY number array from L.Latlng objects
 				mapAreaBnd = latlon2xyArray(mapAreaLatLonArray);
 				//Scale the coords from scaled image to image
 				var unScaledMapAreaBnd = imgModelScaled.unScaleCoordsArray(mapAreaBnd);
-				imageMapArea = calculatePolygonArea(unScaledMapAreaBnd);
+				//imageMapArea = calculatePolygonArea(unScaledMapAreaBnd);
 				//Transform the coords from image refsys to map refsys
 				var xyProjmapAreaBnd = trans.transform(unScaledMapAreaBnd);
 				mapAreawkt = xyArray2wktPolygon(xyProjmapAreaBnd, "http://www.opengis.net/def/crs/OGC/1.3/CRS84");
 				//mapAreaArea = calculatePolygonArea(xyProject(xyProjmapAreaBnd, L.Projection.SphericalMercator));//Leaflet transformation problem http://leafletjs.com/reference.html#icrs
 				$("#mapAreaDetails").html("");
-				$("#mapAreaDetails").html("<b><i>Map area:</i></b><br>" + roundNumber(imageMapArea,1) + " pixels<br>");
+				mapAreaVertexTable.fnClearTable();
+				mapAreaVertexTable.fnAddData(xyProjmapAreaBnd);
 				//$("#mapAreaDetails").append(roundNumber(mapAreaArea/1000000,1) + "squared kilometers");
-				imageMapAreaOnMap = L.polygon(xySwap(xyProjmapAreaBnd), {
-							"stroke" : true, 
-							"fill" : false, 
-							"fillColor" : "#03f",
-							"fillOpacity" : 0.2,
-							"clickable" : false
-				}).addTo(map);
+				imageMapAreaOnMap = L.polygon(xySwap(xyProjmapAreaBnd), c.getConstant("MAP_AREA_POLYGON")).addTo(map);
 			}
 		}else{
 			if(imageBoundaryOnMap != null){
@@ -337,8 +341,52 @@ $(document).ready(function () {
 		}
 	}
 	
+	
+	
 	/**
-	* Prints suggested Points of Interest taken from DBPedia 
+	* Retrieves Dbpedia entries related in space and time
+	* @param xybbox - Array of [x,y] with the map area's vertexs.
+	* @param {inetger} year - Year to search.
+	* @returns Array of arrays [url, label, abstract]
+	*/
+	function queryDbpediaST(xybbox, year){
+		var res = new Array();
+		
+		var abstractLength = c.getConstant("getConstant");
+		var sq = new SparqlQuery();
+		var query = c.getConstant("PREFIXES") + " " + c.getConstant("QUERY_BOX_YEAR");
+		
+		var xMin = xybbox[0];
+		var yMin = xybbox[1];
+		var xMax = xybbox[2];
+		var yMax = xybbox[3];
+		query = query.replace("<PARAM_XMIN>", xMin);
+		query = query.replace("<PARAM_YMIN>", yMin);
+		query = query.replace("<PARAM_XMAX>", xMax);
+		query = query.replace("<PARAM_YMAX>", yMax);
+		query = replaceAll("<PARAM_YEAR>", year, query);//query = query.replace("<PARAM_YEAR>", year);
+		
+		
+		try{
+			//Fails when DBpedia is offline
+			var js = sq.sendSparqlQuery(query, c.getConstant("DBPEDIA_SPARQL"), "");
+			for(var i = 0; i < js.results.bindings.length; i++){
+				var subject = js.results.bindings[i].subject.value;
+				var label = js.results.bindings[i].label.value;
+				var abst = js.results.bindings[i].abst.value;
+				abst = abst.substring(0, abstractLength) + "...";
+				var tmpArray = new Array(subject, label, abst);
+				res.push(tmpArray);
+			}
+		}catch(err){
+			console.log(err); 
+		}
+		return res;
+	}
+	
+	
+	/**
+	* Prints suggested Points of Interest taken from DBPedia . Purely spatial.
 	* @param xybbox - Array of [x,y] with the map area's vertexs.
 	*/
 	function queryDbpedia(xybbox){
@@ -365,9 +413,8 @@ $(document).ready(function () {
 				$("#suggestedControlPointsTableDiv").append('<a href="javascript: void(0)" onclick="zoomToSuggestion(&quot;' + lng + '&quot; , &quot;' + lat + '&quot;)">' + js.results.bindings[i].label.value + "</a>");
 				$("#suggestedControlPointsTableDiv").append(", ");
 				paperMapPlaces = (paperMapPlaces != "") ? paperMapPlaces + " , " + js.results.bindings[i].label.value : paperMapPlaces;
-		}
+			}
 		}catch(err){
-			//alert(err);
 			console.log(err); 
 		}
 	}
@@ -382,6 +429,111 @@ $(document).ready(function () {
 		$("#mapAreawkt").val(mapAreawkt);
 	}
 
+	/**
+	* Validates the data in the metadata tab.
+	*/
+	function validateMetadata(){
+		var res = false;
+		var d = new Date();
+		paperMapUri = $("#paperMapUri").val();
+		var imageMapUri;
+		if(imgModelOriginal != null){
+			imageMapUri = imgModelOriginal.getUrl()
+		}
+		if(isUrlOfImage(imageMapUri)){
+			if(isUrlValid(paperMapUri)){
+				res = true;
+				paperMapCreator = $.trim($("#paperMapCreator").val());
+				paperMapSize = $.trim($("#paperMapSize").val());
+				paperMapTitle = $.trim($("#paperMapTitle").val());
+				paperMapTime = $.trim($("#paperMapTime").val());
+				if(paperMapTime != null){
+					if(isPositiveInteger(paperMapTime) == false || paperMapTime > d.getFullYear()){
+						alert("Invalid 	map time. Please review it in the Map Metadata tab.");
+						res = false;
+					}
+				}
+				paperMapScale = $.trim($("#paperMapScale").val());
+				paperMapPlaces = $.trim($("#paperMapPlaces").val());
+				mapAreawkt = $.trim($("#mapAreawkt").val());
+				}else{
+					alert("The map URI is invalid. Please review it in the Map Metadata tab.");
+				}
+			}else{
+				alert("The image URL is invalid. Please review it in the image tab.");
+			}
+		return res;
+	}
+	
+	
+	/**
+	* Build the triples to be sent to the triple store
+	*/
+	function buildTriples(){
+		var res;
+		var c = new Constants();
+		var baseUri = c.getConstant("HOME_URI");
+		var graph = c.getConstant("HOME_GRAPH");
+		var prefix = c.getConstant("PREFIXES");
+		var insertTemplate = c.getConstant("QUERY_INSERT");
+		//var imageMapUri = imgModelOriginal.getUrl()
+		paperMapUri = $("#paperMapUri").val();
+		if(validateMetadata()){
+			//Gets the data from the form (in case the user changed something)
+			paperMapCreator = $.trim($("#paperMapCreator").val());
+			paperMapSize = $.trim($("#paperMapSize").val());
+			paperMapTitle = $.trim($("#paperMapTitle").val());
+			paperMapTime = $.trim($("#paperMapTime").val());
+			paperMapScale = $.trim($("#paperMapScale").val());
+			paperMapPlaces = $.trim($("#paperMapPlaces").val());
+			mapAreawkt = $.trim($("#mapAreawkt").val());
+			var paperMapPlacesArray = csv2array(paperMapPlaces);//Get the list of places as an array
+			
+			//Triples for map
+			var cMapTriples = "";
+			cMapTriples = "<" + paperMapUri + "> a <http://www.geographicknowledge.de/vocab/maps#Map> . " + String.fromCharCode(13);
+			cMapTriples = "<" + paperMapUri + "> <http://www.geographicknowledge.de/vocab/maps#medium> <http://www.geographicknowledge.de/vocab/maps#Paper> . " + String.fromCharCode(13);
+			if(paperMapSize != null && paperMapSize.length > 0){
+				cMapTriples = "<" + paperMapUri + "> <http://www.geographicknowledge.de/vocab/maps#mapSize> '" + paperMapSize + "'^^xsd:string . " + String.fromCharCode(13);
+			}
+			if(paperMapTitle != null && paperMapTitle.length > 0){
+				cMapTriples = "<" + paperMapUri + "> <http://www.geographicknowledge.de/vocab/maps#title> '" + paperMapTitle + "'^^xsd:string . " + String.fromCharCode(13);
+			}
+			if(paperMapTime != null && paperMapTime.length > 0){
+				cMapTriples = "<" + paperMapUri + "> <http://www.geographicknowledge.de/vocab/maps#mapsTime> '" + paperMapTime + "'^^xsd:gYear . " + String.fromCharCode(13);
+			}
+			if(paperMapScale != null && paperMapScale.length > 0){
+				cMapTriples = "<" + paperMapUri + "> <http://www.geographicknowledge.de/vocab/maps#hasScale> '" + paperMapScale + "'^^xsd:string . " +  String.fromCharCode(13);
+			}
+			if(mapAreawkt != null && mapAreawkt.length > 0){
+				cMapTriples = "<" + paperMapUri + "> <http://www.geographicknowledge.de/vocab/maps#mapsArea> '" + mapAreawkt + "'^^sf:wktLiteral . " +  String.fromCharCode(13);
+			}
+
+			//Triples for place				
+			var cPlaceTriples = "";	
+			if(paperMapPlacesArray != null){
+				for(var i = 0; i < paperMapPlacesArray.length; i++){
+					cPlaceTriples = cPlaceTriples + "<" + encodeURI(baseUri + paperMapPlacesArray[i]) + "> a <http://www.geographicknowledge.de/vocab/maps#Place> . " + String.fromCharCode(13) + 
+													"<" + encodeURI(baseUri + paperMapPlacesArray[i]) + "> foaf:name '" + paperMapPlacesArray[i] + "'^^xsd:string . " + String.fromCharCode(13);
+					cMapTriples = cMapTriples + "<" + paperMapUri + "> <http://www.geographicknowledge.de/vocab/maps#mapsPlace> " + "<" + encodeURI(baseUri + paperMapPlacesArray[i]) + "> . " + String.fromCharCode(13);
+				}
+			}
+			var cAgentTriples = "";
+			if(paperMapCreator != null && paperMapCreator.length > 0){
+			cAgentTriples = "<" + encodeURI(baseUri + paperMapCreator) + "> a <http://purl.org/dc/terms/Agent> . " + String.fromCharCode(13) +
+							"<" + encodeURI(baseUri + paperMapCreator) + "> foaf:name '" + paperMapCreator + "'^^xsd:string ." + String.fromCharCode(13);
+			}
+
+			//Replace in the insert template
+			insertTemplate = insertTemplate.replace("PARAM_GRAPH", graph);
+			insertTemplate = insertTemplate.replace("PARAM_TRIPLES", cMapTriples + cPlaceTriples + cAgentTriples);
+
+			var queryInsert = prefix + " " + insertTemplate;
+			res = queryInsert;
+			
+		}
+		return res;
+	}
 	
 	//------------------------------------------
 	//DataTables http://www.datatables.net
@@ -575,104 +727,98 @@ $(document).ready(function () {
 	//Button - Get RDF. Opens a new window with RDF.
 	$(function(){
 		$( "#btGenerateRdf" ).click(function(){
-			paperMapUri = $("#paperMapUri").val();
-			var imageMapUri;
-			if(imgModelOriginal != null){
-				imageMapUri = imgModelOriginal.getUrl()
+			if(validateMetadata()){
+				//paperMapUri = $("#paperMapUri").val();
+				var imageMapUri = imgModelOriginal.getUrl()
+				var queryInsert = buildTriples();
+				var win = window.open(c.getConstant("CODE_WINDOW_PROPERTIES"));
+				var wincode = c.getConstant("CODE_WINDOW_HTML_PREFIX") + queryInsert + c.getConstant("CODE_WINDOW_HTML_SUFIX");
+				win.document.write(wincode);
+				win.document.close(); 
 			}
-			if(isUrlOfImage(imageMapUri)){
-				if(isUrlValid(paperMapUri)){
-					var queryInsert = buildTriples();
-					var win = window.open(c.getConstant("CODE_WINDOW_PROPERTIES"));
-					var wincode = c.getConstant("CODE_WINDOW_HTML_PREFIX") + queryInsert + c.getConstant("CODE_WINDOW_HTML_SUFIX");
-					win.document.write(wincode);
-					win.document.close(); 
-				}else{
-					alert("The map URI is invalid. Please review it in the Map Metadata tab.");
-				}
-			}else{
-				alert("The image URL is invalid. Please review it in the image tab.");
-			}
-
 		});
 	});
 	
-	//Builds the SPARQL INSERT
-	function buildTriples(){
-		var res;
-		paperMapUri = $("#paperMapUri").val();
-		var imageMapUri;
-		if(imgModelOriginal != null){
-			imageMapUri = imgModelOriginal.getUrl()
-		}
-		if(isUrlOfImage(imageMapUri)){
-			if(isUrlValid(paperMapUri)){
-				var c = new Constants();
-				var baseUri = c.getConstant("HOME_URI");
-				var graph = c.getConstant("HOME_GRAPH");
-				var prefix = c.getConstant("PREFIXES");
-				var insertTemplate = c.getConstant("QUERY_INSERT");
-
-				//Gets the data from the form (in case the user changed something)
-				paperMapCreator = $.trim($("#paperMapCreator").val());
-				paperMapSize = $.trim($("#paperMapSize").val());
-				paperMapTitle = $.trim($("#paperMapTitle").val());
-				paperMapTime = $.trim($("#paperMapTime").val());
-				paperMapScale = $.trim($("#paperMapScale").val());
-				paperMapPlaces = $.trim($("#paperMapPlaces").val());
-				mapAreawkt = $.trim($("#mapAreawkt").val());
-				var paperMapPlacesArray = csv2array(paperMapPlaces);//Get the list of places as an array
-				
-				//Triples for map
-				var cMapTriples = "";
-				cMapTriples = "<" + paperMapUri + "> a <http://www.geographicknowledge.de/vocab/maps#Map> . " + String.fromCharCode(13);
-				cMapTriples = "<" + paperMapUri + "> <http://www.geographicknowledge.de/vocab/maps#medium> <http://www.geographicknowledge.de/vocab/maps#Paper> . " + String.fromCharCode(13);
-				if(paperMapSize != null && paperMapSize.length > 0){
-					cMapTriples = "<" + paperMapUri + "> <http://www.geographicknowledge.de/vocab/maps#mapSize> '" + paperMapSize + "'^^xsd:string . " + String.fromCharCode(13);
-				}
-				if(paperMapTitle != null && paperMapTitle.length > 0){
-					cMapTriples = "<" + paperMapUri + "> <http://www.geographicknowledge.de/vocab/maps#title> '" + paperMapTitle + "'^^xsd:string . " + String.fromCharCode(13);
-				}
-				if(paperMapTime != null && paperMapTime.length > 0){
-					cMapTriples = "<" + paperMapUri + "> <http://www.geographicknowledge.de/vocab/maps#mapsTime> '" + paperMapTime + "' . " + String.fromCharCode(13);
-				}
-				if(paperMapScale != null && paperMapScale.length > 0){
-					cMapTriples = "<" + paperMapUri + "> <http://www.geographicknowledge.de/vocab/maps#hasScale> '" + paperMapScale + "'^^xsd:string . " +  String.fromCharCode(13);
-				}
-				if(mapAreawkt != null && mapAreawkt.length > 0){
-					cMapTriples = "<" + paperMapUri + "> <http://www.geographicknowledge.de/vocab/maps#mapsArea> '" + mapAreawkt + "'^^sf:wktLiteral . " +  String.fromCharCode(13);
-				}
-
-				//Triples for place				
-				var cPlaceTriples = "";	
-				if(paperMapPlacesArray != null){
-					for(var i = 0; i < paperMapPlacesArray.length; i++){
-						cPlaceTriples = cPlaceTriples + "<" + encodeURI(baseUri + paperMapPlacesArray[i]) + "> a <http://www.geographicknowledge.de/vocab/maps#Place> . " + String.fromCharCode(13) + 
-														"<" + encodeURI(baseUri + paperMapPlacesArray[i]) + "> foaf:name '" + paperMapPlacesArray[i] + "'^^xsd:string . " + String.fromCharCode(13);
-						cMapTriples = cMapTriples + "<" + paperMapUri + "> <http://www.geographicknowledge.de/vocab/maps#mapsPlace> " + "<" + encodeURI(baseUri + paperMapPlacesArray[i]) + "> . " + String.fromCharCode(13);
-					}
-				}
-				var cAgentTriples = "";
-				if(paperMapCreator != null && paperMapCreator.length > 0){
-				cAgentTriples = "<" + encodeURI(baseUri + paperMapCreator) + "> a <http://purl.org/dc/terms/Agent> . " + String.fromCharCode(13) +
-								"<" + encodeURI(baseUri + paperMapCreator) + "> foaf:name '" + paperMapCreator + "'^^xsd:string ." + String.fromCharCode(13);
-				}
-
-				//Replace in the insert template
-				insertTemplate = insertTemplate.replace("PARAM_GRAPH", graph);
-				insertTemplate = insertTemplate.replace("PARAM_TRIPLES", cMapTriples + cPlaceTriples + cAgentTriples);
-
-				var queryInsert = prefix + " " + insertTemplate;
-				res = queryInsert;
+	//Button - Updates the suggested points of interest
+	$(function(){
+		$( "#btSuggestPois" ).click(function(){
+			if(trans != null && imgModelScaled !== null){
+				var xyProjArrayBnd = getImageBoundariesInMapCoords(trans, imgModelScaled);
+				var xyProjmapAreaBnd = getBoundary(xyProjArrayBnd);
+				$("body").css("cursor", "progress");
+				queryDbpedia(xyProjmapAreaBnd);
+				$("body").css("cursor", "default");
 			}
+		});
+	});	
+	
+	
+	/**
+	* Prints suggested places taken from DBPedia. Purely alphanumerical.
+	*/
+	function queryDbpediaSuggestedPlaces(){
+		paperMapPlaces = $.trim($("#paperMapPlaces").val());
+		$.ajax({
+			//Uses DBpedia spotlight
+			url: "http://spotlight.dbpedia.org/rest/annotate?text=" + escape(paperMapPlaces) + "&confidence=0.0&support=00&types=Place",
+			headers: { 
+				Accept : "application/json; charset=utf-8",
+				"Content-Type": "text/plain; charset=utf-8"
+			},
+			}).done(function ( data ) {
+
+				$("#placeTags").html("");
+				var count = 0;
+				for(var i = 0; i < data.Resources.length; i++){
+					var obj = data.Resources[i];
+					var subject = obj["@URI"];
+					//var originalText = obj["@surfaceForm"];
+					//Gets the URL last part
+					var matchedText = subject.substring(subject.lastIndexOf("/") + 1, subject.length);
+					//Creates the checkboxes					
+					$("#placeTags").append("<p id='pSuggestedPlaceTag" + count +"'><input type='checkbox' id='" + subject + "' value='" + subject + "' class='chPlaceSuggestion' >" + matchedText + " - <a href='" + subject + "' target='_blank'>view</a> <a href='javascript: void(0)' onclick='removeElement(&quot;pSuggestedPlaceTag" + count + "&quot;)'>remove</a></p>");
+					count++;
+					//Completes the subject with the label and abstract -getDbpediaLabelAbstract();
+				}
+
+			}
+		);	
+	
+	}
+	
+	/**
+	* Goes to DBpedia and retrieves the label and abstract for a given subject
+	* @param uriSubject Subject's URI.
+	* @ returns A string array [uriSubject, label, abstract]
+	*/
+	function getDbpediaLabelAbstract(uriSubject){
+		var res = new Array();
+		var query = c.getConstant("PREFIXES") + " " + c.getConstant("QUERY_COMPLETE_SUBJECT");
+		var sq = new SparqlQuery();
+		var abstractLength = c.getConstant("getConstant");
+		
+		query = query.replace("<PARAM_URI>", uriSubject);
+		try{
+			var js = sq.sendSparqlQuery(query, c.getConstant("DBPEDIA_SPARQL"), "");
+			if(js.results.bindings.length > 0){
+				var label = js.results.bindings[0].label.value;
+				var abst = js.results.bindings[0].abst.value;
+				//Trims the abstract
+				abst = abst.substring(0, abstractLength) + "...";
+				res.push(uriSubject);
+				res.push(label);
+				res.push(abst);
+			}
+		}catch(err){
+			console.log(err); 
 		}
 		return res;
 	}
-
 	
 
 
-	//Button - load image. Loads teh image to the map
+	
+	//Button - load image. Loads the image to the map
 	$(function(){
 		$( "#btLoadImage" ).click(function(){
 			var imageUrl = $( "#imgMapInput" ).val();
@@ -698,7 +844,93 @@ $(document).ready(function () {
 			}
 		});
 	});
+	
+	//Button - Suggest tags (spatio-temporal references)
+	$(function(){
+		$( "#btUpdateMapLinks" ).click(function(){
+			if(trans != null){
+				if(validateMetadata()){
+					var year = $.trim($("#paperMapTime").val());
+					if(year != null){
+						var xyProjArrayBnd = getImageBoundariesInMapCoords(trans, imgModelScaled);
+						var xybboxBnd = getBoundary(xyProjArrayBnd);
+						year = year + "-01-01T00:00:00+02:00";//TODO: Find a better way to make the year valid
+						var stRefs = queryDbpediaST(xybboxBnd, year);
+						//Adds check boxes for suggestions
+						$("#stSuggestions").empty();
+						var count = 0;
+						for(var i = 0; i < stRefs.length; i++){
+							var ref = stRefs[i];
+							var subject = ref[0];
+							var label = ref[1];
+							var abst = ref[2];
+							$("#stSuggestions").append("<p id='pStTag" + count +"'><input type='checkbox' id='" + subject + "' value='" + subject + "' title='" + abst + "' class='chMapLinkSuggestion' >" + label + " - <a href='" + subject + "' target='_blank'>view</a> <a href='javascript: void(0)' onclick='removeElement(&quot;pStTag" + count + "&quot;)'>remove</a></p>");
+							count++;
+						}
+					}else{
+						alert("Please fill the map time field in the metadata tab.");
+					}
+				}
+			}
+		});
+	});
+		
+		
+		
+	//Button - Find matches to places typed by the user
+	$(function(){
+		$('#btFindPlaceMatches').click(function() {
+			if(validateMetadata()){
+				queryDbpediaSuggestedPlaces();
+			}
+		});
+	});		
+		
+	//Button - btFindDescriptionMatches Find dbpedia matches to the description typed by the user
+	$(function(){
+		$( "#btFindDescriptionMatches" ).click(function(){
+			queryDbpediaDescription()
+		});
+	});
+	
+	/**
+	* Prints suggested places taken from DBPedia. Purely alphanumerical.
+	*/
+	function queryDbpediaDescription(){
+		paperMapDescription = $.trim($("#taMapDescription").val());
+		$.ajax({
+			//Uses DBpedia spotlight
+			url: "http://spotlight.dbpedia.org/rest/annotate?text=" + escape(paperMapDescription) + "&confidence=0.0&support=00",
+			headers: { 
+				Accept : "application/json; charset=utf-8",
+				"Content-Type": "text/plain; charset=utf-8"
+			},
+			}).done(function ( data ) {
+				$("#descriptionTags").html("");
+				var count = 0;
+				for(var i = 0; i < data.Resources.length; i++){
+					var obj = data.Resources[i];
+					var subject = obj["@URI"];
+					//var originalText = obj["@surfaceForm"];
+					//Gets the URL last part
+					var matchedText = subject.substring(subject.lastIndexOf("/") + 1, subject.length);
+					//Creates the checkboxes					
+					$("#descriptionTags").append("<p id='pDescriptionTag" + count +"'><input type='checkbox' id='" + subject + "' value='" + subject + "' class='chPlaceSuggestion' >" + matchedText + " - <a href='" + subject + "' target='_blank'>view</a> <a href='javascript: void(0)' onclick='removeElement(&quot;pDescriptionTag" + count + "&quot;)'>remove</a></p>");
+					count++;
+					//Completes the subject with the label and abstract -getDbpediaLabelAbstract();
+				}
+
+			}
+		);	
+	
+	}
+	
+	
+	
+	
 });	
+
+
 
 //Returns the selected row in the table. It must be outside of the ready function
 function fnGetSelected( oTableLocal ){
