@@ -56,6 +56,10 @@ function SparqlQuery(){
 			querypart+=k+"="+encodeURIComponent(params[k])+"&";
 		}
 		var queryURL=baseURL + '?' + querypart;
+		
+		queryURL = queryURL.replace(/(\r\n|\n|\r)/gm,"");//Removes \r
+		
+		
 		if (window.XMLHttpRequest) {
 			xmlhttp=new XMLHttpRequest();
 		}else {

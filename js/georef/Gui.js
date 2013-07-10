@@ -34,6 +34,7 @@ var imageMapArea;//Area of the mapArea in the image (pixels)
 var paperMapSize;
 var paperMapScale;
 var paperMapPlaces;
+var paperMapDescription;
 var mapAreawkt;
 
 $(document).ready(function () {
@@ -435,7 +436,7 @@ $(document).ready(function () {
 	function validateMetadata(){
 		var res = false;
 		var d = new Date();
-		paperMapUri = $("#paperMapUri").val();
+		var paperMapUri = $("#paperMapUri").val();
 		var imageMapUri;
 		if(imgModelOriginal != null){
 			imageMapUri = imgModelOriginal.getUrl()
@@ -476,8 +477,9 @@ $(document).ready(function () {
 		var graph = c.getConstant("HOME_GRAPH");
 		var prefix = c.getConstant("PREFIXES");
 		var insertTemplate = c.getConstant("QUERY_INSERT");
-		//var imageMapUri = imgModelOriginal.getUrl()
-		paperMapUri = $("#paperMapUri").val();
+		var imageMapUri = imgModelOriginal.getUrl()
+		var tripleSeparator = " . ";// + String.fromCharCode(13);
+		var paperMapUri = "<" + $("#paperMapUri").val() + "> ";
 		if(validateMetadata()){
 			//Gets the data from the form (in case the user changed something)
 			paperMapCreator = $.trim($("#paperMapCreator").val());
@@ -486,49 +488,82 @@ $(document).ready(function () {
 			paperMapTime = $.trim($("#paperMapTime").val());
 			paperMapScale = $.trim($("#paperMapScale").val());
 			paperMapPlaces = $.trim($("#paperMapPlaces").val());
+			paperMapDescription = $.trim($("#taMapDescription").val());
 			mapAreawkt = $.trim($("#mapAreawkt").val());
-			var paperMapPlacesArray = csv2array(paperMapPlaces);//Get the list of places as an array
+			var paperMapPlacesArray = csv2array(paperMapPlaces);//Get the list of user's places as an array
 			
 			//Triples for map
 			var cMapTriples = "";
-			cMapTriples = "<" + paperMapUri + "> a <http://www.geographicknowledge.de/vocab/maps#Map> . " + String.fromCharCode(13);
-			cMapTriples = "<" + paperMapUri + "> <http://www.geographicknowledge.de/vocab/maps#medium> <http://www.geographicknowledge.de/vocab/maps#Paper> . " + String.fromCharCode(13);
+			// paper map
+			cMapTriples = paperMapUri + "a <http://www.geographicknowledge.de/vocab/maps#Map>" + tripleSeparator;
+			cMapTriples += paperMapUri + "<http://www.geographicknowledge.de/vocab/maps#medium> <http://www.geographicknowledge.de/vocab/maps#Paper>" + tripleSeparator;
+			// Relation paper - image
+			cMapTriples += paperMapUri + "<http://www.geographicknowledge.de/vocab/maps#digitalImageVersion> <" + imageMapUri + ">" + tripleSeparator;
+			//Size
 			if(paperMapSize != null && paperMapSize.length > 0){
-				cMapTriples = "<" + paperMapUri + "> <http://www.geographicknowledge.de/vocab/maps#mapSize> '" + paperMapSize + "'^^xsd:string . " + String.fromCharCode(13);
+				cMapTriples += paperMapUri + "<http://www.geographicknowledge.de/vocab/maps#mapSize> '" + paperMapSize + "'^^xsd:string" + tripleSeparator;
 			}
+			//paper map title
 			if(paperMapTitle != null && paperMapTitle.length > 0){
-				cMapTriples = "<" + paperMapUri + "> <http://www.geographicknowledge.de/vocab/maps#title> '" + paperMapTitle + "'^^xsd:string . " + String.fromCharCode(13);
+				cMapTriples += paperMapUri + "<http://www.geographicknowledge.de/vocab/maps#title> '" + paperMapTitle + "'^^xsd:string" + tripleSeparator;
 			}
+			//paper map time
 			if(paperMapTime != null && paperMapTime.length > 0){
-				cMapTriples = "<" + paperMapUri + "> <http://www.geographicknowledge.de/vocab/maps#mapsTime> '" + paperMapTime + "'^^xsd:gYear . " + String.fromCharCode(13);
+				cMapTriples += paperMapUri + "<http://www.geographicknowledge.de/vocab/maps#mapsTime> '" + paperMapTime + "'^^xsd:gYear" + tripleSeparator;
 			}
+			//paper map scale
 			if(paperMapScale != null && paperMapScale.length > 0){
-				cMapTriples = "<" + paperMapUri + "> <http://www.geographicknowledge.de/vocab/maps#hasScale> '" + paperMapScale + "'^^xsd:string . " +  String.fromCharCode(13);
+				cMapTriples += paperMapUri + "<http://www.geographicknowledge.de/vocab/maps#hasScale> '" + paperMapScale + "'^^xsd:string" +  tripleSeparator;
 			}
+			//paper map area en map coords
 			if(mapAreawkt != null && mapAreawkt.length > 0){
-				cMapTriples = "<" + paperMapUri + "> <http://www.geographicknowledge.de/vocab/maps#mapsArea> '" + mapAreawkt + "'^^sf:wktLiteral . " +  String.fromCharCode(13);
+				cMapTriples += paperMapUri + "<http://www.geographicknowledge.de/vocab/maps#mapsArea> '" + mapAreawkt + "'^^sf:wktLiteral" +  tripleSeparator;
 			}
 
-			//Triples for place				
+			//Triples for places typed by the user. Creates a new URI for each place
 			var cPlaceTriples = "";	
 			if(paperMapPlacesArray != null){
 				for(var i = 0; i < paperMapPlacesArray.length; i++){
-					cPlaceTriples = cPlaceTriples + "<" + encodeURI(baseUri + paperMapPlacesArray[i]) + "> a <http://www.geographicknowledge.de/vocab/maps#Place> . " + String.fromCharCode(13) + 
-													"<" + encodeURI(baseUri + paperMapPlacesArray[i]) + "> foaf:name '" + paperMapPlacesArray[i] + "'^^xsd:string . " + String.fromCharCode(13);
-					cMapTriples = cMapTriples + "<" + paperMapUri + "> <http://www.geographicknowledge.de/vocab/maps#mapsPlace> " + "<" + encodeURI(baseUri + paperMapPlacesArray[i]) + "> . " + String.fromCharCode(13);
+					cPlaceTriples += "<" + encodeURI(baseUri + paperMapPlacesArray[i]) + "> a <http://www.geographicknowledge.de/vocab/maps#Place>" + tripleSeparator; 
+					cPlaceTriples += "<" + encodeURI(baseUri + paperMapPlacesArray[i]) + "> foaf:name '" + paperMapPlacesArray[i] + "'^^xsd:string" + tripleSeparator;
+					//LInks the paper map to the place just created
+					cMapTriples += paperMapUri + "<http://www.geographicknowledge.de/vocab/maps#mapsPlace> <" + encodeURI(baseUri + paperMapPlacesArray[i]) + ">" + tripleSeparator;
 				}
 			}
+			
+			//Triples about the map's author
 			var cAgentTriples = "";
 			if(paperMapCreator != null && paperMapCreator.length > 0){
-			cAgentTriples = "<" + encodeURI(baseUri + paperMapCreator) + "> a <http://purl.org/dc/terms/Agent> . " + String.fromCharCode(13) +
-							"<" + encodeURI(baseUri + paperMapCreator) + "> foaf:name '" + paperMapCreator + "'^^xsd:string ." + String.fromCharCode(13);
+				cAgentTriples = "<" + encodeURI(baseUri + paperMapCreator) + "> a <http://purl.org/dc/terms/Agent>" + tripleSeparator;
+				cAgentTriples += "<" + encodeURI(baseUri + paperMapCreator) + "> foaf:name '" + paperMapCreator + "'^^xsd:string" + tripleSeparator;
 			}
 
+			//Builds triples form the checkboxes
+			//DBpedia places matched from user's places. Alphanumeric
+			$(".chPlaceSuggestion").each(function( index ){
+				if(this.checked){
+					cMapTriples += paperMapUri + "<http://www.geographicknowledge.de/vocab/maps#mapsPlace> <" +  this.value + ">" + tripleSeparator;
+				}
+			});
+			//DBpedia retrieved from the image map boundary and the user's typed year- spatio temporal places
+			$(".chMapLinkSuggestion").each(function( index ){
+				if(this.checked){
+					cMapTriples += paperMapUri + "<http://www.geographicknowledge.de/vocab/maps#mapsPlace> <" +  this.value + ">" + tripleSeparator;
+				}
+			});
+			//DBpedia - Links found in the user's description
+			$(".chDescriptionSuggestion").each(function( index ){
+				if(this.checked){
+					//TODO: What property for linking this? paper map - description - links?
+				}
+			});
+			
+			
 			//Replace in the insert template
 			insertTemplate = insertTemplate.replace("PARAM_GRAPH", graph);
 			insertTemplate = insertTemplate.replace("PARAM_TRIPLES", cMapTriples + cPlaceTriples + cAgentTriples);
-
 			var queryInsert = prefix + " " + insertTemplate;
+			//queryInsert = queryInsert.replace(/(\r\n|\n|\r)/gm,"");//Removes \r
 			res = queryInsert;
 			
 		}
@@ -713,7 +748,9 @@ $(document).ready(function () {
 				var rotation = calculateRotation(xyProjArrayBnd);
 				
 				var kml = getOverlayText(imgUrl, north, south, east, west, rotation);
-				var wincode = c.getConstant("CODE_WINDOW_HTML_PREFIX") + kml + c.getConstant("CODE_WINDOW_HTML_SUFIX");
+				var wincode = c.getConstant("CODE_WINDOW_HTML_PREFIX");
+				wincode = wincode.replace("<PARAM_WINDOW_TITLE>", "Georeferencer - KML");
+				wincode += kml + c.getConstant("CODE_WINDOW_HTML_SUFIX");
 				var win = window.open(c.getConstant("CODE_WINDOW_PROPERTIES"));
 				win.document.write(wincode);
 				win.document.close(); 
@@ -732,7 +769,9 @@ $(document).ready(function () {
 				var imageMapUri = imgModelOriginal.getUrl()
 				var queryInsert = buildTriples();
 				var win = window.open(c.getConstant("CODE_WINDOW_PROPERTIES"));
-				var wincode = c.getConstant("CODE_WINDOW_HTML_PREFIX") + queryInsert + c.getConstant("CODE_WINDOW_HTML_SUFIX");
+				var wincode = c.getConstant("CODE_WINDOW_HTML_PREFIX");
+				wincode = wincode.replace("<PARAM_WINDOW_TITLE>", "Georeferencer - RDF");
+				wincode += queryInsert + c.getConstant("CODE_WINDOW_HTML_SUFIX");
 				win.document.write(wincode);
 				win.document.close(); 
 			}
@@ -768,17 +807,19 @@ $(document).ready(function () {
 			}).done(function ( data ) {
 
 				$("#placeTags").html("");
-				var count = 0;
+				var tmp = new Array();
 				for(var i = 0; i < data.Resources.length; i++){
 					var obj = data.Resources[i];
 					var subject = obj["@URI"];
-					//var originalText = obj["@surfaceForm"];
-					//Gets the URL last part
-					var matchedText = subject.substring(subject.lastIndexOf("/") + 1, subject.length);
-					//Creates the checkboxes					
-					$("#placeTags").append("<p id='pSuggestedPlaceTag" + count +"'><input type='checkbox' id='" + subject + "' value='" + subject + "' class='chPlaceSuggestion' >" + matchedText + " - <a href='" + subject + "' target='_blank'>view</a> <a href='javascript: void(0)' onclick='removeElement(&quot;pSuggestedPlaceTag" + count + "&quot;)'>remove</a></p>");
-					count++;
-					//Completes the subject with the label and abstract -getDbpediaLabelAbstract();
+					if(tmp.indexOf(subject) < 0){//Avoid duplicated tags
+						tmp.push(subject);
+						//var originalText = obj["@surfaceForm"];
+						//Gets the URL last part
+						var matchedText = subject.substring(subject.lastIndexOf("/") + 1, subject.length);
+						//Creates the checkboxes					
+						$("#placeTags").append("<p id='pSuggestedPlaceTag" + tmp.length +"'><input type='checkbox' id='" + subject + "' value='" + subject + "' class='chPlaceSuggestion' >" + matchedText + " - <a href='" + subject + "' target='_blank'>view</a> <a href='javascript: void(0)' onclick='removeElement(&quot;pSuggestedPlaceTag" + tmp.length + "&quot;)'>remove</a></p>");
+						//Completes the subject with the label and abstract -getDbpediaLabelAbstract();
+					}
 				}
 
 			}
@@ -858,14 +899,16 @@ $(document).ready(function () {
 						var stRefs = queryDbpediaST(xybboxBnd, year);
 						//Adds check boxes for suggestions
 						$("#stSuggestions").empty();
-						var count = 0;
+						var tmp = new Array();
 						for(var i = 0; i < stRefs.length; i++){
 							var ref = stRefs[i];
 							var subject = ref[0];
-							var label = ref[1];
-							var abst = ref[2];
-							$("#stSuggestions").append("<p id='pStTag" + count +"'><input type='checkbox' id='" + subject + "' value='" + subject + "' title='" + abst + "' class='chMapLinkSuggestion' >" + label + " - <a href='" + subject + "' target='_blank'>view</a> <a href='javascript: void(0)' onclick='removeElement(&quot;pStTag" + count + "&quot;)'>remove</a></p>");
-							count++;
+							if(tmp.indexOf(subject) < 0){//Avoid subject repetition
+								tmp.push(subject);
+								var label = ref[1];
+								var abst = ref[2];
+								$("#stSuggestions").append("<p id='pStTag" + tmp.length +"'><input type='checkbox' id='" + subject + "' value='" + subject + "' title='" + abst + "' class='chMapLinkSuggestion' >" + label + " - <a href='" + subject + "' target='_blank'>view</a> <a href='javascript: void(0)' onclick='removeElement(&quot;pStTag" + tmp.length + "&quot;)'>remove</a></p>");
+							}
 						}
 					}else{
 						alert("Please fill the map time field in the metadata tab.");
@@ -907,17 +950,19 @@ $(document).ready(function () {
 			},
 			}).done(function ( data ) {
 				$("#descriptionTags").html("");
-				var count = 0;
+				var tmp = new Array();
 				for(var i = 0; i < data.Resources.length; i++){
 					var obj = data.Resources[i];
 					var subject = obj["@URI"];
-					//var originalText = obj["@surfaceForm"];
-					//Gets the URL last part
-					var matchedText = subject.substring(subject.lastIndexOf("/") + 1, subject.length);
-					//Creates the checkboxes					
-					$("#descriptionTags").append("<p id='pDescriptionTag" + count +"'><input type='checkbox' id='" + subject + "' value='" + subject + "' class='chPlaceSuggestion' >" + matchedText + " - <a href='" + subject + "' target='_blank'>view</a> <a href='javascript: void(0)' onclick='removeElement(&quot;pDescriptionTag" + count + "&quot;)'>remove</a></p>");
-					count++;
-					//Completes the subject with the label and abstract -getDbpediaLabelAbstract();
+					if(tmp.indexOf(subject) < 0){//Avoid subject repetition
+						tmp.push(subject);
+						//var originalText = obj["@surfaceForm"];
+						//Gets the URL last part
+						var matchedText = subject.substring(subject.lastIndexOf("/") + 1, subject.length);
+						//Creates the checkboxes					
+						$("#descriptionTags").append("<p id='pDescriptionTag" + tmp.length +"'><input type='checkbox' id='" + subject + "' value='" + subject + "' class='chDescriptionSuggestion' >" + matchedText + " - <a href='" + subject + "' target='_blank'>view</a> <a href='javascript: void(0)' onclick='removeElement(&quot;pDescriptionTag" + tmp.length + "&quot;)'>remove</a></p>");
+						//Completes the subject with the label and abstract -getDbpediaLabelAbstract();
+					}
 				}
 
 			}
