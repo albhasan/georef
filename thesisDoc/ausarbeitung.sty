@@ -1,0 +1,298 @@
+\ProvidesPackage{ausarbeitung}
+\usepackage[latin1]{inputenc}
+\usepackage[pdftex]{color,graphicx}
+\usepackage[hypertexnames=false]{hyperref}
+%\usepackage[german,ngerman]{babel}
+\usepackage[british,UKenglish,USenglish,english,american]{babel}
+\usepackage{fancyhdr}
+\usepackage{amssymb}
+\usepackage{eurosym}
+\usepackage{background}
+\usepackage{amsmath}
+\usepackage{ifthen}
+\usepackage{float}
+\linespread{1.3}
+
+\def\myauthor#1{\def\MyAuthor{#1}}
+\def\mythema#1{\def\MyThema{#1}}
+\def\debug#1{\def\Debug{#1}}
+\def\mybetreuer#1{\def\MyBetreuer{#1}}
+
+\mybetreuer{}
+\debug{false}
+
+%% Definieren der Arbeitsdaten Titel und Autor
+%%  #1: Autorenname
+%%  #2: Thema der Arbeit
+\newcommand{\mywork}[2]{%
+  \myauthor{#1}\mythema{#2}%
+}
+
+%% Erzeugt ein passendes Titelblatt für die Ausarbeitung
+%%  #1 Typ der Ausarbeitung (z. B. Ausarbeitung, Bachelorarbeit, Diplomarbeit
+%%  #2 Name des Betreuers
+\newcommand{\mytitle}[2]{
+  \mybetreuer{#2}
+  \thispagestyle{fancy}
+  \chead{\large Westfälische Wilhelms-Universität Münster \normalsize}
+  \cfoot{\rule{\textwidth}{0.1pt}}
+  \null\vfil
+%%  \begin{center}\includegraphics[height=2cm]{schloss.pdf}\end{center}
+%%  \vskip 20pt
+%% anstelle der folgenden Zeile, um das Schloss mit einzufügen:
+  \vskip 7.5cm
+  \begin{center}%
+    {\large \textbf{#1} \par}
+    \vskip 1cm
+    {\textbf{\Large \MyThema} \par}
+    \vskip 1.5cm
+    {\Large \MyAuthor \par}
+  \end{center}
+  \vspace*{\stretch{1}}
+    Director: Dr.\ Simon Scheider \\
+    \ifthenelse{\equal{\MyBetreuer}{}}{}{Betreuer: \MyBetreuer \\}
+    Institute for Geoinformatics \\
+    %Praktische Informatik in der Wirtschaft \\
+  \vfil\null
+  \newpage
+%%  \thispagestyle{empty}
+%%  \begin{small}
+%%   \hspace*{1pt}
+%%  \end{small}
+}
+
+\newcommand{\mydiplomtitle}[1]{
+  \mytitle{Master theses}{#1}
+}
+
+\newcommand{\mymastertitle}[1]{
+  \mytitle{Masterarbeit}{#1}
+}
+\newcommand{\mybachelortitle}[1]{
+  \mytitle{Bachelorarbeit}{#1}
+}
+
+%% Erzeugt ein passendes Titelblatt für die Ausarbeitung
+%%  #1 Titel des Seminars
+%%  #2 Name des Betreuers
+\newcommand{\myseminartitle}[2]{
+  \mybetreuer{#2}
+  \thispagestyle{fancy}
+  \chead{\large Westfälische Wilhelms-Universität Münster \normalsize}
+  \cfoot{\rule{\textwidth}{0.1pt}}
+  \null\vfil
+%%  \begin{center}\includegraphics[height=2cm]{schloss.pdf}\end{center}
+%%  \vskip 20pt
+%% anstelle der folgenden Zeile, um das Schloss mit einzufügen:
+  \vskip 7.5cm
+  \begin{center}%
+    {\large \textbf{Ausarbeitung} \par}
+    \vskip 1cm
+    {\textbf{\Large \MyThema} \par}
+    \vskip 1cm
+    {\large  im Rahmen des Seminars #1 \par}
+    \vskip 1.5cm
+    {\Large \MyAuthor \par}
+  \end{center}
+  \vspace*{\stretch{1}}
+    Themensteller: Prof.\ Dr.\ Herbert Kuchen \\
+    \ifthenelse{\equal{\MyBetreuer}{}}{}{Betreuer: \MyBetreuer \\}
+    Institute for Geoinformatics \\
+    Praktische Informatik in der Wirtschaft \\
+  \vfil\null
+  \newpage
+%%  \thispagestyle{empty}
+%%  \begin{small}
+%%   \hspace*{1pt}
+%%  \end{small}
+}
+
+%% Fügt die Abschlusserklärung für Diplom-/Bachelor mit ein
+%%  #1: Datum der Abgabe
+%%  #2: Art der Ausarbeitung
+\newcommand{\abschlusserklaerung}[2]{
+  \newpage
+  \thispagestyle{empty}
+  \vspace*{\stretch{1}}
+  \begin{center}
+    \fbox{\begin{minipage}{\textwidth}
+      Ich versichere hiermit, dass ich meine #2 \glqq\emph{\MyThema}\grqq\ selbstständig
+      und ohne fremde Hilfe angefertigt habe, und dass ich alle von anderen Autoren
+      wörtlich über\-nom\-men\-en Stellen wie auch die sich an die Gedankengänge anderer
+      Autoren eng anlehnenden Ausführungen meiner Arbeit besonders gekennzeichnet und
+      die Quellen zitiert habe. \\ \par
+      \vskip 1cm
+      \begin{tabular}{ll}
+        \noindent Münster, den #1 \hspace{2cm} {} & \rule{70mm}{.1pt} \\
+        {} & \MyAuthor  \\
+      \end{tabular}
+    \end{minipage}}
+  \end{center}
+}
+
+%% Erzeugt die Abschlusserklärung für Diplomarbeiten
+%%  #1: Datum der Abgabe
+\newcommand{\diplomabschlusserklaerung}[1]{
+  \abschlusserklaerung{#1}{Diplomhausarbeit}
+}
+
+%% Erzeugt die Abschlusserklärung für Masterarbeiten
+%%  #1: Datum der Abgabe
+\newcommand{\masterabschlusserklaerung}[1]{
+  \abschlusserklaerung{#1}{Master-Abschlussarbeit}
+}
+
+%% Erzeugt die Abschlusserklärung für Bachelorarbeiten
+%%  #1: Datum der Abgabe
+\newcommand{\bachelorabschlusserklaerung}[1]{
+  \abschlusserklaerung{#1}{Bachelor-Abschlussarbeit}
+}
+
+\newcounter{beispielnummer}
+\setcounter{beispielnummer}{0}
+
+\newcounter{tempctr}
+\setcounter{tempctr}{0}
+
+\newcommand{\emptyspaces}[1]{%
+\setcounter{tempctr}{0}%
+\whiledo{\not \value{tempctr} > #1}{%
+\phantom{x}%
+\stepcounter{tempctr}%
+}%
+}
+
+\definecolor{beispielfarbe}{rgb}{1.0,1.0,0.888}
+
+\newfloat{fbeispiel}{tbhp}{bsp}
+\floatname{fbeispiel}{Beispiel}
+
+%% Fügt ein Beispiel ein
+%%   #1: Text des Beispiels
+%%   #2: Unterschrift
+%%   #3: Label
+\newcommand{\beispiel}[3]{%
+\stepcounter{beispielnummer}%
+\begin{fbeispiel}
+\begin{center}\colorbox{beispielfarbe}{%
+\parbox{0.9\textwidth}{%
+#1%
+}}%\\\vskip 0.2cm%
+%%Bsp. \arabic{beispielnummer}: #2%
+\end{center}%
+\caption{#2}
+\label{#3}
+\end{fbeispiel}
+}
+
+%% Fügt ein Beispiel ein
+%%   #1: Text des Beispiels
+%%   #2: Unterschrift
+%%   #3: Label
+\newcommand{\pbeispiel}[4]{%
+\stepcounter{beispielnummer}%
+\begin{fbeispiel}[#4]
+\begin{center}\colorbox{beispielfarbe}{%
+\parbox{0.9\textwidth}{%
+#1%
+}}%\\\vskip 0.2cm%
+%%Bsp. \arabic{beispielnummer}: #2%
+\end{center}%
+\caption{#2}
+\label{#3}
+\end{fbeispiel}
+}
+
+\newcommand{\nfbeispiel}[1]{%
+\begin{center}\colorbox{beispielfarbe}{%
+\parbox{0.9\textwidth}{%
+#1%
+}}%
+\end{center}%
+}
+
+\newcommand{\ueberschrift}[1]{\vskip 0.25cm \noindent \textbf{#1} \vskip 0.25cm}
+\newcommand{\sourcecode}[1]{\textsf{\textbf{#1}}}
+\newcommand{\linesource}[1]{
+  \begin{quote}
+    \textsf{\textbf{#1}}
+  \end{quote}
+}
+
+\renewcommand{\sectionmark}[1]%
+  %% {\markright{Kapitel \thesection: #1}}
+  {\markright{Chapter \thesection: #1}}
+
+\newcommand{\frontmatter}{
+  \thispagestyle{fancy}
+  \fancyhf{}
+  \lhead{\rightmark}
+  \cfoot{\thepage}
+  \pagenumbering{roman}
+}
+
+\newcommand{\mainmatter}{
+  \pagestyle{fancy}
+  \fancyhf{}
+  \lhead{\rightmark}
+  \cfoot{\thepage}
+  \pagenumbering{arabic}
+}
+
+\newcommand{\subsubsubsection}[1]{%
+\vskip 0.25cm%
+\noindent\textbf{#1}
+%
+%
+}
+
+\newcommand{\mybibliography}{%
+  \newpage%
+  \fancyhf{}%
+  \lhead{\bibname}%
+  \cfoot{\thepage}%
+  %%\clearpage
+  \addcontentsline{toc}{section}{\bibname}%
+}
+
+\newcommand{\isdebug}{%
+  \debug{true}%
+}
+
+\newcommand{\ifdebug}[1]{
+  \ifthenelse{\equal{\Debug}{true}}{#1}{}%
+}
+
+\newenvironment{brainstorm}%
+{\mbox{}\small\sffamily\color{blue}}%
+{\normalsize\rmfamily\color{black}}
+
+\newcommand{\randnotiz}[1]{%
+  \ifdebug{\linespread{1.0}\mbox{}\marginpar{\sffamily\color{red}\tiny #1 \color{black}\rmfamily}\linespread{1.3}}%
+}
+
+\newcommand{\abbildung}[3]{%
+\begin{figure}[htbp]%
+	\begin{center}%
+		\includegraphics[#2]{#1}%
+	  \label{fig:#1}%
+	  \caption{#3}%
+	\end{center}%
+\end{figure}%
+}
+
+\newcommand{\klasse}[1]{%
+\emph{#1}%
+}
+
+
+\newcommand{\methode}[1]{%
+\texttt{#1}%
+}
+
+%% Einstellen der Seitenränder
+\oddsidemargin 1cm
+\evensidemargin 1cm
+\textwidth 15cm
+\topmargin -1.25cm
+\textheight 24.37cm
