@@ -14,10 +14,10 @@ function isUrlOfImage(testUrl){
 	return res;
 }
 
+
 function isUrlValid(url){
 	var res = false;
-	if(url != null){
-		if (url.length == 0) { return false; }
+	if(isTextValid(url)){
 		var urlregex = new RegExp("^(http:\/\/www.|https:\/\/www.|ftp:\/\/www.|www.){1}([0-9A-Za-z]+\.)");
 		if (urlregex.test(url)) {
 			res = true;
@@ -25,6 +25,33 @@ function isUrlValid(url){
 	}
     return res;
 }
+
+
+function isTextValid(txt){
+	var res = false;
+	if(txt != null){
+		if(txt.length > 0){
+			//TODO: check if txt is made of only white spaces
+			res = true;
+		}
+	}
+	return res;
+}
+
+
+function isUriValid(uri){
+	//TODO
+	var res = false;
+	if(isTextValid(uri)){
+		//var urlregex = new RegExp("^(http:\/\/www.|https:\/\/www.|ftp:\/\/www.|www.){1}([0-9A-Za-z]+\.)");
+		//if (urlregex.test(uri)) {
+		res = true;
+		//}
+	}
+    return res;
+}
+
+
 
 function padNumber(number, size) {
     var res = "0000000000" + number;
@@ -270,13 +297,14 @@ function xyArray2wktPolygon(xyArray, srsUrl){
 function csv2array(commaSeparatedValuesString){	
 	var res;
 	if(commaSeparatedValuesString != null && commaSeparatedValuesString.length > 0){
-		var tmp = commaSeparatedValuesString.replace(" , ", "@@@");
-		tmp = tmp.replace(", ", "@@@");
-		tmp = tmp.replace(",", "@@@");
-		tmp = tmp.replace("  ", "@@@");
-		var tmpSplit = tmp.split("@@@");
+		//var tmp = commaSeparatedValuesString.replace(" , ", "@@@");
+		//tmp = tmp.replace(", ", "@@@");
+		//tmp = tmp.replace(",", "@@@");
+		//tmp = tmp.replace("  ", "@@@");
+		var tmpSplit = commaSeparatedValuesString.split(",");//tmp.split("@@@");
 		for(var i = 0; i < tmpSplit.length; i++){
-			tmpSplit[i] = tmpSplit[i].trim();//TODO: This could fail with old browsers
+			//tmpSplit[i] = tmpSplit[i].trim();//TODO: This could fail with old browsers
+			tmpSplit[i] = tmpSplit[i].replace(/\s/g, '');
 		}
 		res = tmpSplit;
 	}

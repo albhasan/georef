@@ -442,7 +442,7 @@ $(document).ready(function () {
 			imageMapUri = imgModelOriginal.getUrl()
 		}
 		if(isUrlOfImage(imageMapUri)){
-			if(isUrlValid(paperMapUri)){
+			if(isUriValid(paperMapUri)){
 				res = true;
 				paperMapCreator = $.trim($("#paperMapCreator").val());
 				paperMapSize = $.trim($("#paperMapSize").val());

@@ -39,7 +39,7 @@ function Constants(){
 						'# YOU CAN USE THIS SPARQL QUERY TO INSERT MAP METADATA IN A TRIPLE STORE' + newline +
 						'#************************************************************************' + newline +
 						'INSERT DATA{' + newline + 
-						'	GRAPH<PARAM_GRAPH>{' + newline 
+						'	GRAPH<PARAM_GRAPH>{' + newline + 
 						'	PARAM_TRIPLES' + newline + 
 						'	}' + newline +
 						'}' + newline;
