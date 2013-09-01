@@ -519,7 +519,14 @@ $(document).ready(function () {
 			if(mapAreawkt != null && mapAreawkt.length > 0){
 				cMapTriples += paperMapUri + "<http://www.geographicknowledge.de/vocab/maps#mapsArea> '" + mapAreawkt + "'^^sf:wktLiteral" +  tripleSeparator;
 			}
-
+			//paper map descriptionm
+			if(paperMapDescription != null && paperMapDescription.length > 0){
+			
+				var tmpDescription = paperMapDescription.replace("'",'\"');
+			
+				cMapTriples += paperMapUri + "<http://purl.org/dc/terms/description> '" + paperMapDescription + "'^^sf:wktLiteral" +  tripleSeparator;
+			}
+			
 			//Triples for places typed by the user. Creates a new URI for each place
 			var cPlaceTriples = "";	
 			if(paperMapPlacesArray != null){
@@ -539,6 +546,7 @@ $(document).ready(function () {
 			}
 
 			//Builds triples form the checkboxes
+			
 			//DBpedia places matched from user's places. Alphanumeric
 			$(".chPlaceSuggestion").each(function( index ){
 				if(this.checked){
@@ -554,11 +562,9 @@ $(document).ready(function () {
 			//DBpedia - Links found in the user's description
 			$(".chDescriptionSuggestion").each(function( index ){
 				if(this.checked){
-					//TODO: What property for linking this? paper map - description - links?
+					cMapTriples += paperMapUri + "<http://purl.org/dc/terms/references> <" +  this.value + ">" + tripleSeparator;
 				}
 			});
-			
-			
 			//Replace in the insert template
 			insertTemplate = insertTemplate.replace("PARAM_GRAPH", graph);
 			insertTemplate = insertTemplate.replace("PARAM_TRIPLES", cMapTriples + cPlaceTriples + cAgentTriples);
@@ -808,17 +814,19 @@ $(document).ready(function () {
 
 				$("#placeTags").html("");
 				var tmp = new Array();
-				for(var i = 0; i < data.Resources.length; i++){
-					var obj = data.Resources[i];
-					var subject = obj["@URI"];
-					if(tmp.indexOf(subject) < 0){//Avoid duplicated tags
-						tmp.push(subject);
-						//var originalText = obj["@surfaceForm"];
-						//Gets the URL last part
-						var matchedText = subject.substring(subject.lastIndexOf("/") + 1, subject.length);
-						//Creates the checkboxes					
-						$("#placeTags").append("<p id='pSuggestedPlaceTag" + tmp.length +"'><input type='checkbox' id='" + subject + "' value='" + subject + "' class='chPlaceSuggestion' >" + matchedText + " - <a href='" + subject + "' target='_blank'>view</a> <a href='javascript: void(0)' onclick='removeElement(&quot;pSuggestedPlaceTag" + tmp.length + "&quot;)'>remove</a></p>");
-						//Completes the subject with the label and abstract -getDbpediaLabelAbstract();
+				if(data != null && data.Resources != null){
+					for(var i = 0; i < data.Resources.length; i++){
+						var obj = data.Resources[i];
+						var subject = obj["@URI"];
+						if(tmp.indexOf(subject) < 0){//Avoid duplicated tags
+							tmp.push(subject);
+							//var originalText = obj["@surfaceForm"];
+							//Gets the URL last part
+							var matchedText = subject.substring(subject.lastIndexOf("/") + 1, subject.length);
+							//Creates the checkboxes					
+							$("#placeTags").append("<p id='pSuggestedPlaceTag" + tmp.length +"'><input type='checkbox' id='" + subject + "' value='" + subject + "' class='chPlaceSuggestion' >" + matchedText + " - <a href='" + subject + "' target='_blank'>view</a> <a href='javascript: void(0)' onclick='removeElement(&quot;pSuggestedPlaceTag" + tmp.length + "&quot;)'>remove</a></p>");
+							//Completes the subject with the label and abstract -getDbpediaLabelAbstract();
+						}
 					}
 				}
 
