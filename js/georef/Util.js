@@ -1,23 +1,33 @@
 /*
-Copyright © 2000 Alber Sanchez <albhasan@gmail.com>
+Copyright © 2013 Alber Sanchez <albhasan@gmail.com>
 This work is free. You can redistribute it and/or modify it under the
 terms of the Do What The Fuck You Want To Public License, Version 2,
 as published by Sam Hocevar. See the COPYING file for more details.
 */
 
-
+/**
+* Tests if the given URL points to an image
+* @param testUrl - Image URL to be tested
+* @returns TRUE if the file extension match an image format FALSE otherwise
+*/
 function isUrlOfImage(testUrl){
 	res = false;
 	if(isUrlValid(testUrl)){
+		// Check for common image file extension
 		return /^.*\.(jpg|JPG|jpeg|JPEG|gif|GIF|bmp|BMP)$/.test(testUrl);
 	}
 	return res;
 }
 
-
+/**
+* Tests if the given URL is valid
+* @param url - URL to be tested
+* @returns TRUE if the URL is valid, FALSE otherwise
+*/
 function isUrlValid(url){
 	var res = false;
 	if(isTextValid(url)){
+		//TODO: There are some URLs which doesn't start with WWW
 		var urlregex = new RegExp("^(http:\/\/www.|https:\/\/www.|ftp:\/\/www.|www.){1}([0-9A-Za-z]+\.)");
 		if (urlregex.test(url)) {
 			res = true;
@@ -26,7 +36,11 @@ function isUrlValid(url){
     return res;
 }
 
-
+/**
+* Tests if the given string is valid
+* @param txt - Text to be tested
+* @returns TRUE if the text is not null and it has more than 0 characters, FALSE otherwise
+*/
 function isTextValid(txt){
 	var res = false;
 	if(txt != null){
@@ -38,31 +52,51 @@ function isTextValid(txt){
 	return res;
 }
 
-
+/**
+* Tests if the given URI is valid
+* @param uri - URI to be tested
+* @returns TRUE if the URL is valid, FALSE otherwise
+*/
 function isUriValid(uri){
 	//TODO
 	var res = false;
 	if(isTextValid(uri)){
 		//var urlregex = new RegExp("^(http:\/\/www.|https:\/\/www.|ftp:\/\/www.|www.){1}([0-9A-Za-z]+\.)");
 		//if (urlregex.test(uri)) {
+		//TODO: Find a regular expression for URI validation
 		res = true;
 		//}
 	}
     return res;
 }
 
-
-
+/**
+* Add 0s in the left of a number
+* @param number - Number to which 0s are being added
+* @param size - Final lenght of the returned string
+* @returns A string with some 0s to the left of the number
+*/
 function padNumber(number, size) {
     var res = "0000000000" + number;
     return res.substr(res.length - size);
 }	
 
+/**
+* Round a number
+* @param number - Number to be rounded
+* @param places - Number of decimals to be rounded to
+* @returns A rounded number
+*/
 function roundNumber(number, places) {
     var multiplier = Math.pow(10, places);
     return (Math.round(number * multiplier) / multiplier);
 }
 
+/**
+* Switch the dimension of a 2 dimensional array
+* @param anArray - Array to be transposed
+* @returns An array
+*/
 function trasposeArray(anArray){
 	var res = anArray.slice(0);//Clone array
 	for (var i = 0; i < res.length; i++) {
@@ -75,11 +109,22 @@ function trasposeArray(anArray){
 	return res;
 }
 
-//http://stackoverflow.com/questions/18082/validate-numbers-in-javascript-isnumeric
+/**
+* Test if the given parameter is a number
+* @param n - parameter
+* @returns TRUE is the parameter is a number, FALSE otherwise
+*/
 function isNumber(n) {
-  return !isNaN(parseFloat(n)) && isFinite(n);
+	//Coded adapted from http://stackoverflow.com/questions/18082/validate-numbers-in-javascript-isnumeric
+	return !isNaN(parseFloat(n)) && isFinite(n);
 }
 
+
+/**
+* Swaps the columns in a 2-dimensional array
+* @param xyArray - Array made of [x,y] arrays where x and y are numbers
+* @returns An array
+*/
 function xySwap(xyArray){
 	var res = new Array();
 	for(var i = 0; i < xyArray.length; i++){
@@ -94,6 +139,11 @@ function xySwap(xyArray){
 	return res;
 }
 
+/**
+* Calculates the area of a polygon
+* @param xyArray - Array of points [x,y] representing the polygon coordinates
+* @returns A number
+*/
 function calculatePolygonArea(xyArray){
 	var res;
 	var isClosed = false;
@@ -122,6 +172,11 @@ function calculatePolygonArea(xyArray){
 	return Math.abs(res);
 }
 
+/**
+* Gets the bounding box coordinates from a set of coordinates
+* @param xyArray - Array of points [x,y] 
+* @returns An 1-dimension array [xMin, yMin, xMax, yMax]
+*/
 function getBoundary(xyArray){
 	var xMin = Infinity;
 	var yMin = Infinity;
@@ -139,9 +194,15 @@ function getBoundary(xyArray){
 	return res;	
 }
 
+/**
+* Centers the map in the specified coordinates
+* @param lng - Longitude
+* @param lat - Latitude
+*/
 function zoomToSuggestion(lng, lat){
+	//TODO: Refactor to panToSuggestion
+	//TODO: Moves to Gui.js because of the dependency on the global "map" variable
 	map.panTo(new L.LatLng(lat, lng));
-	//
 	if(trans != null){
 		var tmp = new Array(new Array(lng, lat));
 		var imgCoords = trans.transformReverse(tmp);
@@ -151,6 +212,12 @@ function zoomToSuggestion(lng, lat){
 	
 }	
 
+/**
+* Gets the bounding box coordinates from a set of coordinates
+* @param xyArray - Array of points [x,y] 
+* @param proj - Projection object
+* @returns An array of points [x,y] 
+*/
 function xyProject(xyArray, proj){
 	var res = new Array();
 	for(var i = 0; i < xyArray.length; i++){
@@ -163,6 +230,11 @@ function xyProject(xyArray, proj){
 	return res;
 }
 
+/**
+* Converts latlong objects to a 2-dimension array
+* @param latlonArray - Array of latlong objects
+* @returns An array of points [x,y] 
+*/
 function latlon2xyArray(latlonArray){
 	var res = new Array();
 	for(var i = 0; i < latlonArray.length; i++){
@@ -173,6 +245,11 @@ function latlon2xyArray(latlonArray){
 	return res;
 }
 
+/**
+* Converts a 2-dimension array [x,y] to an array of latlong objects
+* @param xyArray - An array of points [x,y] 
+* @returns A 1-dimension array of latlong objects
+*/
 function xyArray2latlon(xyArray){
 	var res = new Array();
 	for(var i = 0; i < xyArray.length; i++){
@@ -183,6 +260,11 @@ function xyArray2latlon(xyArray){
 	return res;
 }
 
+/**
+* Converts an array of point objects to an array of points [x,y] 
+* @param pointArray - An array of point objects
+* @returns An array of points [x,y] 
+*/
 function point2xyArray(pointArray){
 	var res = new Array();
 	for(var i = 0; i < pointArray.length; i++){
@@ -193,6 +275,11 @@ function point2xyArray(pointArray){
 	return res;
 }
 
+/**
+* Converts an array of points [x,y] to point an array of point objects
+* @param xyArray - An array of points [x,y] 
+* @returns An array of point objects
+*/
 function xyArray2point(xyArray){
 	var res = new Array();
 	for(var i = 0; i < xyArray.length; i++){
@@ -203,6 +290,11 @@ function xyArray2point(xyArray){
 	return res;
 }
 
+/**
+* Calculates the length of a line made of latlong objects
+* @param latlonArray - An array of latlon objects
+* @returns The distance in meters
+*/
 function latLngArrayDistance(latlonArray){
 	var res = 0;
 	for(var i = 1; i < latlonArray.length; i++){
@@ -213,6 +305,11 @@ function latLngArrayDistance(latlonArray){
 	return res;//Meters
 }
 
+/**
+* Calculates the length of a line made of point objects
+* @param pointArray - An array of point objects
+* @returns A number
+*/
 function pointArrayDistance(pointArray){
 	var res = 0;
 	for(var i = 1; i < pointArray.length; i++){
@@ -223,6 +320,16 @@ function pointArrayDistance(pointArray){
 	return res;
 }
 
+/**
+* Generates KML code for overlaying an image
+* @param imgUrl - Image's URL
+* @param north - North coordinate
+* @param south - South coordinate
+* @param east - East coordinate
+* @param west - West coordinate
+* @param rotation - Rotation angle in degrees measured from the north. To the left is positive
+* @returns KML overlay code
+*/
 function getOverlayText(imgUrl, north, south, east, west, rotation){
 	var res = "";
 	var c = new Constants();
@@ -238,6 +345,12 @@ function getOverlayText(imgUrl, north, south, east, west, rotation){
 	return res;
 }
 
+
+/**
+* Approximates the image's rotation angle from its projected corners
+* @param xyImgProjectedBorders - An array of arrays [[xFrom,yFrom],[xTo,yTo]]
+* @returns An angle in radians.
+*/
 function calculateRotation(xyImgProjectedBorders){
 	var res;
 	var tmpArray = new Array();
@@ -260,9 +373,15 @@ function calculateRotation(xyImgProjectedBorders){
 	return res;
 }
 
-//Single polygon
-//Beware: Some srs require you to switch xy to yx. This function does not do that
+/**
+* Encodes an xyArray [x,y] as Well Known Text
+* @param xyArray - An array of points [x,y] 
+* @param srsUrl - URL of a Spatial Reference System
+* @returns A polygon encoded as WKT
+*/
 function xyArray2wktPolygon(xyArray, srsUrl){
+//NOTE: An xyArray [x,y] can only represent a single polygon
+//NOTE: Some srs require you to switch xy to yx. This function does not check for that
 	var res;
 	var first;
 	var last;
@@ -293,7 +412,11 @@ function xyArray2wktPolygon(xyArray, srsUrl){
 	return res;
 }
 
-
+/**
+* Converts a comma separated value list to an array
+* @param commaSeparatedValuesString - A text of comma separated values
+* @returns An array
+*/
 function csv2array(commaSeparatedValuesString){	
 	var res;
 	if(commaSeparatedValuesString != null && commaSeparatedValuesString.length > 0){
@@ -311,8 +434,13 @@ function csv2array(commaSeparatedValuesString){
 	return res;
 }
 
+/**
+* Tests if a number is a positive integer
+* @param n - A number to be tested
+* @returns TRUE if the given number is a positive integer, FALSE otherwise
+*/
 function isPositiveInteger(n){
-//http://stackoverflow.com/questions/10834796/validate-that-a-string-is-a-positive-integer
+//Code adapted from http://stackoverflow.com/questions/10834796/validate-that-a-string-is-a-positive-integer
 	return n >>> 0 === parseFloat(n);
 }
 

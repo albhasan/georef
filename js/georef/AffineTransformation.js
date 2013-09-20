@@ -8,7 +8,6 @@ as published by Sam Hocevar. See the COPYING file for more details.
 
 /**
  * Creates an affine transformation
- *
  * @param {Array} xyArraySource Array of number arrays of x and y coordinates
  * @param {Array} xyArrayDestination Array of number arrays of x and y coordinates
  */
@@ -35,7 +34,6 @@ function AffineTransformation(xyArraySource, xyArrayDestination){
 	
 	/**
 	 * Builds a matrix suitable for the transformation. https://groups.google.com/forum/?fromgroups#!topic/mapinfo-l/au0j3pSLXHM
-	 *
 	 * @param {Array} xyArray Array of number arrays of x and y coordinates
 	 * @returns {Array} Array of number arrays each one containing [x, y, 1]
 	 */
@@ -56,7 +54,6 @@ function AffineTransformation(xyArraySource, xyArrayDestination){
 	
 	/**
 	 * Calculate the parameters of the transformation. https://groups.google.com/forum/?fromgroups#!topic/mapinfo-l/au0j3pSLXHM
-	 *
 	 * @param {Array} xyArrayFrom Array of number arrays of x and y coordinates
 	 * @param {Array} xyArrayTo Array of number arrays of x and y coordinates
 	 * @returns {Array} Array of numbers containing the transformation parameters
@@ -103,7 +100,6 @@ function AffineTransformation(xyArraySource, xyArrayDestination){
 
 	/**
 	 * Returns the array of xy coordinates of the source
-	 *
 	 * @returns {Array} Array of numbers containing x y coordinates
 	 */
 	this.getXyArraySource = function(){
@@ -112,7 +108,6 @@ function AffineTransformation(xyArraySource, xyArrayDestination){
 	
 	/**
 	 * Returns the array of xy coordinates of the destination
-	 *
 	 * @returns {Array} Array of numbers containing x y coordinates
 	 */
 	this.getXyArrayDestination = function(){
@@ -121,7 +116,6 @@ function AffineTransformation(xyArraySource, xyArrayDestination){
 	
 	/**
 	 * Returns the array of parametes of the transformation
-	 *
 	 * @returns {Array} Array of parameters
 	 */
 	this.getParameters = function(){
@@ -130,7 +124,6 @@ function AffineTransformation(xyArraySource, xyArrayDestination){
 	
 	/**
 	 * Returns the xy coordinates in the destination reference system
-	 *
 	 * @param {Number} xSource x coordinate in the source reference system
 	 * @param {Number} ySource y coordinate in the source reference system
 	 * @returns {Array} Array of x and y in the destination reference system
@@ -151,6 +144,11 @@ function AffineTransformation(xyArraySource, xyArrayDestination){
 		return res;
 	}*/
 
+	/**
+	* Applies the transformation to the input points
+	* @param xyArray - Array made of [x,y] 
+	* @returns An array made of [x,y]  with the resulting coordinates
+	*/
 	this.transform = function(xyArray){
 		var res = new Array();
 		var A = parameters[0][0];
@@ -190,6 +188,11 @@ function AffineTransformation(xyArraySource, xyArrayDestination){
 		return res;
 	}*/
 	
+	/**
+	* Applies the reverse transformation to the input points
+	* @param xyArray - Array made of [x,y] 
+	* @returns An array made of [x,y]  with the resulting coordinates
+	*/
 	this.transformReverse = function(xyArray){
 		var res = new Array();
 		

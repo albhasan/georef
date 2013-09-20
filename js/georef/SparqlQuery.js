@@ -14,6 +14,14 @@ function SparqlQuery(){
 	//---------------------------------------------------------
 	//PRIVILEGED
 	//---------------------------------------------------------
+	
+	/**
+	* Sends a query to a SPARQL triplestore. It just queries, it does NOT update
+	* @param query - SPARQL query
+	* @param baseURL - URL of the SPARQL endpoint
+	* @param defGraphUri - SPARQL Graph to be queried
+	* @returns A JSON object with the query response
+	*/
 	this.sendSparqlQuery = function(query, baseURL, defGraphUri) {
 		var format = "application/json";
 		var debug = "on";
@@ -42,6 +50,12 @@ function SparqlQuery(){
 		return JSON.parse(xmlhttp.responseText);
 	}
 	
+	/**
+	* Sends a UPDATE query to a SPARQL triplestore
+	* @param query - SPARQL UPDATE query
+	* @param baseURL - URL of the SPARQL endpoint
+	* @param defGraphUri - SPARQL Graph to be queried
+	*/
 	this.sendSparqlUpdate = function(query, baseURL, defGraphUri) {
 		var format = "application/json";
 		var debug = "on";

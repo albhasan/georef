@@ -5,9 +5,6 @@ terms of the Do What The Fuck You Want To Public License, Version 2,
 as published by Sam Hocevar. See the COPYING file for more details.
 */
 
-
-
-
 var map;//Map container
 var mapImage;//Map container for the image
 var imageMapMaxSize = 10;//Maximum size of the image in map units
@@ -146,6 +143,8 @@ $(document).ready(function () {
 		});
 		mapImage.addControl(drawControlImage);
 		map.addControl(drawControlMap);
+		
+		//Map event
 		mapImage.on('draw:created', function(e) {
 			var type = e.layerType;
 			var layer = e.layer;
@@ -174,6 +173,7 @@ $(document).ready(function () {
 			updateMetadata();
 		});	
 
+		//Map event
 		map.on('draw:created', function(e) {
 			var type = e.layerType;
 			var layer = e.layer;
@@ -185,6 +185,7 @@ $(document).ready(function () {
 			}
 		});
 
+		//Map event
 		mapImage.on('draw:deleted', function(e) {
 			var layers = e.layers.getLayers();
 			for(var i = 0; i < layers.length; i++){
@@ -201,6 +202,7 @@ $(document).ready(function () {
 			updateMetadata();
 		});
 
+		//Map event
 		map.on('draw:deleted', function(e) {
 			var layers = e.layers.getLayers();
 			for(var i = 0; i < layers.length; i++){
@@ -232,6 +234,8 @@ $(document).ready(function () {
 				res = new AffineTransformation(matchCp[1], matchCp[2]);
 			//}else if(n > 5){
 				//TODO: Create polynomial trasformation
+				//Polynomial transformations are unstable under big geometric differences in maps
+				//Besides, WKT encoding of curve lines can be complicated
 			}
 		}
 		return res;
@@ -284,7 +288,7 @@ $(document).ready(function () {
 				mapAreaBnd = latlon2xyArray(mapAreaLatLonArray);
 				//Scale the coords from scaled image to image
 				var unScaledMapAreaBnd = imgModelScaled.unScaleCoordsArray(mapAreaBnd);
-				//imageMapArea = calculatePolygonArea(unScaledMapAreaBnd);
+				//imageMapArea = calculatePolygonArea(unScaledMapAreaBnd);//No longer required
 				//Transform the coords from image refsys to map refsys
 				var xyProjmapAreaBnd = trans.transform(unScaledMapAreaBnd);
 				mapAreawkt = xyArray2wktPolygon(xyProjmapAreaBnd, "http://www.opengis.net/def/crs/OGC/1.3/CRS84");
@@ -343,7 +347,6 @@ $(document).ready(function () {
 	}
 	
 	
-	
 	/**
 	* Retrieves Dbpedia entries related in space and time
 	* @param xybbox - Array of [x,y] with the map area's vertexs.
@@ -369,7 +372,7 @@ $(document).ready(function () {
 		
 		
 		try{
-			//Fails when DBpedia is offline
+			//Fails when DBpedia is offline - You don't say!
 			var js = sq.sendSparqlQuery(query, c.getConstant("DBPEDIA_SPARQL"), "");
 			for(var i = 0; i < js.results.bindings.length; i++){
 				var subject = js.results.bindings[i].subject.value;
@@ -541,7 +544,8 @@ $(document).ready(function () {
 			//Triples about the map's author
 			var cAgentTriples = "";
 			if(paperMapCreator != null && paperMapCreator.length > 0){
-				cAgentTriples = "<" + encodeURI(baseUri + paperMapCreator) + "> a <http://purl.org/dc/terms/Agent>" + tripleSeparator;
+				cAgentTriples = paperMapUri + " <http://purl.org/dc/terms/creator> <" + encodeURI(baseUri + paperMapCreator) + ">" + tripleSeparator;
+				cAgentTriples += "<" + encodeURI(baseUri + paperMapCreator) + "> a <http://purl.org/dc/terms/Agent>" + tripleSeparator;
 				cAgentTriples += "<" + encodeURI(baseUri + paperMapCreator) + "> foaf:name '" + paperMapCreator + "'^^xsd:string" + tripleSeparator;
 			}
 
