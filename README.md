@@ -1,4 +1,5 @@
 georef
 ======
 
-Historic map geo-referencing hml + javascript
+Historic map geo-referencing hml + javascript for libraries
+
