@@ -7,7 +7,7 @@ The application presented here is meant to be used on the Web and it is complete
 
 The application is able to suggest links from the map to DBpedia; this aims to accelerate the georeferencing process. Additionally, linking historic map’s data to other LOD data sources grants the 5th star in the Tim Berners-Lee’s rating system. The 5th star system’s purpose it to encourage the publication of new LOD by assigning points (stars) to data. 
 
-For installation, usage instructions and screenshots go to the WIKI pages at https://github.com/albhasan/georef/wiki
+For installation, usage instructions and screenshots go to the WIKI pages at https://github.com/albhasan/georef/wiki/_pages
 
 For a detailed description see "A LOD-based georeferencing tool for historic
 maps" available at https://github.com/albhasan/georef/blob/master/thesis/LOD-basedGeoreferencingToolForHistoricMaps.pdf?raw=true
