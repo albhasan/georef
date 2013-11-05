@@ -269,6 +269,7 @@ $(document).ready(function () {
 	function projectImageBoundaries(cpManager, imgModelScaled, mapAreaLatLonArray, map){
 		trans = createTransformation(cpManager);
 		mapAreawkt = "";
+		var c = new Constants();
 		if(trans != null){
 			var mapAreaBnd = new Array();
 			var xyProjArrayBnd = getImageBoundariesInMapCoords(trans, imgModelScaled);
@@ -291,7 +292,7 @@ $(document).ready(function () {
 				//imageMapArea = calculatePolygonArea(unScaledMapAreaBnd);//No longer required
 				//Transform the coords from image refsys to map refsys
 				var xyProjmapAreaBnd = trans.transform(unScaledMapAreaBnd);
-				mapAreawkt = xyArray2wktPolygon(xyProjmapAreaBnd, "http://www.opengis.net/def/crs/OGC/1.3/CRS84");
+				mapAreawkt = xyArray2wktPolygon(xyProjmapAreaBnd, c.getConstant("SPATIAL_REFERENCE_SYSTEM"));
 				//mapAreaArea = calculatePolygonArea(xyProject(xyProjmapAreaBnd, L.Projection.SphericalMercator));//Leaflet transformation problem http://leafletjs.com/reference.html#icrs
 				$("#mapAreaDetails").html("");
 				mapAreaVertexTable.fnClearTable();
@@ -520,14 +521,18 @@ $(document).ready(function () {
 			}
 			//paper map area en map coords
 			if(mapAreawkt != null && mapAreawkt.length > 0){
-				cMapTriples += paperMapUri + "<http://www.geographicknowledge.de/vocab/maps#mapsArea> '" + mapAreawkt + "'^^sf:wktLiteral" +  tripleSeparator;
+				//Get a name for the Geometry object (map area)
+				var geomName = imageMapUri + "-" + djb2Code(imageMapUri);
+				cMapTriples += "<" + geomName + "> a geo:Geometry " +  tripleSeparator;
+				cMapTriples += paperMapUri + "<http://www.geographicknowledge.de/vocab/maps#mapsArea> " + "<" + geomName + "> " +  tripleSeparator;
+				cMapTriples += "<" + geomName + "> geo:asWKT '" + mapAreawkt + "'^^sf:wktLiteral" +  tripleSeparator;
 			}
-			//paper map descriptionm
+			//paper map description
 			if(paperMapDescription != null && paperMapDescription.length > 0){
 			
 				var tmpDescription = paperMapDescription.replace("'",'\"');
 			
-				cMapTriples += paperMapUri + "<http://purl.org/dc/terms/description> '" + paperMapDescription + "'^^sf:wktLiteral" +  tripleSeparator;
+				cMapTriples += paperMapUri + "<http://purl.org/dc/terms/description> '" + paperMapDescription + "'^^xsd:string" +  tripleSeparator;
 			}
 			
 			//Triples for places typed by the user. Creates a new URI for each place

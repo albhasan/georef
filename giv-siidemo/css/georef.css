@@ -1,0 +1,164 @@
+/*
+Copyright © 2000 Alber Sanchez <albhasan@gmail.com>
+This work is free. You can redistribute it and/or modify it under the
+terms of the Do What The Fuck You Want To Public License, Version 2,
+as published by Sam Hocevar. See the COPYING file for more details.
+*/
+
+
+
+/* ------------------------------------------------ 
+ JQuery look
+ ------------------------------------------------ */
+.ui-widget{font-size:12px;}
+
+
+/* ------------------------------------------------ 
+0 window partition 
+ ------------------------------------------------ */
+/* DIV containing everything */
+#container{
+	/*
+	margin-left:auto;
+	margin-right:auto;
+	overflow:scroll;
+	*/
+}
+
+/* ------------------------------------------------ 
+1st window partition 
+ ------------------------------------------------ */
+#top{
+	height: 15%;
+	width:100%;
+}
+#middle{
+	height: 450px;
+}
+#bottom{
+	height: 10%;
+	width:100%;
+}
+
+/* ------------------------------------------------ 
+2nd window partition 
+ ------------------------------------------------ */
+#top-left{ 
+	float: left; 
+	width: 10%;
+}
+#top-center{ 
+	float: left; 
+	width: 80%;
+}
+#top-right{ 
+	float: left; 
+	width: 10%;
+}
+
+#middle-left{
+	float: left;
+	width:20%;
+	height: 100%;
+}
+#middle-center{
+	float:left;
+	width:40%;
+	height: 100%;
+}
+#middle-right{
+	float:left;
+	width:40%;
+	height: 100%;
+}
+
+#bottom-left{ 
+	float: left; 
+	width: 25%;
+}
+#bottom-center{ 
+	float: left; 
+	width: 50%;
+}
+#bottom-right{ 
+	float: left; 
+	width: 25%;
+}
+/* ------------------------------------------------ 
+3rd window partition 
+ ------------------------------------------------ */
+
+
+
+#tabs{
+	height: 100%;
+}
+
+ /* ------------------------------------------------ 
+4th window partition 
+ ------------------------------------------------ */
+#middle-center-tabone-left,#middle-center-tabone-center{
+	height:100%;
+	width:100%;
+	float:left;
+}
+
+/* ------------------------------------------------ 
+5th window partition 
+ ------------------------------------------------ */
+#mapImage{
+	border:1px solid blue;
+	height:100%;
+	width:100%;
+	/*cursor:crosshair;	*/
+}
+/* ------------------------------------------------ */
+/* Fourth window partition */
+/* ------------------------------------------------ */
+#imageForm{
+	height:100%;
+	width:100%;
+}
+
+/* ------------------------------------------------ */
+/* Controls */
+/* ------------------------------------------------ */
+ #accordion-resizer {
+	padding: 10px;
+	width: 350px;
+	
+}
+
+#tabs .tabs-spacer {float: left; height: 200px; }
+.tabs-bottom .ui-tabs-nav { clear: left; padding: 0 .2em .2em .2em; }
+.tabs-bottom .ui-tabs-nav li { top: auto; bottom: 0; margin: 0 .2em 1px 0; border-bottom: auto; border-top: 0; }
+.tabs-bottom .ui-tabs-nav li.ui-tabs-active { margin-top: -1px; padding-top: 1px; }
+
+#tabs-1,#tabs-2,#tabs-3,#tabs-4,#tabs-5{
+	/*height:350px;*/
+	height:100%;
+}
+
+#accordion{
+	height: 100%;
+}
+
+#map{
+	border: 1px solid blue;
+	height: 95%;
+	width: 100%;
+	/*cursor:crosshair;*/
+}
+
+#pTitle{
+	font-style: italic;
+	font-weight: normal;
+	font-size: 1.2em;
+	color: #8e141c;
+	text-align: center;
+}
+
+#label {
+	display: inline-block;
+	width: 5em;
+}

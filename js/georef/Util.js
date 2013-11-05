@@ -452,3 +452,14 @@ http://stackoverflow.com/questions/1144783/replacing-all-occurrences-of-a-string
 function removeElement(id){
 	$('#' + id).remove();
 }
+
+
+//Taken from http://erlycoder.com/49/javascript-hash-functions-to-convert-string-into-integer-hash-
+function djb2Code(str){
+	var hash = 5381;
+	for (i = 0; i < str.length; i++) {
+		char = str.charCodeAt(i);
+		hash = ((hash << 5) + hash) + char; /* hash * 33 + c */
+	}
+	return hash;
+}

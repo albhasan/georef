@@ -13,9 +13,9 @@ function Constants(){
 	
 	var DBPEDIA_SPARQL = 'http://dbpedia.org/sparql';
 	
-	var HOME_URI = 'http://uni-muenster.de/historicmaps/';
+	var HOME_URI = 'http://uni-muenster.de/historicmaps';
 	
-	var HOME_GRAPH = 'http://ifgi.uni-muenster.de/historicmaps/';
+	var HOME_GRAPH = 'http://ifgi.uni-muenster.de/lodum/historicmaps';
 	
 	var HOME_SPARQLENDPOINT = 'http://giv-siidemo.uni-muenster.de:8081/parliament/sparql';
 	
@@ -32,13 +32,10 @@ function Constants(){
 					'PREFIX skos: <http://www.w3.org/2004/02/skos/core#> ' + newline +
 					'PREFIX sf: <http://www.opengis.net/ont/sf#> ' + newline +
 					'PREFIX geof: <http://www.opengis.net/def/function/geosparql/> ' + newline +
-					'PREFIX geo: <http://www.opengis.net/ont/geosparql#> ' + newline +
+					'PREFIX geo: <http://www.opengis.net/ont/geosparql/1.0#> ' + newline +
 					'PREFIX geoWgs84: <http://www.w3.org/2003/01/geo/wgs84_pos#> ' + newline;
 					
-	var QUERY_INSERT = 	'#************************************************************************' + newline +
-						'# YOU CAN USE THIS SPARQL QUERY TO INSERT MAP METADATA IN A TRIPLE STORE' + newline +
-						'#************************************************************************' + newline +
-						'INSERT DATA{' + newline + 
+	var QUERY_INSERT = 	'INSERT DATA{' + newline + 
 						'	GRAPH<PARAM_GRAPH>{' + newline + 
 						'	PARAM_TRIPLES' + newline + 
 						'	}' + newline +
@@ -162,6 +159,7 @@ function Constants(){
 					"clickable" : false
 				}
 	
+	var SPATIAL_REFERENCE_SYSTEM = "http://www.opengis.net/def/crs/EPSG/0/4326";
 
 	
 	//---------------------------------------------------------
@@ -201,6 +199,8 @@ function Constants(){
 			res = QUERY_COMPLETE_SUBJECT;
 		}else if(name =="ABSTRACT_LENGTH"){
 			res = ABSTRACT_LENGTH;
+		}else if(name =="SPATIAL_REFERENCE_SYSTEM"){
+			res = SPATIAL_REFERENCE_SYSTEM;
 		}
 		
 		
