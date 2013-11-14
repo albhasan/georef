@@ -1,0 +1,352 @@
+<?xml version="1.0"?>
+
+
+<!DOCTYPE rdf:RDF [
+    <!ENTITY terms "http://purl.org/dc/terms/" >
+    <!ENTITY time "http://www.w3.org/2006/time#" >
+    <!ENTITY bibo "http://purl.org/ontology/bibo/" >
+    <!ENTITY owl "http://www.w3.org/2002/07/owl#" >
+    <!ENTITY geon "http://www.geonames.org/ontology#" >
+    <!ENTITY xsd "http://www.w3.org/2001/XMLSchema#" >
+    <!ENTITY geo "http://www.opengis.net/ont/geosparql#" >
+    <!ENTITY rdfs "http://www.w3.org/2000/01/rdf-schema#" >
+    <!ENTITY rdf "http://www.w3.org/1999/02/22-rdf-syntax-ns#" >
+    <!ENTITY maps "http://www.geographicknowledge.de/vocab/maps#" >
+]>
+
+
+<rdf:RDF xmlns="http://www.geographicknowledge.de/vocab/maps#"
+     xml:base="http://www.geographicknowledge.de/vocab/maps"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:time="http://www.w3.org/2006/time#"
+     xmlns:geo="http://www.opengis.net/ont/geosparql#"
+     xmlns:maps="http://www.geographicknowledge.de/vocab/maps#"
+     xmlns:bibo="http://purl.org/ontology/bibo/"
+     xmlns:terms="http://purl.org/dc/terms/"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:geon="http://www.geonames.org/ontology#"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+    <owl:Ontology rdf:about="http://www.geographicknowledge.de/vocab/maps">
+        <rdfs:comment xml:lang="en">This is an ontology which can be reused to describe contents as well as properties of library documents which are scanned historic maps</rdfs:comment>
+       <!-- <owl:imports rdf:resource="http://purl.org/ontology/bibo/"/>
+        <owl:imports rdf:resource="http://www.geographicknowledge.de/vocab/SpatioTemporalFeature"/>
+        <owl:imports rdf:resource="http://www.opengis.net/ont/geosparql"/>
+        <owl:imports rdf:resource="http://www.w3.org/2006/time"/>-->
+    </owl:Ontology>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Datatypes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.w3.org/2001/XMLSchema#date -->
+
+    <rdfs:Datatype rdf:about="&xsd;date"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Object Properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.geographicknowledge.de/vocab/maps#creator -->
+
+    <owl:ObjectProperty rdf:about="&maps;creator">
+        <rdfs:comment xml:lang="en">The creator (author or cartographer) of a map</rdfs:comment>
+        <rdfs:range rdf:resource="&terms;Agent"/>
+        <rdfs:subPropertyOf rdf:resource="&terms;contributor"/>
+        <rdfs:domain rdf:resource="&maps;Map"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.geographicknowledge.de/vocab/maps#digitalImageVersion -->
+
+    <owl:ObjectProperty rdf:about="&maps;digitalImageVersion">
+        <rdfs:range>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="&maps;medium"/>
+                <owl:allValuesFrom rdf:resource="&maps;Digital"/>
+            </owl:Restriction>
+        </rdfs:range>
+        <rdfs:domain>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="&maps;medium"/>
+                <owl:allValuesFrom rdf:resource="&maps;Paper"/>
+            </owl:Restriction>
+        </rdfs:domain>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.geographicknowledge.de/vocab/maps#hasMapWindow -->
+
+    <owl:ObjectProperty rdf:about="&maps;hasMapWindow">
+        <rdfs:subPropertyOf rdf:resource="&terms;hasPart"/>
+        <rdfs:range rdf:resource="&maps;Map"/>
+        <rdfs:domain rdf:resource="&maps;Map"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.geographicknowledge.de/vocab/maps#mapSize -->
+
+    <owl:ObjectProperty rdf:about="&maps;mapSize">
+        <rdfs:comment>map size, e g. 74 * 95 cm</rdfs:comment>
+        <rdfs:subPropertyOf rdf:resource="&terms;format"/>
+        <rdfs:domain rdf:resource="&maps;Map"/>
+        <rdfs:range>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="&maps;size"/>
+                <owl:someValuesFrom rdf:resource="&rdfs;Literal"/>
+            </owl:Restriction>
+        </rdfs:range>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.geographicknowledge.de/vocab/maps#mapsArea -->
+
+    <owl:ObjectProperty rdf:about="&maps;mapsArea">
+        <rdfs:comment xml:lang="en">The area in a spatial coordinate system (a geo:Geometry) which corresponds to the map window of the map</rdfs:comment>
+        <rdfs:domain rdf:resource="&maps;Map"/>
+        <rdfs:subPropertyOf rdf:resource="&maps;represents"/>
+        <rdfs:range rdf:resource="&geo;Geometry"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.geographicknowledge.de/vocab/maps#mapsPhenomenon -->
+
+    <owl:ObjectProperty rdf:about="&maps;mapsPhenomenon">
+        <rdfs:comment xml:lang="en">Geographic Phenomena represented in a map</rdfs:comment>
+        <rdfs:range rdf:resource="&maps;GeographicPhenomenon"/>
+        <rdfs:domain rdf:resource="&maps;Map"/>
+        <rdfs:subPropertyOf rdf:resource="&maps;represents"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.geographicknowledge.de/vocab/maps#mapsTime -->
+
+    <owl:ObjectProperty rdf:about="&maps;mapsTime">
+        <rdfs:comment xml:lang="en">The temporal coverage of the map, i.e., the time interval or moment which it represents.</rdfs:comment>
+        <rdfs:domain rdf:resource="&maps;Map"/>
+        <rdfs:subPropertyOf rdf:resource="&maps;represents"/>
+        <rdfs:range rdf:resource="&time;TemporalEntity"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.geographicknowledge.de/vocab/maps#medium -->
+
+    <owl:ObjectProperty rdf:about="&maps;medium">
+        <rdfs:comment xml:lang="en">The medium of the map, e.g. paper or digital</rdfs:comment>
+        <rdfs:subPropertyOf rdf:resource="&terms;format"/>
+        <rdfs:domain rdf:resource="&maps;Map"/>
+        <rdfs:range rdf:resource="&maps;MediaType"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.geographicknowledge.de/vocab/maps#printedIn -->
+
+    <owl:ObjectProperty rdf:about="&maps;printedIn">
+        <rdfs:comment>Cartographic maps may be printed in books or atlases</rdfs:comment>
+        <rdfs:subPropertyOf rdf:resource="&bibo;reproducedIn"/>
+        <rdfs:domain>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="&maps;medium"/>
+                <owl:allValuesFrom rdf:resource="&maps;Paper"/>
+            </owl:Restriction>
+        </rdfs:domain>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.geographicknowledge.de/vocab/maps#represents -->
+
+    <owl:ObjectProperty rdf:about="&maps;represents">
+        <rdfs:comment xml:lang="en">This is a property which allows to associate map content (what is displayed) with a map. Map content includes the map area in a spatial coordinate system  as well as objects or fields which a re depicted in the map.</rdfs:comment>
+        <rdfs:domain rdf:resource="&maps;Map"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.geographicknowledge.de/vocab/maps#title -->
+
+    <owl:ObjectProperty rdf:about="&maps;title">
+        <rdfs:subPropertyOf rdf:resource="&terms;title"/>
+        <rdfs:domain rdf:resource="&maps;Map"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Data properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.geographicknowledge.de/vocab/maps#ImageURI -->
+
+    <owl:DatatypeProperty rdf:about="&maps;ImageURI">
+        <rdfs:subPropertyOf rdf:resource="&bibo;uri"/>
+        <rdfs:domain>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="&maps;medium"/>
+                <owl:allValuesFrom rdf:resource="&maps;Digital"/>
+            </owl:Restriction>
+        </rdfs:domain>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.geographicknowledge.de/vocab/maps#hasScale -->
+
+    <owl:DatatypeProperty rdf:about="&maps;hasScale">
+        <rdfs:domain rdf:resource="&maps;Map"/>
+        <rdfs:range rdf:resource="&rdfs;Literal"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.geographicknowledge.de/vocab/maps#size -->
+
+    <owl:DatatypeProperty rdf:about="&maps;size">
+        <rdfs:range rdf:resource="&rdfs;Literal"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Classes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.geographicknowledge.de/vocab/maps#Digital -->
+
+    <owl:Class rdf:about="&maps;Digital">
+        <rdfs:subClassOf rdf:resource="&maps;MediaType"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.geographicknowledge.de/vocab/maps#GeographicPhenomenon -->
+
+    <owl:Class rdf:about="&maps;GeographicPhenomenon">
+        <owl:equivalentClass rdf:resource="&geo;Feature"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.geographicknowledge.de/vocab/maps#Map -->
+
+    <owl:Class rdf:about="&maps;Map">
+        <rdfs:subClassOf rdf:resource="&bibo;Map"/>
+        <rdfs:comment>The basic class of documents which are cartographic maps. Maps are displayed, and thus have an associated display size, as well as a map scale.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.geographicknowledge.de/vocab/maps#MediaType -->
+
+    <owl:Class rdf:about="&maps;MediaType">
+        <rdfs:comment>The media types for maps: </rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.geographicknowledge.de/vocab/maps#Paper -->
+
+    <owl:Class rdf:about="&maps;Paper">
+        <rdfs:subClassOf rdf:resource="&maps;MediaType"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.geographicknowledge.de/vocab/maps#ThematicMap -->
+
+    <owl:Class rdf:about="&maps;ThematicMap">
+        <rdfs:subClassOf rdf:resource="&maps;Map"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.geographicknowledge.de/vocab/maps#TopographicMap -->
+
+    <owl:Class rdf:about="&maps;TopographicMap">
+        <rdfs:subClassOf rdf:resource="&maps;Map"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.opengis.net/ont/geosparql#Feature -->
+
+    <rdf:Description rdf:about="&geo;Feature"/>
+    
+
+
+    <!-- http://www.opengis.net/ont/geosparql#Geometry -->
+
+    <owl:Class rdf:about="&geo;Geometry"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Individuals
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.geographicknowledge.de/vocab/maps#Digital -->
+
+    <owl:NamedIndividual rdf:about="&maps;Digital">
+        <rdf:type rdf:resource="&maps;Digital"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.geographicknowledge.de/vocab/maps#Paper -->
+
+    <owl:NamedIndividual rdf:about="&maps;Paper">
+        <rdf:type rdf:resource="&maps;Paper"/>
+    </owl:NamedIndividual>
+</rdf:RDF>
+
+
+
+<!-- Generated by the OWL API (version 3.4.2) http://owlapi.sourceforge.net -->
+

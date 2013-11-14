@@ -67,6 +67,21 @@ $(document).ready(function () {
 		]
 	} ); 
 	
+
+	//Adds the combo with the ontology classes
+	$.get(c.getConstant("ONTOLOGY_URL"), function(xmlResponse){
+		var rdfClasses = getRdfClasses(xmlResponse);
+		var counter = 0;
+		for(var i = 0; i < rdfClasses.length; i++){
+			if(rdfClasses[i].children.length == 0){
+				//alert("leaf - " + rdfClasses[i].name);
+				$("#contentTags").append("<p id='pOntologyContentTag" + counter +"'><input type='checkbox' id='" + rdfClasses[i].name + "' value='" + rdfClasses[i].name + "' class='chOntologyContent' >" + rdfClasses[i].name + " - <a href='" + rdfClasses[i].uri + "' target='_blank'>view</a> <a href='javascript: void(0)' onclick='removeElement(&quot;pOntologyContentTag" + counter + "&quot;)'>remove</a></p>");				
+				counter++;
+			}
+		}
+	}) 
+
+	
 	//------------------------------------------
 	//LEAFLET http://leafletjs.com/
 	//------------------------------------------
@@ -572,6 +587,8 @@ $(document).ready(function () {
 			$(".chDescriptionSuggestion").each(function( index ){
 				if(this.checked){
 					cMapTriples += paperMapUri + "<http://purl.org/dc/terms/references> <" +  this.value + ">" + tripleSeparator;
+					//http://www.geographicknowledge.de/vocab/maps#mapsPhenomenon
+					
 				}
 			});
 			//Replace in the insert template
@@ -582,6 +599,7 @@ $(document).ready(function () {
 			res = queryInsert;
 			
 		}
+		alert("MISSING TRIPLES FroM ONTOLOGY");
 		return res;
 	}
 	

@@ -1,0 +1,407 @@
+<?xml version="1.0"?>
+
+
+<!DOCTYPE rdf:RDF [
+    <!ENTITY owl "http://www.w3.org/2002/07/owl#" >
+    <!ENTITY xsd "http://www.w3.org/2001/XMLSchema#" >
+    <!ENTITY rdfs "http://www.w3.org/2000/01/rdf-schema#" >
+    <!ENTITY rdf "http://www.w3.org/1999/02/22-rdf-syntax-ns#" >
+    <!ENTITY maps "http://www.geographicknowledge.de/vocab/maps#" >
+    <!ENTITY historicmapsphen "http://www.geographicknowledge.de/vocab/historicmapsphen#" >
+]>
+
+
+<rdf:RDF xmlns="http://www.geographicknowledge.de/vocab/historicmapsphen#"
+     xml:base="http://www.geographicknowledge.de/vocab/historicmapsphen"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:historicmapsphen="http://www.geographicknowledge.de/vocab/historicmapsphen#"
+     xmlns:maps="http://www.geographicknowledge.de/vocab/maps#"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+    <owl:Ontology rdf:about="http://www.geographicknowledge.de/vocab/historicmapsphen">
+        <rdfs:comment xml:lang="en">Ontology of mapped geographic phenomena in historic maps</rdfs:comment>
+        <owl:imports rdf:resource="http://www.geographicknowledge.de/vocab/maps"/>
+    </owl:Ontology>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Object Properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#end -->
+
+    <owl:ObjectProperty rdf:about="&historicmapsphen;end">
+        <rdfs:domain rdf:resource="&historicmapsphen;March"/>
+        <rdfs:range rdf:resource="&historicmapsphen;Place"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#happensAt -->
+
+    <owl:ObjectProperty rdf:about="&historicmapsphen;happensAt">
+        <rdfs:domain rdf:resource="&historicmapsphen;Event"/>
+        <rdfs:range rdf:resource="&historicmapsphen;Place"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#nextEvent -->
+
+    <owl:ObjectProperty rdf:about="&historicmapsphen;nextEvent">
+        <rdfs:domain rdf:resource="&historicmapsphen;Event"/>
+        <rdfs:range rdf:resource="&historicmapsphen;Event"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#partOfEvent -->
+
+    <owl:ObjectProperty rdf:about="&historicmapsphen;partOfEvent">
+        <rdfs:domain rdf:resource="&historicmapsphen;Event"/>
+        <rdfs:range rdf:resource="&historicmapsphen;Event"/>
+        <rdfs:subPropertyOf rdf:resource="&owl;topObjectProperty"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#partOfObject -->
+
+    <owl:ObjectProperty rdf:about="&historicmapsphen;partOfObject">
+        <rdfs:range rdf:resource="&historicmapsphen;Object"/>
+        <rdfs:domain rdf:resource="&historicmapsphen;Object"/>
+        <rdfs:subPropertyOf rdf:resource="&owl;topObjectProperty"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#participatesIn -->
+
+    <owl:ObjectProperty rdf:about="&historicmapsphen;participatesIn">
+        <rdfs:range rdf:resource="&historicmapsphen;Event"/>
+        <rdfs:domain rdf:resource="http://xmlns.com/foaf/0.1/Agent"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#start -->
+
+    <owl:ObjectProperty rdf:about="&historicmapsphen;start">
+        <rdfs:domain rdf:resource="&historicmapsphen;March"/>
+        <rdfs:range rdf:resource="&historicmapsphen;Place"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Data properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#participantsNumber -->
+
+    <owl:DatatypeProperty rdf:about="&historicmapsphen;participantsNumber">
+        <rdfs:domain rdf:resource="&historicmapsphen;Event"/>
+        <rdfs:range rdf:resource="&xsd;integer"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#temperature -->
+
+    <owl:DatatypeProperty rdf:about="&historicmapsphen;temperature">
+        <rdfs:domain rdf:resource="&historicmapsphen;Event"/>
+        <rdfs:range rdf:resource="&xsd;decimal"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Classes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#Administration -->
+
+    <owl:Class rdf:about="&historicmapsphen;Administration">
+        <rdfs:subClassOf rdf:resource="&historicmapsphen;Object"/>
+        <rdfs:comment>Class of administrative units, e.g. states, countries, communities</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#Agriculture -->
+
+    <owl:Class rdf:about="&historicmapsphen;Agriculture">
+        <rdfs:subClassOf rdf:resource="&historicmapsphen;LanduseObject"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#Bare -->
+
+    <owl:Class rdf:about="&historicmapsphen;Bare">
+        <rdfs:subClassOf rdf:resource="&historicmapsphen;Landcover"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#Battle -->
+
+    <owl:Class rdf:about="&historicmapsphen;Battle">
+        <rdfs:subClassOf rdf:resource="&historicmapsphen;War"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#Block -->
+
+    <owl:Class rdf:about="&historicmapsphen;Block">
+        <rdfs:subClassOf rdf:resource="&historicmapsphen;ConstructionObject"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#Building -->
+
+    <owl:Class rdf:about="&historicmapsphen;Building">
+        <rdfs:subClassOf rdf:resource="&historicmapsphen;ConstructionObject"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#City -->
+
+    <owl:Class rdf:about="&historicmapsphen;City">
+        <rdfs:subClassOf rdf:resource="&historicmapsphen;Inhabited"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#ConstructionObject -->
+
+    <owl:Class rdf:about="&historicmapsphen;ConstructionObject">
+        <rdfs:subClassOf rdf:resource="&historicmapsphen;Object"/>
+        <rdfs:comment>Class of constructed objects, such as buildings or constucted areas</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#Continent -->
+
+    <owl:Class rdf:about="&historicmapsphen;Continent">
+        <rdfs:subClassOf rdf:resource="&historicmapsphen;Landform"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#Elevation -->
+
+    <owl:Class rdf:about="&historicmapsphen;Elevation">
+        <rdfs:subClassOf rdf:resource="&historicmapsphen;Landform"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#Event -->
+
+    <owl:Class rdf:about="&historicmapsphen;Event">
+        <rdfs:subClassOf rdf:resource="&maps;GeographicPhenomenon"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#Field -->
+
+    <owl:Class rdf:about="&historicmapsphen;Field">
+        <rdfs:subClassOf rdf:resource="&historicmapsphen;Landcover"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#Forest -->
+
+    <owl:Class rdf:about="&historicmapsphen;Forest">
+        <rdfs:subClassOf rdf:resource="&historicmapsphen;Landcover"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#Inhabited -->
+
+    <owl:Class rdf:about="&historicmapsphen;Inhabited">
+        <rdfs:subClassOf rdf:resource="&historicmapsphen;Place"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#Invasion -->
+
+    <owl:Class rdf:about="&historicmapsphen;Invasion">
+        <rdfs:subClassOf rdf:resource="&historicmapsphen;War"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#Lake -->
+
+    <owl:Class rdf:about="&historicmapsphen;Lake">
+        <rdfs:subClassOf rdf:resource="&historicmapsphen;WaterBody"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#Landcover -->
+
+    <owl:Class rdf:about="&historicmapsphen;Landcover">
+        <rdfs:subClassOf rdf:resource="&historicmapsphen;Object"/>
+        <rdfs:comment>Class of phenomena which cover a land surface</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#Landform -->
+
+    <owl:Class rdf:about="&historicmapsphen;Landform">
+        <rdfs:subClassOf rdf:resource="&historicmapsphen;Object"/>
+        <rdfs:comment>Class of phenomena based on land morphology</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#Landparcel -->
+
+    <owl:Class rdf:about="&historicmapsphen;Landparcel">
+        <rdfs:subClassOf rdf:resource="&historicmapsphen;Object"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#LanduseObject -->
+
+    <owl:Class rdf:about="&historicmapsphen;LanduseObject">
+        <rdfs:subClassOf rdf:resource="&historicmapsphen;Object"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#March -->
+
+    <owl:Class rdf:about="&historicmapsphen;March">
+        <rdfs:subClassOf rdf:resource="&historicmapsphen;War"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#Non-inhabited -->
+
+    <owl:Class rdf:about="&historicmapsphen;Non-inhabited">
+        <rdfs:subClassOf rdf:resource="&historicmapsphen;Place"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#Object -->
+
+    <owl:Class rdf:about="&historicmapsphen;Object">
+        <rdfs:subClassOf rdf:resource="&maps;GeographicPhenomenon"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#Place -->
+
+    <owl:Class rdf:about="&historicmapsphen;Place">
+        <rdfs:subClassOf rdf:resource="&historicmapsphen;Object"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#Railway -->
+
+    <owl:Class rdf:about="&historicmapsphen;Railway">
+        <rdfs:subClassOf rdf:resource="&historicmapsphen;TrafficObject"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#River -->
+
+    <owl:Class rdf:about="&historicmapsphen;River">
+        <rdfs:subClassOf rdf:resource="&historicmapsphen;WaterBody"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#Road -->
+
+    <owl:Class rdf:about="&historicmapsphen;Road">
+        <rdfs:subClassOf rdf:resource="&historicmapsphen;TrafficObject"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#Sea -->
+
+    <owl:Class rdf:about="&historicmapsphen;Sea">
+        <rdfs:subClassOf rdf:resource="&historicmapsphen;WaterBody"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#TrafficObject -->
+
+    <owl:Class rdf:about="&historicmapsphen;TrafficObject">
+        <rdfs:subClassOf rdf:resource="&historicmapsphen;Object"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#Valley -->
+
+    <owl:Class rdf:about="&historicmapsphen;Valley">
+        <rdfs:subClassOf rdf:resource="&historicmapsphen;Landform"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#War -->
+
+    <owl:Class rdf:about="&historicmapsphen;War">
+        <rdfs:subClassOf rdf:resource="&historicmapsphen;Event"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#WaterBody -->
+
+    <owl:Class rdf:about="&historicmapsphen;WaterBody">
+        <rdfs:subClassOf rdf:resource="&historicmapsphen;Landform"/>
+    </owl:Class>
+</rdf:RDF>
+
+
+
+<!-- Generated by the OWL API (version 3.4.2) http://owlapi.sourceforge.net -->
+

@@ -161,6 +161,9 @@ function Constants(){
 	
 	var SPATIAL_REFERENCE_SYSTEM = "http://www.opengis.net/def/crs/EPSG/0/4326";
 
+	var ONTOLOGY_URL = "http://localhost/georef/ontologies/historicmapsphen.rdf"; //Be aware of javascript's cross domain problem
+
+
 	
 	//---------------------------------------------------------
 	//PRIVILEGED
@@ -201,7 +204,12 @@ function Constants(){
 			res = ABSTRACT_LENGTH;
 		}else if(name =="SPATIAL_REFERENCE_SYSTEM"){
 			res = SPATIAL_REFERENCE_SYSTEM;
+		}else if(name =="ONTOLOGY_URL"){
+			res = ONTOLOGY_URL;
 		}
+		
+		
+		
 		
 		
 		

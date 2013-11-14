@@ -14,7 +14,7 @@ function isUrlOfImage(testUrl){
 	res = false;
 	if(isUrlValid(testUrl)){
 		// Check for common image file extension
-		return /^.*\.(jpg|JPG|jpeg|JPEG|gif|GIF|bmp|BMP)$/.test(testUrl);
+		return /^.*\.(jpg|JPG|jpeg|JPEG|gif|GIF|bmp|BMP|png|PNG)$/.test(testUrl);
 	}
 	return res;
 }
@@ -28,13 +28,16 @@ function isUrlValid(url){
 	var res = false;
 	if(isTextValid(url)){
 		//TODO: There are some URLs which doesn't start with WWW
-		var urlregex = new RegExp("^(http:\/\/www.|https:\/\/www.|ftp:\/\/www.|www.){1}([0-9A-Za-z]+\.)");
+		//var urlregex = new RegExp("^(http:\/\/www.|https:\/\/www.|ftp:\/\/www.|www.){1}([0-9A-Za-z]+\.)");
+		var urlregex = /^(http|https):\/\/(([a-zA-Z0-9$\-_.+!*'(),;:&=]|%[0-9a-fA-F]{2})+@)?(((25[0-5]|2[0-4][0-9]|[0-1][0-9][0-9]|[1-9][0-9]|[0-9])(\.(25[0-5]|2[0-4][0-9]|[0-1][0-9][0-9]|[1-9][0-9]|[0-9])){3})|localhost|([a-zA-Z0-9\-\u00C0-\u017F]+\.)+([a-zA-Z]{2,}))(:[0-9]+)?(\/(([a-zA-Z0-9$\-_.+!*'(),;:@&=]|%[0-9a-fA-F]{2})*(\/([a-zA-Z0-9$\-_.+!*'(),;:@&=]|%[0-9a-fA-F]{2})*)*)?(\?([a-zA-Z0-9$\-_.+!*'(),;:@&=\/?]|%[0-9a-fA-F]{2})*)?(\#([a-zA-Z0-9$\-_.+!*'(),;:@&=\/?]|%[0-9a-fA-F]{2})*)?)?$/;
+		
 		if (urlregex.test(url)) {
 			res = true;
 		}
 	}
     return res;
 }
+
 
 /**
 * Tests if the given string is valid
@@ -58,9 +61,8 @@ function isTextValid(txt){
 * @returns TRUE if the URL is valid, FALSE otherwise
 */
 function isUriValid(uri){
-	//TODO
 	var res = false;
-	if(isTextValid(uri)){
+	if(isUrlValid(uri)){
 		//var urlregex = new RegExp("^(http:\/\/www.|https:\/\/www.|ftp:\/\/www.|www.){1}([0-9A-Za-z]+\.)");
 		//if (urlregex.test(uri)) {
 		//TODO: Find a regular expression for URI validation
@@ -374,14 +376,12 @@ function calculateRotation(xyImgProjectedBorders){
 }
 
 /**
-* Encodes an xyArray [x,y] as Well Known Text
+* Encodes an xyArray [x,y] as Well Known Text. NOTE 1: An xyArray [x,y] can only represent a single polygon. NOTE 2: Some srs require you to switch xy to yx. This function does not check for that
 * @param xyArray - An array of points [x,y] 
 * @param srsUrl - URL of a Spatial Reference System
 * @returns A polygon encoded as WKT
 */
 function xyArray2wktPolygon(xyArray, srsUrl){
-//NOTE: An xyArray [x,y] can only represent a single polygon
-//NOTE: Some srs require you to switch xy to yx. This function does not check for that
 	var res;
 	var first;
 	var last;
@@ -444,13 +444,82 @@ function isPositiveInteger(n){
 	return n >>> 0 === parseFloat(n);
 }
 
-function replaceAll(find, replace, str) {
-http://stackoverflow.com/questions/1144783/replacing-all-occurrences-of-a-string-in-javascript
-	return str.replace(new RegExp(find, 'g'), replace);
+
+/**
+* Takes a string of a RDF and finds the classes
+* @param rdfTxt - A string representing RDF
+* @returns An array of javascript objects
+*/
+function getRdfClasses(rdfTxt){
+	var rdfClasses = rdfTxt.getElementsByTagName("owl:Class"); 
+	var classArray = new Array();
+	for(var i = 0 ; i < rdfClasses.length; i++){
+		var uri = rdfClasses[i].getAttribute("rdf:about");
+		
+		var tmp = new Object();
+		tmp.type = "Class";
+		tmp.uri = uri;
+		tmp.name = getLastStringAfterHash(uri);
+		
+		var childNodes = rdfClasses[i].childNodes;
+		var tmpParents = new Array();
+		for(var j = 0 ; j < childNodes.length; j++){
+			if(childNodes[j].nodeName == "rdfs:subClassOf"){
+				//alert(tmp.name + " - " + childNodes[j].getAttribute("rdf:resource"));
+				tmpParents.push(childNodes[j].getAttribute("rdf:resource"));
+			}
+		}
+		tmp.parents = tmpParents;
+		tmp.children = new Array();
+		classArray.push(tmp);
+	}
+	getChildrenClasses(classArray);
+	return classArray;
 }
 
-function removeElement(id){
-	$('#' + id).remove();
+/**
+* Takes a set of RdfClasses (javascript objects) and fills the array of each one with its children
+* @param rdfClasses - An array of RdfClasses 
+*/
+function getChildrenClasses(rdfClasses){
+	for(var i = 0; i < rdfClasses.length; i++){
+		var fatherUris = rdfClasses[i].parents;
+		for(var k = 0; k < fatherUris.length; k++){
+			var found = false;
+			for(var j = 0; j < rdfClasses.length; j++){
+				if(i == j) continue;
+				if(rdfClasses[j].uri == fatherUris[k]){
+					rdfClasses[j].children.push(rdfClasses[i].uri);
+					found = true;
+					break;
+				}
+			}
+			if(found) break;
+		}
+	}
+}
+
+
+
+
+
+
+
+
+function getLastStringAfterHash(urlTxt){
+	var res = "";
+	var tmpArray = urlTxt.split("#");
+	if(tmpArray.length > 1){
+		res = tmpArray[tmpArray.length - 1];// last element
+	}
+	return res;
+}
+
+
+
+//Taken from http://stackoverflow.com/questions/1144783/replacing-all-occurrences-of-a-string-in-javascript
+function replaceAll(find, replace, str) {
+	return str.replace(new RegExp(find, 'g'), replace);
 }
 
 
@@ -462,4 +531,24 @@ function djb2Code(str){
 		hash = ((hash << 5) + hash) + char; /* hash * 33 + c */
 	}
 	return hash;
+}
+ 
+ 
+//Taken from http://www.w3schools.com/dom/dom_loadxmldoc.asp 
+function loadXMLString(txt){
+	if (window.DOMParser){
+		parser=new DOMParser();
+		xmlDoc=parser.parseFromString(txt,"text/xml");
+	}else{
+		// Internet Explorer
+		xmlDoc=new ActiveXObject("Microsoft.XMLDOM");
+		xmlDoc.async=false;
+		xmlDoc.loadXML(txt);
+	}
+	return xmlDoc;
+}
+
+
+function removeElement(id){
+	$('#' + id).remove();
 }
