@@ -74,8 +74,7 @@ $(document).ready(function () {
 		var counter = 0;
 		for(var i = 0; i < rdfClasses.length; i++){
 			if(rdfClasses[i].children.length == 0){
-				//alert("leaf - " + rdfClasses[i].name);
-				$("#contentTags").append("<p id='pOntologyContentTag" + counter +"'><input type='checkbox' id='" + rdfClasses[i].name + "' value='" + rdfClasses[i].name + "' class='chOntologyContent' >" + rdfClasses[i].name + " - <a href='" + rdfClasses[i].uri + "' target='_blank'>view</a> <a href='javascript: void(0)' onclick='removeElement(&quot;pOntologyContentTag" + counter + "&quot;)'>remove</a></p>");				
+				$("#contentTags").append("<p id='pOntologyContentTag" + counter +"'><input type='checkbox' id='" + rdfClasses[i].name + "' value='" + rdfClasses[i].uri + "' class='chOntologyContent' >" + rdfClasses[i].name + " - <a href='" + rdfClasses[i].uri + "' target='_blank'>view</a> <a href='javascript: void(0)' onclick='removeElement(&quot;pOntologyContentTag" + counter + "&quot;)'>remove</a></p>");				
 				counter++;
 			}
 		}
@@ -366,13 +365,14 @@ $(document).ready(function () {
 	/**
 	* Retrieves Dbpedia entries related in space and time
 	* @param xybbox - Array of [x,y] with the map area's vertexs.
-	* @param {inetger} year - Year to search.
+	* @param {inetger} yearStart - Start year to search.
+	* @param {inetger} yearEnd - End year to search.
 	* @returns Array of arrays [url, label, abstract]
 	*/
-	function queryDbpediaST(xybbox, year){
+	function queryDbpediaST(xybbox, yearStart, yearEnd){
 		var res = new Array();
 		
-		var abstractLength = c.getConstant("getConstant");
+		var abstractLength = c.getConstant("ABSTRACT_LENGTH");
 		var sq = new SparqlQuery();
 		var query = c.getConstant("PREFIXES") + " " + c.getConstant("QUERY_BOX_YEAR");
 		
@@ -384,8 +384,8 @@ $(document).ready(function () {
 		query = query.replace("<PARAM_YMIN>", yMin);
 		query = query.replace("<PARAM_XMAX>", xMax);
 		query = query.replace("<PARAM_YMAX>", yMax);
-		query = replaceAll("<PARAM_YEAR>", year, query);//query = query.replace("<PARAM_YEAR>", year);
-		
+		query = replaceAll("<PARAM_YEAR_START>", yearStart, query);
+		query = replaceAll("<PARAM_YEAR_END>", yearEnd, query);
 		
 		try{
 			//Fails when DBpedia is offline - You don't say!
@@ -557,7 +557,7 @@ $(document).ready(function () {
 					cPlaceTriples += "<" + encodeURI(baseUri + paperMapPlacesArray[i]) + "> a <http://www.geographicknowledge.de/vocab/maps#Place>" + tripleSeparator; 
 					cPlaceTriples += "<" + encodeURI(baseUri + paperMapPlacesArray[i]) + "> foaf:name '" + paperMapPlacesArray[i] + "'^^xsd:string" + tripleSeparator;
 					//LInks the paper map to the place just created
-					cMapTriples += paperMapUri + "<http://www.geographicknowledge.de/vocab/maps#mapsPlace> <" + encodeURI(baseUri + paperMapPlacesArray[i]) + ">" + tripleSeparator;
+					cMapTriples += paperMapUri + "<http://www.geographicknowledge.de/vocab/maps#mapsPhenomenon> <" + encodeURI(baseUri + paperMapPlacesArray[i]) + ">" + tripleSeparator;
 				}
 			}
 			
@@ -574,13 +574,13 @@ $(document).ready(function () {
 			//DBpedia places matched from user's places. Alphanumeric
 			$(".chPlaceSuggestion").each(function( index ){
 				if(this.checked){
-					cMapTriples += paperMapUri + "<http://www.geographicknowledge.de/vocab/maps#mapsPlace> <" +  this.value + ">" + tripleSeparator;
+					cMapTriples += paperMapUri + "<http://www.geographicknowledge.de/vocab/maps#mapsPhenomenon> <" +  this.value + ">" + tripleSeparator;
 				}
 			});
 			//DBpedia retrieved from the image map boundary and the user's typed year- spatio temporal places
 			$(".chMapLinkSuggestion").each(function( index ){
 				if(this.checked){
-					cMapTriples += paperMapUri + "<http://www.geographicknowledge.de/vocab/maps#mapsPlace> <" +  this.value + ">" + tripleSeparator;
+					cMapTriples += paperMapUri + "<http://www.geographicknowledge.de/vocab/maps#mapsPhenomenon> <" +  this.value + ">" + tripleSeparator;
 				}
 			});
 			//DBpedia - Links found in the user's description
@@ -591,6 +591,13 @@ $(document).ready(function () {
 					
 				}
 			});
+			//Triples from the ontology
+			$(".chOntologyContent").each(function( index ){
+				if(this.checked){
+					cMapTriples += paperMapUri + "<http://www.geographicknowledge.de/vocab/maps#mapsPhenomenon> <" +  this.value + ">" + tripleSeparator;
+				}
+			});
+			
 			//Replace in the insert template
 			insertTemplate = insertTemplate.replace("PARAM_GRAPH", graph);
 			insertTemplate = insertTemplate.replace("PARAM_TRIPLES", cMapTriples + cPlaceTriples + cAgentTriples);
@@ -599,7 +606,7 @@ $(document).ready(function () {
 			res = queryInsert;
 			
 		}
-		alert("MISSING TRIPLES FroM ONTOLOGY");
+
 		return res;
 	}
 	
@@ -930,8 +937,9 @@ $(document).ready(function () {
 					if(year != null){
 						var xyProjArrayBnd = getImageBoundariesInMapCoords(trans, imgModelScaled);
 						var xybboxBnd = getBoundary(xyProjArrayBnd);
-						year = year + "-01-01T00:00:00+02:00";//TODO: Find a better way to make the year valid
-						var stRefs = queryDbpediaST(xybboxBnd, year);
+						var yearStart = year + "-01-01T00:00:00+02:00";//TODO: Find a better way to make the year valid
+						var yearEnd = year;//HACK: Machete kills!
+						var stRefs = queryDbpediaST(xybboxBnd, yearStart, yearEnd);
 						//Adds check boxes for suggestions
 						$("#stSuggestions").empty();
 						var tmp = new Array();
