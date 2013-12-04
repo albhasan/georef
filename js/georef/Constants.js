@@ -163,7 +163,7 @@ function Constants(){
 
 	var ONTOLOGY_URL = "http://localhost/georef/ontologies/historicmapsphen.rdf"; //Be aware of javascript's cross domain problem
 
-
+	var DATE_SEPARATOR = "-";
 	
 	//---------------------------------------------------------
 	//PRIVILEGED
@@ -206,12 +206,9 @@ function Constants(){
 			res = SPATIAL_REFERENCE_SYSTEM;
 		}else if(name =="ONTOLOGY_URL"){
 			res = ONTOLOGY_URL;
+		}else if(name =="DATE_SEPARATOR"){
+			res = DATE_SEPARATOR;
 		}
-		
-		
-		
-		
-		
 		
 		return res;
 	}

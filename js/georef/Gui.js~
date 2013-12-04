@@ -453,58 +453,35 @@ $(document).ready(function () {
 	* Validates the data in the metadata tab.
 	*/
 	function validateMetadata(){
-		var res = true;
-		var c = new Constants();
-		var paperMapUri = $("#paperMapUri").val();
+		var res = false;
 		var d = new Date();
-		var messages = new Array();
+		var paperMapUri = $("#paperMapUri").val();
 		var imageMapUri;
-		var dateSeparator = c.getConstant("DATE_SEPARATOR");
-		
 		if(imgModelOriginal != null){
-			imageMapUri = imgModelOriginal.getUrl();
+			imageMapUri = imgModelOriginal.getUrl()
 		}
 		if(isUrlOfImage(imageMapUri)){
 			if(isUriValid(paperMapUri)){
+				res = true;
 				paperMapCreator = $.trim($("#paperMapCreator").val());
 				paperMapSize = $.trim($("#paperMapSize").val());
 				paperMapTitle = $.trim($("#paperMapTitle").val());
 				paperMapTime = $.trim($("#paperMapTime").val());
 				if(paperMapTime != null){
-					if(paperMapTime.length > 3){
-						if(paperMapTime.indexOf(dateSeparator) >= 0){
-							var strDates = paperMapTime.split(dateSeparator);
-							if(isPositiveInteger(strDates[0].trim()) == false || isPositiveInteger(strDates[1].trim()) == false){
-								messages.unshift("Invalid map time. Expected is like '1810' or '1810-1819'. Please review it in the Map Metadata tab.");
-							}
-						}else{
-							if(isPositiveInteger(paperMapTime) == false || paperMapTime > d.getFullYear()){
-								messages.unshift("Invalid 	map time. Please review it in the Map Metadata tab.");
-							}
-						}
+					if(isPositiveInteger(paperMapTime) == false || paperMapTime > d.getFullYear()){
+						alert("Invalid 	map time. Please review it in the Map Metadata tab.");
+						res = false;
 					}
-					paperMapScale = $.trim($("#paperMapScale").val());
-					paperMapPlaces = $.trim($("#paperMapPlaces").val());
-					mapAreawkt = $.trim($("#mapAreawkt").val());
+				}
+				paperMapScale = $.trim($("#paperMapScale").val());
+				paperMapPlaces = $.trim($("#paperMapPlaces").val());
+				mapAreawkt = $.trim($("#mapAreawkt").val());
 				}else{
-					messages.unshift("The map URI is invalid. Please review it in the Map Metadata tab.");
+					alert("The map URI is invalid. Please review it in the Map Metadata tab.");
 				}
 			}else{
-				messages.unshift("The image URL is invalid. Please review it in the image tab.");
+				alert("The image URL is invalid. Please review it in the image tab.");
 			}
-		}
-		if(messages.length > 0){
-			var msgstr = "";
-			for (var i = 0; i < messages.length; i++){
-				if(i == 0){
-					msgstr = messages[i] + "\n";
-				}else{
-					msgstr += messages[i];
-				}
-			}
-			alert(msgstr);
-			res = false;
-		}
 		return res;
 	}
 	
@@ -521,8 +498,7 @@ $(document).ready(function () {
 		var insertTemplate = c.getConstant("QUERY_INSERT");
 		var imageMapUri = imgModelOriginal.getUrl()
 		var tripleSeparator = " . ";// + String.fromCharCode(13);
-		var pmu = $("#paperMapUri").val();
-		var paperMapUri = "<" + pmu + "> ";
+		var paperMapUri = "<" + $("#paperMapUri").val() + "> ";
 		if(validateMetadata()){
 			//Gets the data from the form (in case the user changed something)
 			paperMapCreator = $.trim($("#paperMapCreator").val());
@@ -550,42 +526,10 @@ $(document).ready(function () {
 			if(paperMapTitle != null && paperMapTitle.length > 0){
 				cMapTriples += paperMapUri + "<http://www.geographicknowledge.de/vocab/maps#title> '" + paperMapTitle + "'^^xsd:string" + tripleSeparator;
 			}
-			
 			//paper map time
 			if(paperMapTime != null && paperMapTime.length > 0){
-				var dateArray = paperMapTime.split("-");
-				var dateFrom = "";
-				var dateTo = "";
-				var tripleFrom = "";
-				var tripleTo = "";
-				var timeTriple = "";
-
-				if(dateArray.length > 0){
-					if(dateArray.length == 1){
-						dateFrom = dateArray[0];
-						dateFrom = dateFrom.trim();
-						tripleFrom = "<" + paperMapUri + "/mapRepresentationTime> a <http://www.w3.org/2006/time#Instant>" + tripleSeparator;
-						tripleFrom += "<" + paperMapUri + "/mapRepresentationTime> <http://www.w3.org/2001/XMLSchema#dateTime> '" + dateFrom + "'" + tripleSeparator;
-						timeTriple = tripleFrom;
-					}else if(dateArray.length == 2){
-						dateFrom = dateArray[0];
-						dateFrom = dateFrom.trim();
-						dateTo = dateArray[1];
-						dateTo = dateTo.trim();
-						tripleFrom = "<" + paperMapUri + "/mapRepresentationTime/start> a <http://www.w3.org/2006/time#Instant>" + tripleSeparator;
-						tripleFrom += "<" + paperMapUri + "/mapRepresentationTime/start> <http://www.w3.org/2001/XMLSchema#dateTime> '" + dateFrom + "'" + tripleSeparator;
-						tripleTo = "<" + paperMapUri + "/mapRepresentationTime/end> a <http://www.w3.org/2006/time#Instant>" + tripleSeparator;
-						tripleTo += "<" + paperMapUri + "/mapRepresentationTime/end> <http://www.w3.org/2001/XMLSchema#dateTime> '" + dateTo + "'" + tripleSeparator;
-						var intervalTriple = "<" + paperMapUri + "/mapRepresentationTime> a <http://www.w3.org/2006/time#Interval>" + tripleSeparator;
-						intervalTriple +=  "<" + paperMapUri + "/mapRepresentationTime> <http://www.w3.org/2006/time#hasBeginning> <" + paperMapUri + "/mapRepresentationTime/start>" + tripleSeparator;
-						intervalTriple +=  "<" + paperMapUri + "/mapRepresentationTime> <http://www.w3.org/2006/time#hasEnd> <" + paperMapUri + "/mapRepresentationTime/end>" + tripleSeparator;
-						timeTriple	=  intervalTriple + tripleFrom + tripleTo + tripleSeparator;
-					}
-					cMapTriples += paperMapUri + "<http://www.geographicknowledge.de/vocab/maps#mapsTime> <" + paperMapUri + "/mapRepresentationTime>" + tripleSeparator;
-					cMapTriples += timeTriple;
-				}
+				cMapTriples += paperMapUri + "<http://www.geographicknowledge.de/vocab/maps#mapsTime> '" + paperMapTime + "'^^xsd:gYear" + tripleSeparator;
 			}
-			
 			//paper map scale
 			if(paperMapScale != null && paperMapScale.length > 0){
 				cMapTriples += paperMapUri + "<http://www.geographicknowledge.de/vocab/maps#hasScale> '" + paperMapScale + "'^^xsd:string" +  tripleSeparator;
@@ -593,14 +537,16 @@ $(document).ready(function () {
 			//paper map area en map coords
 			if(mapAreawkt != null && mapAreawkt.length > 0){
 				//Get a name for the Geometry object (map area)
-				var geomName = imageMapUri + "/" + djb2Code(imageMapUri);
+				var geomName = imageMapUri + "-" + djb2Code(imageMapUri);
 				cMapTriples += "<" + geomName + "> a geo:Geometry " +  tripleSeparator;
 				cMapTriples += paperMapUri + "<http://www.geographicknowledge.de/vocab/maps#mapsArea> " + "<" + geomName + "> " +  tripleSeparator;
 				cMapTriples += "<" + geomName + "> geo:asWKT '" + mapAreawkt + "'^^sf:wktLiteral" +  tripleSeparator;
 			}
 			//paper map description
 			if(paperMapDescription != null && paperMapDescription.length > 0){
+			
 				var tmpDescription = paperMapDescription.replace("'",'\"');
+			
 				cMapTriples += paperMapUri + "<http://purl.org/dc/terms/description> '" + paperMapDescription + "'^^xsd:string" +  tripleSeparator;
 			}
 			
@@ -608,21 +554,19 @@ $(document).ready(function () {
 			var cPlaceTriples = "";	
 			if(paperMapPlacesArray != null){
 				for(var i = 0; i < paperMapPlacesArray.length; i++){
-					var tmpPlace = encodeURI(baseUri + "/" + paperMapPlacesArray[i]);
-					cPlaceTriples += "<" + tmpPlace + "> a <http://www.geographicknowledge.de/vocab/maps#Place>" + tripleSeparator; 
-					cPlaceTriples += "<" + tmpPlace + "> foaf:name '" + paperMapPlacesArray[i] + "'^^xsd:string" + tripleSeparator;
-					//Links the paper map to the place just created
-					cMapTriples += paperMapUri + "<http://www.geographicknowledge.de/vocab/maps#mapsPhenomenon> <" + tmpPlace + ">" + tripleSeparator;
+					cPlaceTriples += "<" + encodeURI(baseUri + paperMapPlacesArray[i]) + "> a <http://www.geographicknowledge.de/vocab/maps#Place>" + tripleSeparator; 
+					cPlaceTriples += "<" + encodeURI(baseUri + paperMapPlacesArray[i]) + "> foaf:name '" + paperMapPlacesArray[i] + "'^^xsd:string" + tripleSeparator;
+					//LInks the paper map to the place just created
+					cMapTriples += paperMapUri + "<http://www.geographicknowledge.de/vocab/maps#mapsPhenomenon> <" + encodeURI(baseUri + paperMapPlacesArray[i]) + ">" + tripleSeparator;
 				}
 			}
 			
 			//Triples about the map's author
 			var cAgentTriples = "";
 			if(paperMapCreator != null && paperMapCreator.length > 0){
-				var tmpMapCreator =  encodeURI(baseUri + "/" + paperMapCreator);
-				cAgentTriples = paperMapUri + " <http://purl.org/dc/terms/creator> <" + tmpMapCreator + ">" + tripleSeparator;
-				cAgentTriples += "<" + tmpMapCreator + "> a <http://purl.org/dc/terms/Agent>" + tripleSeparator;
-				cAgentTriples += "<" + tmpMapCreator + "> foaf:name '" + paperMapCreator + "'^^xsd:string" + tripleSeparator;
+				cAgentTriples = paperMapUri + " <http://purl.org/dc/terms/creator> <" + encodeURI(baseUri + paperMapCreator) + ">" + tripleSeparator;
+				cAgentTriples += "<" + encodeURI(baseUri + paperMapCreator) + "> a <http://purl.org/dc/terms/Agent>" + tripleSeparator;
+				cAgentTriples += "<" + encodeURI(baseUri + paperMapCreator) + "> foaf:name '" + paperMapCreator + "'^^xsd:string" + tripleSeparator;
 			}
 
 			//Builds triples form the checkboxes
@@ -650,9 +594,7 @@ $(document).ready(function () {
 			//Triples from the ontology
 			$(".chOntologyContent").each(function( index ){
 				if(this.checked){
-					var tmpInstance = pmu + "/" + djb2Code(this.value);
-					cMapTriples += "<" + tmpInstance + "> a <" + this.value  + ">" + tripleSeparator;
-					cMapTriples += paperMapUri + "<http://www.geographicknowledge.de/vocab/maps#mapsPhenomenon> <" +  tmpInstance + ">" + tripleSeparator;
+					cMapTriples += paperMapUri + "<http://www.geographicknowledge.de/vocab/maps#mapsPhenomenon> <" +  this.value + ">" + tripleSeparator;
 				}
 			});
 			
@@ -991,22 +933,12 @@ $(document).ready(function () {
 		$( "#btUpdateMapLinks" ).click(function(){
 			if(trans != null){
 				if(validateMetadata()){
-					var c = new Constants();
-					var dateSeparator = c.getConstant("DATE_SEPARATOR");
 					var year = $.trim($("#paperMapTime").val());
 					if(year != null){
 						var xyProjArrayBnd = getImageBoundariesInMapCoords(trans, imgModelScaled);
 						var xybboxBnd = getBoundary(xyProjArrayBnd);
-						var yearStart = "";
-						var yearEnd = "";
-						if(year.indexOf(dateSeparator) >= 0){
-							var yearStrArray = year.split(dateSeparator);
-							yearStart = yearStrArray[0] + "-01-01T00:00:00+00:00";//TODO: Find a better way to make the year valid
-							yearEnd = yearStrArray[1];//HACK: Machete kills!
-						}else{
-							yearStart = year + "-01-01T00:00:00+00:00";//TODO: Find a better way to make the year valid
-							yearEnd = year;//HACK: Machete kills!
-						}
+						var yearStart = year + "-01-01T00:00:00+02:00";//TODO: Find a better way to make the year valid
+						var yearEnd = year;//HACK: Machete kills!
 						var stRefs = queryDbpediaST(xybboxBnd, yearStart, yearEnd);
 						//Adds check boxes for suggestions
 						$("#stSuggestions").empty();
