@@ -502,8 +502,18 @@ function getChildrenClasses(rdfClasses){
 
 
 
-
-
+/**
+* Replaces characters for escaped versions
+* @param text - An string
+* @returns An escaped string
+*/
+function getStringEscaped(text){
+	var res = text;
+	res = res.replace(/'/g, "\'");
+	res = res.replace(/"/g, '\"');
+	res = res.replace(/\\/g, '\\');
+	return res;
+}
 
 
 function getLastStringAfterHash(urlTxt){

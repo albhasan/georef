@@ -525,13 +525,13 @@ $(document).ready(function () {
 		var paperMapUri = "<" + pmu + "> ";
 		if(validateMetadata()){
 			//Gets the data from the form (in case the user changed something)
-			paperMapCreator = $.trim($("#paperMapCreator").val());
+			paperMapCreator = getStringEscaped($.trim($("#paperMapCreator").val()));
 			paperMapSize = $.trim($("#paperMapSize").val());
-			paperMapTitle = $.trim($("#paperMapTitle").val());
+			paperMapTitle = getStringEscaped($.trim($("#paperMapTitle").val()));
 			paperMapTime = $.trim($("#paperMapTime").val());
 			paperMapScale = $.trim($("#paperMapScale").val());
 			paperMapPlaces = $.trim($("#paperMapPlaces").val());
-			paperMapDescription = $.trim($("#taMapDescription").val());
+			paperMapDescription = getStringEscaped($.trim($("#taMapDescription").val()));
 			mapAreawkt = $.trim($("#mapAreawkt").val());
 			var paperMapPlacesArray = csv2array(paperMapPlaces);//Get the list of user's places as an array
 			
@@ -564,24 +564,24 @@ $(document).ready(function () {
 					if(dateArray.length == 1){
 						dateFrom = dateArray[0];
 						dateFrom = dateFrom.trim();
-						tripleFrom = "<" + paperMapUri + "/mapRepresentationTime> a <http://www.w3.org/2006/time#Instant>" + tripleSeparator;
-						tripleFrom += "<" + paperMapUri + "/mapRepresentationTime> <http://www.w3.org/2001/XMLSchema#dateTime> '" + dateFrom + "'" + tripleSeparator;
+						tripleFrom = "<" + pmu + "/mapRepresentationTime> a <http://www.w3.org/2006/time#Instant>" + tripleSeparator;
+						tripleFrom += "<" + pmu + "/mapRepresentationTime> <http://www.w3.org/2001/XMLSchema#gYear> '" + dateFrom + "'" + tripleSeparator;
 						timeTriple = tripleFrom;
 					}else if(dateArray.length == 2){
 						dateFrom = dateArray[0];
 						dateFrom = dateFrom.trim();
 						dateTo = dateArray[1];
 						dateTo = dateTo.trim();
-						tripleFrom = "<" + paperMapUri + "/mapRepresentationTime/start> a <http://www.w3.org/2006/time#Instant>" + tripleSeparator;
-						tripleFrom += "<" + paperMapUri + "/mapRepresentationTime/start> <http://www.w3.org/2001/XMLSchema#dateTime> '" + dateFrom + "'" + tripleSeparator;
-						tripleTo = "<" + paperMapUri + "/mapRepresentationTime/end> a <http://www.w3.org/2006/time#Instant>" + tripleSeparator;
-						tripleTo += "<" + paperMapUri + "/mapRepresentationTime/end> <http://www.w3.org/2001/XMLSchema#dateTime> '" + dateTo + "'" + tripleSeparator;
-						var intervalTriple = "<" + paperMapUri + "/mapRepresentationTime> a <http://www.w3.org/2006/time#Interval>" + tripleSeparator;
-						intervalTriple +=  "<" + paperMapUri + "/mapRepresentationTime> <http://www.w3.org/2006/time#hasBeginning> <" + paperMapUri + "/mapRepresentationTime/start>" + tripleSeparator;
-						intervalTriple +=  "<" + paperMapUri + "/mapRepresentationTime> <http://www.w3.org/2006/time#hasEnd> <" + paperMapUri + "/mapRepresentationTime/end>" + tripleSeparator;
-						timeTriple	=  intervalTriple + tripleFrom + tripleTo + tripleSeparator;
+						tripleFrom = "<" + pmu + "/mapRepresentationTime/start> a <http://www.w3.org/2006/time#Instant>" + tripleSeparator;
+						tripleFrom += "<" + pmu + "/mapRepresentationTime/start> <http://www.w3.org/2001/XMLSchema#gYear> '" + dateFrom + "'" + tripleSeparator;
+						tripleTo = "<" + pmu + "/mapRepresentationTime/end> a <http://www.w3.org/2006/time#Instant>" + tripleSeparator;
+						tripleTo += "<" + pmu + "/mapRepresentationTime/end> <http://www.w3.org/2001/XMLSchema#gYear> '" + dateTo + "'" + tripleSeparator;
+						var intervalTriple = "<" + pmu + "/mapRepresentationTime> a <http://www.w3.org/2006/time#Interval>" + tripleSeparator;
+						intervalTriple +=  "<" + pmu + "/mapRepresentationTime> <http://www.w3.org/2006/time#hasBeginning> <" + pmu + "/mapRepresentationTime/start>" + tripleSeparator;
+						intervalTriple +=  "<" + pmu + "/mapRepresentationTime> <http://www.w3.org/2006/time#hasEnd> <" + pmu + "/mapRepresentationTime/end>" + tripleSeparator;
+						timeTriple	=  intervalTriple + tripleFrom + tripleTo;
 					}
-					cMapTriples += paperMapUri + "<http://www.geographicknowledge.de/vocab/maps#mapsTime> <" + paperMapUri + "/mapRepresentationTime>" + tripleSeparator;
+					cMapTriples += paperMapUri + "<http://www.geographicknowledge.de/vocab/maps#mapsTime> <" + pmu + "/mapRepresentationTime>" + tripleSeparator;
 					cMapTriples += timeTriple;
 				}
 			}
