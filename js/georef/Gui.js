@@ -650,9 +650,9 @@ $(document).ready(function () {
 			//Triples from the ontology
 			$(".chOntologyContent").each(function( index ){
 				if(this.checked){
-					var tmpInstance = pmu + "/" + djb2Code(this.value);
-					cMapTriples += "<" + tmpInstance + "> a <" + this.value  + ">" + tripleSeparator;
-					cMapTriples += paperMapUri + "<http://www.geographicknowledge.de/vocab/maps#mapsPhenomenon> <" +  tmpInstance + ">" + tripleSeparator;
+					var tmpInstance = djb2Code(pmu + "/" + this.value);
+					cMapTriples += "_:" + tmpInstance + " a <" + this.value  + ">" + tripleSeparator;
+					cMapTriples += paperMapUri + "<http://www.geographicknowledge.de/vocab/maps#mapsPhenomenon> _:" +  tmpInstance + tripleSeparator;
 				}
 			});
 			
