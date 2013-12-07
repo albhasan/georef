@@ -512,11 +512,10 @@ $(document).ready(function () {
 	/**
 	* Build the triples to be sent to the triple store
 	*/
-	function buildTriples(){
+	function buildTriples(graph){
 		var res;
 		var c = new Constants();
 		var baseUri = c.getConstant("HOME_URI");
-		var graph = c.getConstant("HOME_GRAPH");
 		var prefix = c.getConstant("PREFIXES");
 		var insertTemplate = c.getConstant("QUERY_INSERT");
 		var imageMapUri = imgModelOriginal.getUrl()
@@ -801,20 +800,27 @@ $(document).ready(function () {
 	});
 
 	
-	//Button - store. Gets the data, builds triples and send them to the triple store
+	//Button - store. Gets the data, creates a new graph, builds triples and send them to the triple store
 	$(function(){
 		$( "#btStoreTriples" ).click(function(){
 			paperMapUri = $("#paperMapUri").val();
 			var imageMapUri;
+			var c = new Constants();
 			if(imgModelOriginal != null){
 				imageMapUri = imgModelOriginal.getUrl()
 			}
 			if(isUrlOfImage(imageMapUri)){
 				if(isUrlValid(paperMapUri)){
-					var queryInsert = buildTriples();
+					var graph = createGraphName(c.getConstant("HOME_URI"), paperMapUri);
+					var queryCreate = c.getConstant("QUERY_CREATE_GRAPH");
+					queryCreate = queryCreate.replace("PARAM_GRAPH", graph);
+					var queryInsert = buildTriples(graph);
 					try{
-						var graph = c.getConstant("HOME_GRAPH");
+						//Creates a new SPARQL GRAPH
 						var sq = new SparqlQuery();
+						var js = sq.sendSparqlUpdate(queryCreate, c.getConstant("HOME_SPARQLENDPOINT"), graph);
+						//Insert the triples in the new GRAPH
+						sq = new SparqlQuery();
 						var js = sq.sendSparqlUpdate(queryInsert, c.getConstant("HOME_SPARQLENDPOINT"), graph);
 						alert("Map data inserted!");
 					}catch(err){
@@ -863,9 +869,11 @@ $(document).ready(function () {
 	$(function(){
 		$( "#btGenerateRdf" ).click(function(){
 			if(validateMetadata()){
-				//paperMapUri = $("#paperMapUri").val();
+				paperMapUri = $("#paperMapUri").val();
 				var imageMapUri = imgModelOriginal.getUrl()
-				var queryInsert = buildTriples();
+				var c = new Constants();	
+				var graph = createGraphName(c.getConstant("HOME_URI"), paperMapUri);
+				var queryInsert = buildTriples(graph);
 				var win = window.open(c.getConstant("CODE_WINDOW_PROPERTIES"));
 				var wincode = c.getConstant("CODE_WINDOW_HTML_PREFIX");
 				wincode = wincode.replace("<PARAM_WINDOW_TITLE>", "Georeferencer - RDF");
@@ -888,6 +896,23 @@ $(document).ready(function () {
 			}
 		});
 	});	
+	
+	
+	/**
+	* Creates a name for the garoh of the map from a prefix and the map URI
+	*/
+	function createGraphName(prefix, mapURI){
+		var res = "";
+		if(prefix.length > 1 && mapURI.length > 1){
+			var tmp = djb2Code(mapURI);
+			if(prefix.substr(prefix.length - 1) == "/"){
+				res = prefix + tmp;
+			}else{
+				res = prefix + "/" + tmp;
+			}
+		}
+		return res;
+	}
 	
 	
 	/**

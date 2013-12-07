@@ -15,8 +15,6 @@ function Constants(){
 	
 	var HOME_URI = 'http://uni-muenster.de/historicmaps';
 	
-	var HOME_GRAPH = 'http://ifgi.uni-muenster.de/lodum/historicmaps';
-	
 	var HOME_SPARQLENDPOINT = 'http://giv-siidemo.uni-muenster.de:8081/parliament/sparql';
 	
 	var PREFIXES =	'PREFIX owl: <http://www.w3.org/2002/07/owl#> ' + newline +
@@ -34,6 +32,11 @@ function Constants(){
 					'PREFIX geof: <http://www.opengis.net/def/function/geosparql/> ' + newline +
 					'PREFIX geo: <http://www.opengis.net/ont/geosparql/1.0#> ' + newline +
 					'PREFIX geoWgs84: <http://www.w3.org/2003/01/geo/wgs84_pos#> ' + newline;
+					
+					
+					
+	var QUERY_CREATE_GRAPH = 'CREATE GRAPH <PARAM_GRAPH>' + newline;
+
 					
 	var QUERY_INSERT = 	'INSERT DATA{' + newline + 
 						'	GRAPH<PARAM_GRAPH>{' + newline + 
@@ -182,8 +185,6 @@ function Constants(){
 			res = HOME_URI;
 		}else if(name =="QUERY_INSERT"){
 			res = QUERY_INSERT;
-		}else if(name =="HOME_GRAPH"){
-			res = HOME_GRAPH;
 		}else if(name =="HOME_SPARQLENDPOINT"){
 			res = HOME_SPARQLENDPOINT;
 		}else if(name =="CODE_WINDOW_PROPERTIES"){
@@ -208,7 +209,11 @@ function Constants(){
 			res = ONTOLOGY_URL;
 		}else if(name =="DATE_SEPARATOR"){
 			res = DATE_SEPARATOR;
+		}else if(name =="QUERY_CREATE_GRAPH"){
+			res = QUERY_CREATE_GRAPH;
 		}
+		
+		
 		
 		return res;
 	}
