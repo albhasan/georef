@@ -11,10 +11,16 @@ as published by Sam Hocevar. See the COPYING file for more details.
 * @returns TRUE if the file extension match an image format FALSE otherwise
 */
 function isUrlOfImage(testUrl){
-	res = false;
-	if(isUrlValid(testUrl)){
-		// Check for common image file extension
-		return /^.*\.(jpg|JPG|jpeg|JPEG|gif|GIF|bmp|BMP|png|PNG)$/.test(testUrl);
+	//TODO: How to check if it really is an image e.g http://sammlungen.ulb.uni-muenster.de/hd/content/pageview/2578874
+	res = true;
+	/*if(isUrlValid(testUrl)){
+		Check for common image file extension
+		return /^.*\.(jpg|JPG|jpeg|JPEG|gif|GIF|bmp|BMP)$/.test(testUrl);
+		res = true;
+	}*/
+	if(testUrl.indexOf("?") > 0 ){
+		alert("The given URL contains parameters. Please remove the parameters.");
+		res = false;
 	}
 	return res;
 }
@@ -25,18 +31,18 @@ function isUrlOfImage(testUrl){
 * @returns TRUE if the URL is valid, FALSE otherwise
 */
 function isUrlValid(url){
-	var res = false;
-	if(isTextValid(url)){
+	//TODO: How to validate a URL?????
+	var res = true;
+	/*if(isTextValid(url)){
 		//TODO: There are some URLs which doesn't start with WWW
-		//var urlregex = new RegExp("^(http:\/\/www.|https:\/\/www.|ftp:\/\/www.|www.){1}([0-9A-Za-z]+\.)");
-		var urlregex = /^(http|https):\/\/(([a-zA-Z0-9$\-_.+!*'(),;:&=]|%[0-9a-fA-F]{2})+@)?(((25[0-5]|2[0-4][0-9]|[0-1][0-9][0-9]|[1-9][0-9]|[0-9])(\.(25[0-5]|2[0-4][0-9]|[0-1][0-9][0-9]|[1-9][0-9]|[0-9])){3})|localhost|([a-zA-Z0-9\-\u00C0-\u017F]+\.)+([a-zA-Z]{2,}))(:[0-9]+)?(\/(([a-zA-Z0-9$\-_.+!*'(),;:@&=]|%[0-9a-fA-F]{2})*(\/([a-zA-Z0-9$\-_.+!*'(),;:@&=]|%[0-9a-fA-F]{2})*)*)?(\?([a-zA-Z0-9$\-_.+!*'(),;:@&=\/?]|%[0-9a-fA-F]{2})*)?(\#([a-zA-Z0-9$\-_.+!*'(),;:@&=\/?]|%[0-9a-fA-F]{2})*)?)?$/;
-		
+		var urlregex = new RegExp("^(http:\/\/www.|https:\/\/www.|ftp:\/\/www.|www.){1}([0-9A-Za-z]+\.)");
 		if (urlregex.test(url)) {
 			res = true;
 		}
-	}
+	}*/
     return res;
 }
+
 
 
 /**

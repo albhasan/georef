@@ -21,8 +21,8 @@ var mapAreaVertexTable;//
 
 var imageBoundaryOnMap;
 var imageMapAreaOnMap;
-var drawnItemsImage = new L.FeatureGroup();
-var drawnItemsMap = new L.FeatureGroup();
+var drawnItemsImage;//var drawnItemsImage = new L.FeatureGroup();
+var drawnItemsMap;//var drawnItemsMap = new L.FeatureGroup();
 var c;//Constants
 var trans;//Transformation
 var imageMapArea;//Area of the mapArea in the image (pixels)
@@ -96,12 +96,20 @@ $(document).ready(function () {
 		mapImage = L.map('mapImage', {center: [imageMapMaxSize/2, imageMapMaxSize/2],zoom: 12,crs: L.CRS.Simple});	//Plane SRS to put the map-image
 		mkManager = new MarkerManager(cpManager, drawnItemsImage, drawnItemsMap);
 		
+		
+drawnItemsImage = new L.FeatureGroup();
+drawnItemsMap = new L.FeatureGroup();
+		
+		
+		
 		//Adds layers
-		L.tileLayer('http://{s}.tile.cloudmade.com/BC9A493B41014CAABB98F0471D759707/997/256/{z}/{x}/{y}.png', {
+		/*L.tileLayer('http://{s}.tile.cloudmade.com/BC9A493B41014CAABB98F0471D759707/997/256/{z}/{x}/{y}.png', {
 			maxZoom: 18,
 			attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://cloudmade.com">CloudMade</a>'
+		}).addTo(map);*/
+		L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+			attribution: '&amp;copy; &lt;a href="http://osm.org/copyright"&gt;OpenStreetMap&lt;/a&gt; contributors'
 		}).addTo(map);
-		
 		//Leaflet draw options
 		mapImage.addLayer(drawnItemsImage);
 		map.addLayer(drawnItemsMap);
