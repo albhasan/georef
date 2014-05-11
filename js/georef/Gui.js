@@ -21,8 +21,8 @@ var mapAreaVertexTable;//
 
 var imageBoundaryOnMap;
 var imageMapAreaOnMap;
-var drawnItemsImage;//var drawnItemsImage = new L.FeatureGroup();
-var drawnItemsMap;//var drawnItemsMap = new L.FeatureGroup();
+var drawnItemsImage = new L.FeatureGroup();
+var drawnItemsMap = new L.FeatureGroup();
 var c;//Constants
 var trans;//Transformation
 var imageMapArea;//Area of the mapArea in the image (pixels)
@@ -67,7 +67,7 @@ $(document).ready(function () {
 		]
 	} ); 
 	
-
+	
 	//Adds the combo with the ontology classes
 	$.get(c.getConstant("ONTOLOGY_URL"), function(xmlResponse){
 		var rdfClasses = getRdfClasses(xmlResponse);
@@ -96,20 +96,20 @@ $(document).ready(function () {
 		mapImage = L.map('mapImage', {center: [imageMapMaxSize/2, imageMapMaxSize/2],zoom: 12,crs: L.CRS.Simple});	//Plane SRS to put the map-image
 		mkManager = new MarkerManager(cpManager, drawnItemsImage, drawnItemsMap);
 		
-		
-drawnItemsImage = new L.FeatureGroup();
-drawnItemsMap = new L.FeatureGroup();
-		
-		
-		
 		//Adds layers
 		/*L.tileLayer('http://{s}.tile.cloudmade.com/BC9A493B41014CAABB98F0471D759707/997/256/{z}/{x}/{y}.png', {
 			maxZoom: 18,
 			attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://cloudmade.com">CloudMade</a>'
 		}).addTo(map);*/
+		
+		
+		
 		L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
 			attribution: '&amp;copy; &lt;a href="http://osm.org/copyright"&gt;OpenStreetMap&lt;/a&gt; contributors'
 		}).addTo(map);
+		
+		
+		
 		//Leaflet draw options
 		mapImage.addLayer(drawnItemsImage);
 		map.addLayer(drawnItemsMap);
@@ -462,6 +462,7 @@ drawnItemsMap = new L.FeatureGroup();
 	*/
 	function validateMetadata(){
 		var res = true;
+
 		var c = new Constants();
 		var paperMapUri = $("#paperMapUri").val();
 		var d = new Date();
@@ -474,6 +475,7 @@ drawnItemsMap = new L.FeatureGroup();
 		}
 		if(isUrlOfImage(imageMapUri)){
 			if(isUriValid(paperMapUri)){
+
 				paperMapCreator = $.trim($("#paperMapCreator").val());
 				paperMapSize = $.trim($("#paperMapSize").val());
 				paperMapTitle = $.trim($("#paperMapTitle").val());
@@ -488,9 +490,11 @@ drawnItemsMap = new L.FeatureGroup();
 						}else{
 							if(isPositiveInteger(paperMapTime) == false || paperMapTime > d.getFullYear()){
 								messages.unshift("Invalid 	map time. Please review it in the Map Metadata tab.");
+
 							}
 						}
 					}
+
 					paperMapScale = $.trim($("#paperMapScale").val());
 					paperMapPlaces = $.trim($("#paperMapPlaces").val());
 					mapAreawkt = $.trim($("#mapAreawkt").val());
@@ -524,6 +528,7 @@ drawnItemsMap = new L.FeatureGroup();
 		var res;
 		var c = new Constants();
 		var baseUri = c.getConstant("HOME_URI");
+
 		var prefix = c.getConstant("PREFIXES");
 		var insertTemplate = c.getConstant("QUERY_INSERT");
 		var imageMapUri = imgModelOriginal.getUrl()
@@ -607,7 +612,9 @@ drawnItemsMap = new L.FeatureGroup();
 			}
 			//paper map description
 			if(paperMapDescription != null && paperMapDescription.length > 0){
+
 				var tmpDescription = paperMapDescription.replace("'",'\"');
+
 				cMapTriples += paperMapUri + "<http://purl.org/dc/terms/description> '" + paperMapDescription + "'^^xsd:string" +  tripleSeparator;
 			}
 			
@@ -824,6 +831,7 @@ drawnItemsMap = new L.FeatureGroup();
 					queryCreate = queryCreate.replace("PARAM_GRAPH", graph);
 					var queryInsert = buildTriples(graph);
 					try{
+
 						//Creates a new SPARQL GRAPH
 						var sq = new SparqlQuery();
 						var js = sq.sendSparqlUpdate(queryCreate, c.getConstant("HOME_SPARQLENDPOINT"), graph);
@@ -907,7 +915,7 @@ drawnItemsMap = new L.FeatureGroup();
 	
 	
 	/**
-	* Creates a name for the garoh of the map from a prefix and the map URI
+	* Creates a name for the graph of the map from a prefix and the map URI
 	*/
 	function createGraphName(prefix, mapURI){
 		var res = "";

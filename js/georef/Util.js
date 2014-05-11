@@ -19,7 +19,7 @@ function isUrlOfImage(testUrl){
 		res = true;
 	}*/
 	if(testUrl.indexOf("?") > 0 ){
-		alert("The given URL contains parameters. Please remove the parameters.");
+		alert("The given URL contains parameters. Please remove the question mark and every character to the right of it.");
 		res = false;
 	}
 	return res;
@@ -67,8 +67,9 @@ function isTextValid(txt){
 * @returns TRUE if the URL is valid, FALSE otherwise
 */
 function isUriValid(uri){
+	//TODO
 	var res = false;
-	if(isUrlValid(uri)){
+	if(isTextValid(uri)){
 		//var urlregex = new RegExp("^(http:\/\/www.|https:\/\/www.|ftp:\/\/www.|www.){1}([0-9A-Za-z]+\.)");
 		//if (urlregex.test(uri)) {
 		//TODO: Find a regular expression for URI validation
@@ -382,12 +383,15 @@ function calculateRotation(xyImgProjectedBorders){
 }
 
 /**
+
 * Encodes an xyArray [x,y] as Well Known Text. NOTE 1: An xyArray [x,y] can only represent a single polygon. NOTE 2: Some srs require you to switch xy to yx. This function does not check for that
 * @param xyArray - An array of points [x,y] 
 * @param srsUrl - URL of a Spatial Reference System
 * @returns A polygon encoded as WKT
 */
 function xyArray2wktPolygon(xyArray, srsUrl){
+//NOTE: An xyArray [x,y] can only represent a single polygon
+//NOTE: Some srs require you to switch xy to yx. This function does not check for that
 	var res;
 	var first;
 	var last;
@@ -449,7 +453,6 @@ function isPositiveInteger(n){
 //Code adapted from http://stackoverflow.com/questions/10834796/validate-that-a-string-is-a-positive-integer
 	return n >>> 0 === parseFloat(n);
 }
-
 
 /**
 * Takes a string of a RDF and finds the classes
@@ -535,8 +538,10 @@ function getLastStringAfterHash(urlTxt){
 
 //Taken from http://stackoverflow.com/questions/1144783/replacing-all-occurrences-of-a-string-in-javascript
 function replaceAll(find, replace, str) {
+http://stackoverflow.com/questions/1144783/replacing-all-occurrences-of-a-string-in-javascript
 	return str.replace(new RegExp(find, 'g'), replace);
 }
+
 
 
 //Taken from http://erlycoder.com/49/javascript-hash-functions-to-convert-string-into-integer-hash-
@@ -548,8 +553,12 @@ function djb2Code(str){
 	}
 	return hash;
 }
- 
- 
+
+
+
+
+
+
 //Taken from http://www.w3schools.com/dom/dom_loadxmldoc.asp 
 function loadXMLString(txt){
 	if (window.DOMParser){
@@ -568,3 +577,8 @@ function loadXMLString(txt){
 function removeElement(id){
 	$('#' + id).remove();
 }
+
+
+
+
+

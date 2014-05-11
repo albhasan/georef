@@ -15,6 +15,8 @@ function Constants(){
 	
 	var HOME_URI = 'http://uni-muenster.de/historicmaps';
 	
+	var HOME_GRAPH = 'http://ifgi.uni-muenster.de/lodum/historicmaps/';
+	
 	var HOME_SPARQLENDPOINT = 'http://giv-siidemo.uni-muenster.de:8081/parliament/sparql';
 	
 	var PREFIXES =	'PREFIX owl: <http://www.w3.org/2002/07/owl#> ' + newline +
@@ -167,7 +169,6 @@ function Constants(){
 	var ONTOLOGY_URL = "http://localhost/georef/ontologies/historicmapsphen.rdf"; //Be aware of javascript's cross domain problem
 
 	var DATE_SEPARATOR = "-";
-	
 	//---------------------------------------------------------
 	//PRIVILEGED
 	//---------------------------------------------------------
@@ -185,6 +186,8 @@ function Constants(){
 			res = HOME_URI;
 		}else if(name =="QUERY_INSERT"){
 			res = QUERY_INSERT;
+		}else if(name =="HOME_GRAPH"){
+			res = HOME_GRAPH;
 		}else if(name =="HOME_SPARQLENDPOINT"){
 			res = HOME_SPARQLENDPOINT;
 		}else if(name =="CODE_WINDOW_PROPERTIES"){

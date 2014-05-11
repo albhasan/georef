@@ -162,5 +162,4 @@ as published by Sam Hocevar. See the COPYING file for more details.
 	display: inline-block;
 	width: 5em;
 }
-
 .ui-tab-content, .ui-tabs-panel{overflow: auto;}
