@@ -398,6 +398,9 @@ $(document).ready(function () {
 		try{
 			//Fails when DBpedia is offline - You don't say!
 			var js = sq.sendSparqlQuery(query, c.getConstant("DBPEDIA_SPARQL"), "");
+			if(js.results.bindings.length < 1){
+				alert("No spatio-temporal related  results were found!");
+			}
 			for(var i = 0; i < js.results.bindings.length; i++){
 				var subject = js.results.bindings[i].subject.value;
 				var label = js.results.bindings[i].label.value;
@@ -435,6 +438,9 @@ $(document).ready(function () {
 			$("#suggestedControlPointsTableDiv").html("");
 			$("#suggestedControlPointsTableDiv").append("<b><i>POI Suggestions: </i></b>");
 			paperMapPlaces = "";
+			if(js.results.bindings.length < 1){
+				alert("No POIs were found in this zone!");
+			}
 			for(var i = 0; i < js.results.bindings.length; i++){
 				var lng = js.results.bindings[i].lg.value;
 				var lat = js.results.bindings[i].lt.value;
@@ -990,6 +996,8 @@ $(document).ready(function () {
 				res.push(uriSubject);
 				res.push(label);
 				res.push(abst);
+			}else{
+				alert("No suggestions were found!");
 			}
 		}catch(err){
 			console.log(err); 
