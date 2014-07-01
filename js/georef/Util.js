@@ -527,9 +527,11 @@ function getStringEscaped(text){
 
 function getLastStringAfterHash(urlTxt){
 	var res = "";
-	var tmpArray = urlTxt.split("#");
-	if(tmpArray.length > 1){
-		res = tmpArray[tmpArray.length - 1];// last element
+	if(urlTxt !== null && urlTxt !== undefined){
+		var tmpArray = urlTxt.split("#");
+		if(tmpArray.length > 1){
+			res = tmpArray[tmpArray.length - 1];// last element
+		}
 	}
 	return res;
 }
@@ -577,7 +579,6 @@ function loadXMLString(txt){
 function removeElement(id){
 	$('#' + id).remove();
 }
-
 
 
 
