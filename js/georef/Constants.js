@@ -166,7 +166,8 @@ function Constants(){
 	
 	var SPATIAL_REFERENCE_SYSTEM = "http://www.opengis.net/def/crs/EPSG/0/4326";
 
-	var ONTOLOGY_URL = "http://localhost/georef/ontologies/historicmapsphen.rdf"; //Be aware of javascript's cross domain problem
+	var ONTOLOGY_URL = "http://www.geographicknowledge.de/vocab/historicmapsphen"; //Be aware of javascript's cross domain problem
+	
 
 	var DATE_SEPARATOR = "-";
 	//---------------------------------------------------------

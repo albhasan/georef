@@ -671,7 +671,7 @@ $(document).ready(function () {
 			$(".chOntologyContent").each(function( index ){
 				if(this.checked){
 					var tmpInstance = djb2Code(pmu + "/" + this.value);
-					cMapTriples += "_:" + tmpInstance + " a <" + this.value  + ">" + tripleSeparator;
+					cMapTriples += paperMapUri + " a <" + this.value  + ">" + tripleSeparator;
 					cMapTriples += paperMapUri + "<http://www.geographicknowledge.de/vocab/maps#mapsPhenomenon> _:" +  tmpInstance + tripleSeparator;
 				}
 			});
