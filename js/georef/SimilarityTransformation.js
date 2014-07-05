@@ -8,7 +8,7 @@ as published by Sam Hocevar. See the COPYING file for more details.
 function SimilarityTransformation(xyArraySource, xyArrayDestination){
 
 	//orthogonal axis
-	//Axes have the same scale (not suitable for georef but for a fist approximation to query DBpedia for suggestions!)
+	//Axes have the same scale (not suitable for georef!)
 
 	
 	var that = this;
@@ -17,7 +17,7 @@ function SimilarityTransformation(xyArraySource, xyArrayDestination){
 	var xyArrayTo;
 	var parameters;
 	
-	if(xyArraySource.length == xyArrayDestination.length && xyArraySource.length > 1){//at least 2 points 
+	if(xyArraySource.length == xyArrayDestination.length && xyArraySource.length > 1){//at least 2 points
 		xyArrayFrom = xyArraySource;
 		xyArrayTo  = xyArrayDestination;
 		parameters = calculateParameters(xyArrayFrom, xyArrayTo);
@@ -29,11 +29,6 @@ function SimilarityTransformation(xyArraySource, xyArrayDestination){
 	//PRIVATE
 	//---------------------------------------------------------
 	
-	/**
-	* Builds the matrix A
-	* @param xyArray - Array made of [x,y] arrays where x and y are numbers
-	* @returns An array resemblig the matrix A for a similarity transformation
-	*/
 	function buildA(xyArray){
 		var res = new Array();
 		for(var i = 0; i < xyArray.length; i++){
@@ -49,11 +44,6 @@ function SimilarityTransformation(xyArraySource, xyArrayDestination){
 		return res;
 	}
 
-	/**
-	* Builds the vector L
-	* @param xyArray - Array made of [x,y] arrays where x and y are numbers
-	* @returns An array resemblig the vector L for a similarity transformation
-	*/
 	function buildL(xyArray){
 		var res = new Array();
 		for(var i = 0; i < xyArray.length; i++){
@@ -67,12 +57,7 @@ function SimilarityTransformation(xyArraySource, xyArrayDestination){
 	}
 
 	
-	/**
-	* Similarity transformation
-	* @param xyArrayFrom - Array made of [x,y] in the image
-	* @param xyArrayTo - Array made of [x,y] in the reference map
-	* @returns An array with the results of the least squares adjustment
-	*/
+	//Similarity transformation
 	function calculateParameters(xyArrayFrom, xyArrayTo){
 		var res = new Array();
 		var Aarray = buildA(xyArrayFrom);
@@ -81,10 +66,6 @@ function SimilarityTransformation(xyArraySource, xyArrayDestination){
 		return res;
 	}
 	
-	/**
-	* Calculates the parameters for reversing the transformation
-	* @returns An array of parameters
-	*/
 	function reverseParameters(){
 		var res = new Array();
 		
@@ -133,11 +114,6 @@ function SimilarityTransformation(xyArraySource, xyArrayDestination){
 		return res;
 	}*/
 
-	/**
-	* Applies the transformation to the input points
-	* @param xyArray - Array made of [x,y] 
-	* @returns An array made of [x,y]  with the resulting coordinates
-	*/
 	this.transform = function(xyArray){
 		var res = new Array();
 		//a0 b0 a b
@@ -173,12 +149,6 @@ function SimilarityTransformation(xyArraySource, xyArrayDestination){
 		return res;
 	}*/
 	
-	
-	/**
-	* Applies the reverse transformation to the input points
-	* @param xyArray - Array made of [x,y] 
-	* @returns An array made of [x,y]  with the resulting coordinates
-	*/
 	this.transformReverse = function(xyArray){
 		var res = new Array();
 		
