@@ -21,7 +21,6 @@ as published by Sam Hocevar. See the COPYING file for more details.
 		
 		<link rel="stylesheet" href="./js/Leaflet.draw/dist/leaflet.draw.css" />
 		<!--[if lte IE 8]><link rel="stylesheet" href="./js/Leaflet.draw/dist/leaflet.draw.ie.css" /><![endif]-->
-		<script src="./js/config.json"></script>
 		<script src="./js/Leaflet.draw/src/Leaflet.draw.js"></script>
 		<script src="./js/Leaflet.draw/src/edit/handler/Edit.Poly.js"></script>
 		<script src="./js/Leaflet.draw/src/edit/handler/Edit.SimpleShape.js"></script>
@@ -108,7 +107,7 @@ as published by Sam Hocevar. See the COPYING file for more details.
 			<div id="middle">
 				<div id="middle-left">
 					<div id="accordion">
-						<h3>1 - Image</h3>
+						<h3 title="Type the URL of the map you want to georeference.">1 - Image</h3>
 						<div>
 							<div id="imageForm">
 								Image url: 
@@ -118,7 +117,7 @@ as published by Sam Hocevar. See the COPYING file for more details.
 								i.e <a href="http://upload.wikimedia.org/wikipedia/commons/2/29/Minard.png" target="_blank">Charles Minard's map at Wikipedia</a>
 							</div>
 						</div>
-						<h3>2 - Control Points</h3>
+						<h3 title="Click on the button 'Add an Image Control Point' on the left side map and create a matchinbg point on the right side map using the button 'Add a Map Control Point'.">2 - Control Points</h3>
 						<div>
 							<div>
 								<button type="button" id="btSuggestPois">Suggest POIs</button> 
@@ -126,31 +125,31 @@ as published by Sam Hocevar. See the COPYING file for more details.
 							</div>
 							<div id="controlPointsTableDiv"></div>
 						</div>
-						<h3>3 - Map area</h3>
+						<h3 title="Click on the left side map button 'Draw a Map Area on Image' and use the tool to exactly draw the map area on the image.">3 - Map area</h3>
 						<div>
 							<div id="mapAreaDetails">
 								Please use the "<i>Draw a Map Area on Image</i>" tool to draw a polygon on the map image.
 							</div>
 							<div id="mapAreaVertexTableDiv"></div>
 						</div>
-						<h3>4 - Ruler</h3>
+						<h3 title="Please use the 'Draw a 20cm line' tool to draw a line on the map image. Use the ruler scanned along the map (if any).">4 - Ruler</h3>
 						<div>
 							<div id="rulerDetails">
-								Please use the "<i>Draw an 1cm line</i>" tool to draw a line on the map image. Use the ruler scanned along the map (if any).
+								Please use the "<i>Draw an 20cm line</i>" tool to draw a line on the map image. Use the ruler scanned along the map (if any).
 							</div>
 						</div>
-						<h3>5 - Results</h3>
+						<h3 title="Optional: Save the goreferenced map as an RDF file or store it directly into the default triple store.">5 - Results</h3>
 						<div>
+							You can store you work by pressing this button. The map geometric properties along with its metadata (from the "<i>Map metadata</i>" tab) will be stored. The map image is not copied but "<b>linked</b>".<br>
+							<button id="btStoreTriples">Store map data as LOD</button>
+							<br>
+							<br>
 							You can view the map on its approximated location on Google Earth by pressing this button:<bt>
 							<button id="btGenerateKml">Get KML</button> 
 							<br>
 							<br>
 							You can get the RDF representing the map's metadata by pressing this button:<bt>
 							<button id="btGenerateRdf">Get RDF</button> 
-							<br>
-							<br>
-							You can store you work by pressing this button. The map geometric properties along with its metadata (from the "<i>Map metadata</i>" tab) will be stored. The map image is not copied but "<b>linked</b>".<br>
-							<button id="btStoreTriples">Store map data as LOD</button>
 						</div>
 					</div>
 				</div>

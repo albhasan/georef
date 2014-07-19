@@ -47,23 +47,24 @@ $(document).ready(function () {
 	cpTable = $('#controlPointsTable').dataTable( {
 		"aaData": null,
 		"aoColumns": [
-			{ "sTitle": "CP Id", "sClass": "center" },
-			{ "sTitle": "Im X", "sClass": "center" },
-			{ "sTitle": "Im Y", "sClass": "center" },
-			{ "sTitle": "Map X", "sClass": "center" },
-			{ "sTitle": "Map Y", "sClass": "center" }
+			{ "sTitle": "CP Id", "sClass": "center", "bVisible": true},
+			{ "sTitle": "Im X", "sClass": "center", "bVisible": false},
+			{ "sTitle": "Im Y", "sClass": "center", "bVisible": false},
+			{ "sTitle": "Map X", "sClass": "center", "bVisible": false},
+			{ "sTitle": "Map Y", "sClass": "center", "bVisible": false}
 		]
 	} ); 
 	
 	$('#mapAreaVertexTableDiv').html( '<table cellpadding="0" cellspacing="0" border="0" class="display" id="mapAreaVertexTable"></table>' );
 	mapAreaVertexTable = $('#mapAreaVertexTable').dataTable( {
 		"bFilter": false,
+		"bInfo": false,
 		"bSort": false,
 		"bPaginate": false,
 		"aaData": null,
 		"aoColumns": [
-			{ "sTitle": "X", "sClass": "center" },
-			{ "sTitle": "Y", "sClass": "center" },
+			{ "sTitle": "X", "sClass": "center", "bVisible": false},
+			{ "sTitle": "Y", "sClass": "center", "bVisible": false},
 		]
 	} ); 
 	
