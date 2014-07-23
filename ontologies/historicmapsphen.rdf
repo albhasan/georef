@@ -3,7 +3,9 @@
 
 <!DOCTYPE rdf:RDF [
     <!ENTITY owl "http://www.w3.org/2002/07/owl#" >
+    <!ENTITY gn "http://www.geonames.org/ontology#" >
     <!ENTITY xsd "http://www.w3.org/2001/XMLSchema#" >
+    <!ENTITY lode "http://linkedevents.org/ontology/" >
     <!ENTITY rdfs "http://www.w3.org/2000/01/rdf-schema#" >
     <!ENTITY rdf "http://www.w3.org/1999/02/22-rdf-syntax-ns#" >
     <!ENTITY maps "http://www.geographicknowledge.de/vocab/maps#" >
@@ -13,6 +15,8 @@
 
 <rdf:RDF xmlns="http://www.geographicknowledge.de/vocab/historicmapsphen#"
      xml:base="http://www.geographicknowledge.de/vocab/historicmapsphen"
+     xmlns:gn="http://www.geonames.org/ontology#"
+     xmlns:lode="http://linkedevents.org/ontology/"
      xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
      xmlns:historicmapsphen="http://www.geographicknowledge.de/vocab/historicmapsphen#"
      xmlns:maps="http://www.geographicknowledge.de/vocab/maps#"
@@ -21,6 +25,7 @@
      xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
     <owl:Ontology rdf:about="http://www.geographicknowledge.de/vocab/historicmapsphen">
         <rdfs:comment xml:lang="en">Ontology of mapped geographic phenomena in historic maps</rdfs:comment>
+        <owl:imports rdf:resource="http://linkedevents.org/ontology/"/>
         <owl:imports rdf:resource="http://www.geographicknowledge.de/vocab/maps"/>
     </owl:Ontology>
     
@@ -37,11 +42,13 @@
     
 
 
-    <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#end -->
+    <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#connects -->
 
-    <owl:ObjectProperty rdf:about="&historicmapsphen;end">
-        <rdfs:domain rdf:resource="&historicmapsphen;March"/>
-        <rdfs:range rdf:resource="&historicmapsphen;Place"/>
+    <owl:ObjectProperty rdf:about="&historicmapsphen;connects">
+        <rdfs:label xml:lang="en">connects</rdfs:label>
+        <rdfs:domain rdf:resource="&historicmapsphen;Object"/>
+        <rdfs:range rdf:resource="&historicmapsphen;Object"/>
+        <rdfs:subPropertyOf rdf:resource="&owl;topObjectProperty"/>
     </owl:ObjectProperty>
     
 
@@ -49,8 +56,49 @@
     <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#happensAt -->
 
     <owl:ObjectProperty rdf:about="&historicmapsphen;happensAt">
+        <rdfs:label xml:lang="en">happensAt</rdfs:label>
+        <rdfs:subPropertyOf rdf:resource="&lode;atPlace"/>
         <rdfs:domain rdf:resource="&historicmapsphen;Event"/>
         <rdfs:range rdf:resource="&historicmapsphen;Place"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#isRepresentedBy -->
+
+    <owl:ObjectProperty rdf:about="&historicmapsphen;isRepresentedBy">
+        <rdfs:label xml:lang="en">isRepresentedBy</rdfs:label>
+        <owl:inverseOf rdf:resource="&maps;represents"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#isSettingFor -->
+
+    <owl:ObjectProperty rdf:about="&historicmapsphen;isSettingFor">
+        <rdfs:label xml:lang="en">isSettingFor</rdfs:label>
+        <rdfs:domain rdf:resource="&historicmapsphen;RoleSituation"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#isSettingForPerson -->
+
+    <owl:ObjectProperty rdf:about="&historicmapsphen;isSettingForPerson">
+        <rdfs:range rdf:resource="&historicmapsphen;Person"/>
+        <rdfs:domain rdf:resource="&historicmapsphen;RoleSituation"/>
+        <rdfs:subPropertyOf rdf:resource="&historicmapsphen;isSettingFor"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#isSettingForRole -->
+
+    <owl:ObjectProperty rdf:about="&historicmapsphen;isSettingForRole">
+        <rdfs:label xml:lang="en">isSettingForRole</rdfs:label>
+        <rdfs:range rdf:resource="&historicmapsphen;Role"/>
+        <rdfs:domain rdf:resource="&historicmapsphen;RoleSituation"/>
+        <rdfs:subPropertyOf rdf:resource="&historicmapsphen;isSettingFor"/>
     </owl:ObjectProperty>
     
 
@@ -58,6 +106,7 @@
     <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#nextEvent -->
 
     <owl:ObjectProperty rdf:about="&historicmapsphen;nextEvent">
+        <rdfs:label xml:lang="en">nextEvent</rdfs:label>
         <rdfs:domain rdf:resource="&historicmapsphen;Event"/>
         <rdfs:range rdf:resource="&historicmapsphen;Event"/>
     </owl:ObjectProperty>
@@ -67,6 +116,7 @@
     <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#partOfEvent -->
 
     <owl:ObjectProperty rdf:about="&historicmapsphen;partOfEvent">
+        <rdfs:label xml:lang="en">partOfEvent</rdfs:label>
         <rdfs:domain rdf:resource="&historicmapsphen;Event"/>
         <rdfs:range rdf:resource="&historicmapsphen;Event"/>
         <rdfs:subPropertyOf rdf:resource="&owl;topObjectProperty"/>
@@ -77,6 +127,7 @@
     <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#partOfObject -->
 
     <owl:ObjectProperty rdf:about="&historicmapsphen;partOfObject">
+        <rdfs:label xml:lang="en">partOfObject</rdfs:label>
         <rdfs:range rdf:resource="&historicmapsphen;Object"/>
         <rdfs:domain rdf:resource="&historicmapsphen;Object"/>
         <rdfs:subPropertyOf rdf:resource="&owl;topObjectProperty"/>
@@ -87,18 +138,60 @@
     <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#participatesIn -->
 
     <owl:ObjectProperty rdf:about="&historicmapsphen;participatesIn">
+        <rdfs:label xml:lang="en">participatesIn</rdfs:label>
         <rdfs:range rdf:resource="&historicmapsphen;Event"/>
-        <rdfs:domain rdf:resource="http://xmlns.com/foaf/0.1/Agent"/>
+        <rdfs:subPropertyOf>
+            <rdf:Description>
+                <owl:inverseOf rdf:resource="&lode;involved"/>
+            </rdf:Description>
+        </rdfs:subPropertyOf>
     </owl:ObjectProperty>
     
 
 
-    <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#start -->
+    <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#rulesOver -->
 
-    <owl:ObjectProperty rdf:about="&historicmapsphen;start">
-        <rdfs:domain rdf:resource="&historicmapsphen;March"/>
-        <rdfs:range rdf:resource="&historicmapsphen;Place"/>
+    <owl:ObjectProperty rdf:about="&historicmapsphen;rulesOver">
+        <rdfs:label xml:lang="en">rulesOver</rdfs:label>
+        <rdfs:range rdf:resource="&historicmapsphen;Administration"/>
+        <rdfs:domain rdf:resource="&historicmapsphen;RulingSituation"/>
+        <rdfs:subPropertyOf rdf:resource="&historicmapsphen;isSettingFor"/>
     </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#wasAcquiredBy -->
+
+    <owl:ObjectProperty rdf:about="&historicmapsphen;wasAcquiredBy">
+        <rdfs:label xml:lang="en">wasAcquiredBy</rdfs:label>
+        <rdfs:domain rdf:resource="&historicmapsphen;Object"/>
+        <rdfs:range rdf:resource="&historicmapsphen;Person"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#where -->
+
+    <owl:ObjectProperty rdf:about="&historicmapsphen;where">
+        <rdfs:label xml:lang="en">where</rdfs:label>
+        <rdfs:domain rdf:resource="&maps;GeographicPhenomenon"/>
+        <rdfs:range rdf:resource="http://www.opengis.net/ont/geosparql#Geometry"/>
+        <rdfs:subPropertyOf rdf:resource="http://www.opengis.net/ont/geosparql#hasGeometry"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.geographicknowledge.de/vocab/maps#represents -->
+
+    <rdf:Description rdf:about="&maps;represents">
+        <rdfs:label xml:lang="en">represents</rdfs:label>
+    </rdf:Description>
+    
+
+
+    <!-- http://www.opengis.net/ont/geosparql#hasGeometry -->
+
+    <owl:ObjectProperty rdf:about="http://www.opengis.net/ont/geosparql#hasGeometry"/>
     
 
 
@@ -116,6 +209,7 @@
     <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#participantsNumber -->
 
     <owl:DatatypeProperty rdf:about="&historicmapsphen;participantsNumber">
+        <rdfs:label xml:lang="en">participantsNumber</rdfs:label>
         <rdfs:domain rdf:resource="&historicmapsphen;Event"/>
         <rdfs:range rdf:resource="&xsd;integer"/>
     </owl:DatatypeProperty>
@@ -125,6 +219,7 @@
     <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#temperature -->
 
     <owl:DatatypeProperty rdf:about="&historicmapsphen;temperature">
+        <rdfs:label xml:lang="en">temperature</rdfs:label>
         <rdfs:domain rdf:resource="&historicmapsphen;Event"/>
         <rdfs:range rdf:resource="&xsd;decimal"/>
     </owl:DatatypeProperty>
@@ -145,8 +240,9 @@
     <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#Administration -->
 
     <owl:Class rdf:about="&historicmapsphen;Administration">
+        <rdfs:label xml:lang="en">Administration</rdfs:label>
         <rdfs:subClassOf rdf:resource="&historicmapsphen;Object"/>
-        <rdfs:comment>Class of administrative units, e.g. states, countries, communities</rdfs:comment>
+        <rdfs:comment xml:lang="en">Class of administrative units, e.g. states, countries, communities</rdfs:comment>
     </owl:Class>
     
 
@@ -154,6 +250,7 @@
     <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#Agriculture -->
 
     <owl:Class rdf:about="&historicmapsphen;Agriculture">
+        <rdfs:label xml:lang="en">Agriculture</rdfs:label>
         <rdfs:subClassOf rdf:resource="&historicmapsphen;LanduseObject"/>
     </owl:Class>
     
@@ -162,6 +259,7 @@
     <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#Bare -->
 
     <owl:Class rdf:about="&historicmapsphen;Bare">
+        <rdfs:label xml:lang="en">Bare</rdfs:label>
         <rdfs:subClassOf rdf:resource="&historicmapsphen;Landcover"/>
     </owl:Class>
     
@@ -170,6 +268,7 @@
     <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#Battle -->
 
     <owl:Class rdf:about="&historicmapsphen;Battle">
+        <rdfs:label xml:lang="en">Battle</rdfs:label>
         <rdfs:subClassOf rdf:resource="&historicmapsphen;War"/>
     </owl:Class>
     
@@ -178,7 +277,17 @@
     <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#Block -->
 
     <owl:Class rdf:about="&historicmapsphen;Block">
+        <rdfs:label xml:lang="en">Block</rdfs:label>
         <rdfs:subClassOf rdf:resource="&historicmapsphen;ConstructionObject"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#Bog -->
+
+    <owl:Class rdf:about="&historicmapsphen;Bog">
+        <rdfs:label xml:lang="en">Bog</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&historicmapsphen;Field"/>
     </owl:Class>
     
 
@@ -186,7 +295,17 @@
     <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#Building -->
 
     <owl:Class rdf:about="&historicmapsphen;Building">
+        <rdfs:label xml:lang="en">Building</rdfs:label>
         <rdfs:subClassOf rdf:resource="&historicmapsphen;ConstructionObject"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#Chaussee -->
+
+    <owl:Class rdf:about="&historicmapsphen;Chaussee">
+        <rdfs:label xml:lang="en">Chaussee</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&historicmapsphen;Road"/>
     </owl:Class>
     
 
@@ -194,7 +313,17 @@
     <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#City -->
 
     <owl:Class rdf:about="&historicmapsphen;City">
+        <rdfs:label xml:lang="en">City</rdfs:label>
         <rdfs:subClassOf rdf:resource="&historicmapsphen;Inhabited"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#Coniferous -->
+
+    <owl:Class rdf:about="&historicmapsphen;Coniferous">
+        <rdfs:label xml:lang="en">Coniferous</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&historicmapsphen;Wood"/>
     </owl:Class>
     
 
@@ -202,8 +331,9 @@
     <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#ConstructionObject -->
 
     <owl:Class rdf:about="&historicmapsphen;ConstructionObject">
+        <rdfs:label xml:lang="en">ConstructionObject</rdfs:label>
         <rdfs:subClassOf rdf:resource="&historicmapsphen;Object"/>
-        <rdfs:comment>Class of constructed objects, such as buildings or constucted areas</rdfs:comment>
+        <rdfs:comment xml:lang="en">Class of constructed objects, such as buildings or constucted areas</rdfs:comment>
     </owl:Class>
     
 
@@ -211,6 +341,34 @@
     <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#Continent -->
 
     <owl:Class rdf:about="&historicmapsphen;Continent">
+        <rdfs:label xml:lang="en">Continent</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&historicmapsphen;Landform"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#Deciduous -->
+
+    <owl:Class rdf:about="&historicmapsphen;Deciduous">
+        <rdfs:label xml:lang="en">Deciduous</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&historicmapsphen;Wood"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#Duke -->
+
+    <owl:Class rdf:about="&historicmapsphen;Duke">
+        <rdfs:label xml:lang="en">Duke</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&historicmapsphen;Ruler"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#Earthdam -->
+
+    <owl:Class rdf:about="&historicmapsphen;Earthdam">
+        <rdfs:label xml:lang="en">Earthdam</rdfs:label>
         <rdfs:subClassOf rdf:resource="&historicmapsphen;Landform"/>
     </owl:Class>
     
@@ -219,6 +377,7 @@
     <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#Elevation -->
 
     <owl:Class rdf:about="&historicmapsphen;Elevation">
+        <rdfs:label xml:lang="en">Elevation</rdfs:label>
         <rdfs:subClassOf rdf:resource="&historicmapsphen;Landform"/>
     </owl:Class>
     
@@ -227,6 +386,8 @@
     <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#Event -->
 
     <owl:Class rdf:about="&historicmapsphen;Event">
+        <rdfs:label xml:lang="en">Event</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&lode;Event"/>
         <rdfs:subClassOf rdf:resource="&maps;GeographicPhenomenon"/>
     </owl:Class>
     
@@ -235,15 +396,35 @@
     <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#Field -->
 
     <owl:Class rdf:about="&historicmapsphen;Field">
+        <rdfs:label xml:lang="en">Field</rdfs:label>
         <rdfs:subClassOf rdf:resource="&historicmapsphen;Landcover"/>
     </owl:Class>
     
 
 
-    <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#Forest -->
+    <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#Footpath -->
 
-    <owl:Class rdf:about="&historicmapsphen;Forest">
-        <rdfs:subClassOf rdf:resource="&historicmapsphen;Landcover"/>
+    <owl:Class rdf:about="&historicmapsphen;Footpath">
+        <rdfs:label xml:lang="en">Footpath</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&historicmapsphen;TrafficObject"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#Heath -->
+
+    <owl:Class rdf:about="&historicmapsphen;Heath">
+        <rdfs:label xml:lang="en">Heath</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&historicmapsphen;Field"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#Hollowway -->
+
+    <owl:Class rdf:about="&historicmapsphen;Hollowway">
+        <rdfs:label xml:lang="en">Hollowway</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&historicmapsphen;Landform"/>
     </owl:Class>
     
 
@@ -251,6 +432,7 @@
     <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#Inhabited -->
 
     <owl:Class rdf:about="&historicmapsphen;Inhabited">
+        <rdfs:label xml:lang="en">Inhabited</rdfs:label>
         <rdfs:subClassOf rdf:resource="&historicmapsphen;Place"/>
     </owl:Class>
     
@@ -259,7 +441,17 @@
     <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#Invasion -->
 
     <owl:Class rdf:about="&historicmapsphen;Invasion">
+        <rdfs:label xml:lang="en">Invasion</rdfs:label>
         <rdfs:subClassOf rdf:resource="&historicmapsphen;War"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#King -->
+
+    <owl:Class rdf:about="&historicmapsphen;King">
+        <rdfs:label xml:lang="en">King</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&historicmapsphen;Ruler"/>
     </owl:Class>
     
 
@@ -267,6 +459,7 @@
     <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#Lake -->
 
     <owl:Class rdf:about="&historicmapsphen;Lake">
+        <rdfs:label xml:lang="en">Lake</rdfs:label>
         <rdfs:subClassOf rdf:resource="&historicmapsphen;WaterBody"/>
     </owl:Class>
     
@@ -275,8 +468,9 @@
     <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#Landcover -->
 
     <owl:Class rdf:about="&historicmapsphen;Landcover">
+        <rdfs:label xml:lang="en">LandCover</rdfs:label>
         <rdfs:subClassOf rdf:resource="&historicmapsphen;Object"/>
-        <rdfs:comment>Class of phenomena which cover a land surface</rdfs:comment>
+        <rdfs:comment xml:lang="en">Class of phenomena which cover a land surface</rdfs:comment>
     </owl:Class>
     
 
@@ -284,8 +478,9 @@
     <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#Landform -->
 
     <owl:Class rdf:about="&historicmapsphen;Landform">
+        <rdfs:label xml:lang="en">Landform</rdfs:label>
         <rdfs:subClassOf rdf:resource="&historicmapsphen;Object"/>
-        <rdfs:comment>Class of phenomena based on land morphology</rdfs:comment>
+        <rdfs:comment xml:lang="en">Class of phenomena based on land morphology</rdfs:comment>
     </owl:Class>
     
 
@@ -293,6 +488,7 @@
     <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#Landparcel -->
 
     <owl:Class rdf:about="&historicmapsphen;Landparcel">
+        <rdfs:label xml:lang="en">Landparcel</rdfs:label>
         <rdfs:subClassOf rdf:resource="&historicmapsphen;Object"/>
     </owl:Class>
     
@@ -301,15 +497,17 @@
     <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#LanduseObject -->
 
     <owl:Class rdf:about="&historicmapsphen;LanduseObject">
+        <rdfs:label xml:lang="en">LanduseObject</rdfs:label>
         <rdfs:subClassOf rdf:resource="&historicmapsphen;Object"/>
     </owl:Class>
     
 
 
-    <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#March -->
+    <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#Meadow -->
 
-    <owl:Class rdf:about="&historicmapsphen;March">
-        <rdfs:subClassOf rdf:resource="&historicmapsphen;War"/>
+    <owl:Class rdf:about="&historicmapsphen;Meadow">
+        <rdfs:label xml:lang="en">Meadow</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&historicmapsphen;Field"/>
     </owl:Class>
     
 
@@ -325,7 +523,26 @@
     <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#Object -->
 
     <owl:Class rdf:about="&historicmapsphen;Object">
+        <rdfs:label xml:lang="en">Object</rdfs:label>
         <rdfs:subClassOf rdf:resource="&maps;GeographicPhenomenon"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#Pasture -->
+
+    <owl:Class rdf:about="&historicmapsphen;Pasture">
+        <rdfs:label xml:lang="en">Pasture</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&historicmapsphen;Field"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#Person -->
+
+    <owl:Class rdf:about="&historicmapsphen;Person">
+        <rdfs:label xml:lang="en">Person</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
     </owl:Class>
     
 
@@ -333,6 +550,7 @@
     <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#Place -->
 
     <owl:Class rdf:about="&historicmapsphen;Place">
+        <rdfs:label xml:lang="en">Place</rdfs:label>
         <rdfs:subClassOf rdf:resource="&historicmapsphen;Object"/>
     </owl:Class>
     
@@ -341,7 +559,33 @@
     <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#Railway -->
 
     <owl:Class rdf:about="&historicmapsphen;Railway">
+        <rdfs:label xml:lang="en">Railway</rdfs:label>
         <rdfs:subClassOf rdf:resource="&historicmapsphen;TrafficObject"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#RepresentedGeoPhen -->
+
+    <owl:Class rdf:about="&historicmapsphen;RepresentedGeoPhen">
+        <rdfs:label xml:lang="en">RepresentedGeoPhen</rdfs:label>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="&maps;GeographicPhenomenon"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="&historicmapsphen;isRepresentedBy"/>
+                        <owl:someValuesFrom rdf:resource="http://purl.org/ontology/bibo/Map"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="&historicmapsphen;where"/>
+                <owl:someValuesFrom rdf:resource="http://www.opengis.net/ont/geosparql#Geometry"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
     </owl:Class>
     
 
@@ -349,6 +593,7 @@
     <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#River -->
 
     <owl:Class rdf:about="&historicmapsphen;River">
+        <rdfs:label xml:lang="en">River</rdfs:label>
         <rdfs:subClassOf rdf:resource="&historicmapsphen;WaterBody"/>
     </owl:Class>
     
@@ -357,7 +602,58 @@
     <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#Road -->
 
     <owl:Class rdf:about="&historicmapsphen;Road">
+        <rdfs:label xml:lang="en">Road</rdfs:label>
         <rdfs:subClassOf rdf:resource="&historicmapsphen;TrafficObject"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#Role -->
+
+    <owl:Class rdf:about="&historicmapsphen;Role">
+        <rdfs:label xml:lang="en">Role</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#RoleSituation -->
+
+    <owl:Class rdf:about="&historicmapsphen;RoleSituation">
+        <rdfs:label xml:lang="en">RoleSituation</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&historicmapsphen;Situation"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#Ruler -->
+
+    <owl:Class rdf:about="&historicmapsphen;Ruler">
+        <rdfs:label xml:lang="en">Ruler</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&historicmapsphen;Role"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#RulingSituation -->
+
+    <owl:Class rdf:about="&historicmapsphen;RulingSituation">
+        <rdfs:label xml:lang="en">RulingSituation</rdfs:label>
+        <owl:equivalentClass>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="&historicmapsphen;isSettingForRole"/>
+                <owl:someValuesFrom rdf:resource="&historicmapsphen;Ruler"/>
+            </owl:Restriction>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="&historicmapsphen;RoleSituation"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#Sand -->
+
+    <owl:Class rdf:about="&historicmapsphen;Sand">
+        <rdfs:label xml:lang="en">Sand</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&historicmapsphen;Field"/>
     </owl:Class>
     
 
@@ -365,7 +661,35 @@
     <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#Sea -->
 
     <owl:Class rdf:about="&historicmapsphen;Sea">
+        <rdfs:label xml:lang="en">Sea</rdfs:label>
         <rdfs:subClassOf rdf:resource="&historicmapsphen;WaterBody"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#Situation -->
+
+    <owl:Class rdf:about="&historicmapsphen;Situation">
+        <rdfs:label xml:lang="en">Situation</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&historicmapsphen;Event"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#State -->
+
+    <owl:Class rdf:about="&historicmapsphen;State">
+        <rdfs:label xml:lang="en">State</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&historicmapsphen;Administration"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#Territory -->
+
+    <owl:Class rdf:about="&historicmapsphen;Territory">
+        <rdfs:label xml:lang="en">Territory</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&historicmapsphen;Administration"/>
     </owl:Class>
     
 
@@ -373,6 +697,7 @@
     <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#TrafficObject -->
 
     <owl:Class rdf:about="&historicmapsphen;TrafficObject">
+        <rdfs:label xml:lang="en">TrafficObject</rdfs:label>
         <rdfs:subClassOf rdf:resource="&historicmapsphen;Object"/>
     </owl:Class>
     
@@ -381,7 +706,17 @@
     <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#Valley -->
 
     <owl:Class rdf:about="&historicmapsphen;Valley">
+        <rdfs:label xml:lang="en">Valley</rdfs:label>
         <rdfs:subClassOf rdf:resource="&historicmapsphen;Landform"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#Village -->
+
+    <owl:Class rdf:about="&historicmapsphen;Village">
+        <rdfs:label xml:lang="en">Village</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&historicmapsphen;Inhabited"/>
     </owl:Class>
     
 
@@ -389,6 +724,7 @@
     <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#War -->
 
     <owl:Class rdf:about="&historicmapsphen;War">
+        <rdfs:label xml:lang="en">War</rdfs:label>
         <rdfs:subClassOf rdf:resource="&historicmapsphen;Event"/>
     </owl:Class>
     
@@ -397,8 +733,49 @@
     <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#WaterBody -->
 
     <owl:Class rdf:about="&historicmapsphen;WaterBody">
+        <rdfs:label xml:lang="en">Waterbody</rdfs:label>
         <rdfs:subClassOf rdf:resource="&historicmapsphen;Landform"/>
     </owl:Class>
+    
+
+
+    <!-- http://www.geographicknowledge.de/vocab/historicmapsphen#Wood -->
+
+    <owl:Class rdf:about="&historicmapsphen;Wood">
+        <rdfs:label xml:lang="en">Wood</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&historicmapsphen;Landcover"/>
+    </owl:Class>
+    
+
+
+    <!-- http://xmlns.com/foaf/0.1/Person -->
+
+    <owl:Class rdf:about="http://xmlns.com/foaf/0.1/Person">
+        <rdfs:label xml:lang="en">Person</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Annotations
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    <rdf:Description rdf:about="&maps;mapsTime">
+        <rdfs:label xml:lang="en">mapsTime</rdfs:label>
+    </rdf:Description>
+    <rdf:Description rdf:about="&maps;mapsArea">
+        <rdfs:label xml:lang="en">mapsArea</rdfs:label>
+    </rdf:Description>
+    <rdf:Description rdf:about="&maps;mapsPhenomenon">
+        <rdfs:label xml:lang="en">mapsPhenomenon</rdfs:label>
+    </rdf:Description>
+    <rdf:Description rdf:about="&maps;title">
+        <rdfs:label xml:lang="en">Title</rdfs:label>
+    </rdf:Description>
 </rdf:RDF>
 
 

@@ -145,7 +145,7 @@ as published by Sam Hocevar. See the COPYING file for more details.
 
 #map{
 	border: 1px solid blue;
-	height: 95%;
+	height: 85%;
 	width: 100%;
 	/*cursor:crosshair;*/
 }

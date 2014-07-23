@@ -73,6 +73,38 @@ function Constants(){
 						'		lang(?label) = "en" ' + newline +
 						'	) ' + newline +
 						'}ORDER BY DESC(xsd:integer(?population)) ';
+
+
+	var QUERY_CITYS_2 =	'SELECT ?subject ?label (AVG(?lat) AS ?lt) (AVG(?long) AS ?lg) ' + newline +
+						'WHERE { ' + newline +
+						'	?subject rdfs:label ?label. ' + newline +
+						'	?subject geoWgs84:lat ?lat.  ' + newline +
+						'	?subject geoWgs84:long ?long.  ' + newline +
+						'	?subject <http://dbpedia.org/ontology/populationUrban> ?population.  ' + newline +
+						'	{ ' + newline +
+						'		SELECT DISTINCT ?subject ' + newline +
+						'		WHERE {  ' + newline +
+						'			?subject rdf:type <http://dbpedia.org/ontology/City>.  ' + newline +
+						'			?subject <http://dbpedia.org/ontology/populationUrban> ?population.  ' + newline +
+						'			?subject geoWgs84:lat ?lat.  ' + newline +
+						'			?subject geoWgs84:long ?long.  ' + newline +
+						'			FILTER (  ' + newline +
+						'				xsd:double(?lat) >= <PARAM_YMIN> &&  ' + newline +
+						'				xsd:double(?lat) <= <PARAM_YMAX> &&  ' + newline +
+						'				xsd:double(?long) >= <PARAM_XMIN> &&  ' + newline +
+						'				xsd:double(?long) <= <PARAM_XMAX> ' + newline +
+						'			)  ' + newline +
+						'		} ' + newline +
+						'		ORDER BY DESC(xsd:integer(?population))  ' + newline +
+						'		LIMIT 10  ' + newline +
+						'	} ' + newline +
+						'	FILTER (  ' + newline +
+						'		lang(?label) = "en" ' + newline +
+						'	) ' + newline +
+						'}ORDER BY DESC(xsd:integer(?population)) ';
+
+
+
 						
 	var QUERY_COMPLETE_SUBJECT = 	'SELECT ?subject ?label ?abst ' + newline + 
 									'WHERE { ' + newline +
@@ -166,7 +198,7 @@ function Constants(){
 	
 	var SPATIAL_REFERENCE_SYSTEM = "http://www.opengis.net/def/crs/EPSG/0/4326";
 
-	var ONTOLOGY_URL = "http://www.geographicknowledge.de/vocab/historicmapsphen"; //Be aware of javascript's cross domain problem
+	var ONTOLOGY_URL = "./ontologies/historicmapsphen.rdf"; //Be aware of javascript's cross domain problem
 	
 
 	var DATE_SEPARATOR = "-";

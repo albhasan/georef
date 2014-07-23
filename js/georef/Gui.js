@@ -81,6 +81,32 @@ $(document).ready(function () {
 		}
 	}) 
 
+
+	
+	//SPECIFIC AUTHOR NAME SEARCH ON THE LIBRARY OF MUENSTER
+	//Comment this function for deactivate the autocomplete
+	//Autocomplete functions for map creator from LOBID
+    $('#paperMapCreator').each(function() {
+        var $input = $(this);
+        $input.autocomplete({
+            source : function(request, response) {
+                $.ajax({
+                    url : "http://api.lobid.org/person",
+                    dataType : "jsonp",
+                    data : {
+                        name : request.term,
+                        format : "ids"
+                    },
+                    success : function(data) {
+                        response(data);
+                    }
+                });
+            }
+        });
+    });	
+	
+	
+	
 	
 	//------------------------------------------
 	//LEAFLET http://leafletjs.com/
@@ -975,6 +1001,62 @@ $(document).ready(function () {
 	
 	}
 	
+	
+	
+	
+	
+
+
+
+	/**
+	* Fills a list of places matching the user search on the map
+	*/
+	function queryDbpediaMapPlaces(){
+		mapPlaces = $.trim($("#searchMapPlaces").val());
+		$.ajax({
+			//Uses DBpedia spotlight
+			url: "http://spotlight.dbpedia.org/rest/annotate?text=" + escape(mapPlaces) + "&confidence=0.0&support=00&types=Place,PopulatedPlace,Settlement,City,Village,CityDistrict,Town,AdministrativeRegion",
+			headers: { 
+				Accept : "application/json; charset=utf-8",
+				"Content-Type": "text/plain; charset=utf-8"
+			},
+			}).done(function ( data ) {
+				$("#foundPlaces").html("");
+				var tmp = new Array();
+				if(data != null && data.Resources != null){
+					for(var i = 0; i < data.Resources.length; i++){
+						var obj = data.Resources[i];
+						var subject = obj["@URI"];
+						if(tmp.indexOf(subject) < 0){//Avoid duplicated tags
+							tmp.push(subject);
+							//var originalText = obj["@surfaceForm"];
+							//Gets the URL last part
+							var matchedText = subject.substring(subject.lastIndexOf("/") + 1, subject.length);
+							//Creates the checkboxes					
+							$("#foundPlaces").append("<p id='pSuggestedPlaceTag" + tmp.length +"'><input type='checkbox' id='" + subject + "' value='" + subject + "' class='chPlaceSuggestion' >" + matchedText + " - <a href='" + subject + "' target='_blank'>view</a> <a href='javascript: void(0)' onclick='removeElement(&quot;pSuggestedPlaceTag" + tmp.length + "&quot;)'>remove</a></p>");
+							//Completes the subject with the label and abstract -getDbpediaLabelAbstract();
+						}
+					}
+				}
+
+			}
+		);	
+	
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
 	/**
 	* Goes to DBpedia and retrieves the label and abstract for a given subject
 	* @param uriSubject Subject's URI.
@@ -1006,8 +1088,12 @@ $(document).ready(function () {
 		return res;
 	}
 	
-
-
+	//Button - Find matches to places typed by the user
+	$(function(){
+		$('#btFindMapPlaces').click(function() {
+			queryDbpediaMapPlaces();
+		});
+	});		
 	
 	//Button - load image. Loads the image to the map
 	$(function(){
@@ -1089,6 +1175,7 @@ $(document).ready(function () {
 			}
 		});
 	});		
+		
 		
 	//Button - btFindDescriptionMatches Find dbpedia matches to the description typed by the user
 	$(function(){
