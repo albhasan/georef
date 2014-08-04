@@ -1002,51 +1002,49 @@ $(document).ready(function () {
 	}
 
 
-/**
-* Fills a list of places matching the user search on the map
-*/
-$('#searchMapPlaces').each(function() {
-	var $input = $(this);
-	$input.autocomplete({
-		source : function(request, response) {
-			$.ajax({
-				url : "http://api.geonames.org/searchJSON",
-				dataType : "json",
-				data : {
-					q : request.term,
-					maxRows : "5", 
-					fuzzy : "0.8", 
-					username: "hamersson", 
-					format : "lat"
-				},
-				success : function(data) {
-					//Filter JSON objects
-					var myArray1 = new Array();
-					var gn = data.geonames;
-					for (i = 0;i < gn.length; i++) {
-						var prettyName = gn[i].name + " - " + gn[i].countryCode;
-						var loc = gn[i].lon + " - " + gn[i].lat;
-						myArray1[i] = prettyName;
-					}					
-					response(myArray1);
-				}
-			});
-		}
-	});
-});	
+	/**
+	* Fills a list of places matching the user search on the map
+	*/
+	$('#searchMapPlaces').each(function() {
+		var $input = $(this);
+		$input.autocomplete({
+			source : function(request, response) {
+				$.ajax({
+					url : "http://api.geonames.org/searchJSON",
+					dataType : "json",
+					data : {
+						q : request.term,
+						maxRows : "5", 
+						fuzzy : "0.8", 
+						username: "hamersson", 
+						format : "lat"
+					},
+					success : function(data) {
+						//Filter JSON objects
+						var myArray1 = new Array();
+						var gn = data.geonames;
+						for (i = 0;i < gn.length; i++) {
+							var tmpObj = {};
+							tmpObj.label = gn[i].name + ", " + gn[i].countryName;
+							tmpObj.value = gn[i].name + ", " + gn[i].countryName + " (Lon: " + gn[i].lng + "; Lat: " + gn[i].lat + ")";
+							myArray1[i] = tmpObj;
+						}
+						response(myArray1);
+					}
+				});
+			},
+			select: function( event, ui ) {
+				str = ui.item.value;
+				tmp1 = str.substring(str.indexOf(":") + 2 , str.lastIndexOf(")"));
+				tmp2 = tmp1.split(";");
+				lng = tmp2[0];
+				lat = tmp2[1].substring(tmp2[1].indexOf(":") + 1);
+				zoomToSuggestion(lng, lat);
+			}
+		});
+	});	
 
 
-
-
-
-
-
-
-
-
-
-
-	
 	/**
 	* Goes to DBpedia and retrieves the label and abstract for a given subject
 	* @param uriSubject Subject's URI.

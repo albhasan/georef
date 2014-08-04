@@ -163,3 +163,8 @@ as published by Sam Hocevar. See the COPYING file for more details.
 	width: 5em;
 }
 .ui-tab-content, .ui-tabs-panel{overflow: auto;}
+
+#searchMapPlaces{
+	width: 300px;
+}
+
