@@ -848,6 +848,52 @@ $(document).ready(function () {
 	});
 
 	
+	
+	
+	
+	
+	
+	
+	
+	
+	//Button - Searchs for exiting maps in a triple store using the MAP URI
+	$(function(){
+		$( "#btSearchMapUri" ).click(function(){
+			queryTripleStoreForMaps();
+		});
+	});
+	
+	//Searchs for exiting maps in a triple store using the MAP URI
+	function queryTripleStoreForMaps(){
+		var mapUri = $.trim($("#paperMapUri").val());
+		var id = mapUri.substring(mapUri.lastIndexOf("/") + 1);
+		$.ajax({
+			url: "http://lobid.org/resource",
+			dataType : "jsonp",
+			data : {
+				name : id,
+				format : "full"
+			},
+		}).then(function(data) {
+			graph = data[1]["@graph"];
+			for (var i = 0; i < graph.length; i++) {
+				myObj =  graph[i];
+				if(myObj["@id"] == mapUri){
+					$( "#paperMapTitle" ).val(myObj.title);
+					$( "#paperMapCreator" ).val(myObj.creator);
+				}
+			}
+		});		
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	//Button - store. Gets the data, creates a new graph, builds triples and send them to the triple store
 	$(function(){
 		$( "#btStoreTriples" ).click(function(){
@@ -998,7 +1044,6 @@ $(document).ready(function () {
 
 			}
 		);	
-	
 	}
 
 
@@ -1199,10 +1244,8 @@ $(document).ready(function () {
 		);	
 	
 	}
-	
-	
-	
-	
+
+
 });	
 
 

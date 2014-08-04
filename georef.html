@@ -185,7 +185,11 @@ as published by Sam Hocevar. See the COPYING file for more details.
 								<fieldset>
 									<legend>Metadata</legend>
 									<p>Please fill in the blanks with the pertinent information.</p>
-									Map (URI): <input type="text" id="paperMapUri" title="Paper map unique identifier. Please use a URI." /><br>
+									<form id="frMapUri" autocomplete="off">
+										Map (URI): <input type="text" id="paperMapUri" title="Paper map unique identifier. Please use a URI." />
+										<button type="button" id="btSearchMapUri">Find matches in LOBID</button>
+									</form>
+									<br>
 									Map title: <input type="text" id="paperMapTitle" title="Map title." /><br>
 									Map creator: <input type="text" id="paperMapCreator" title="The creator (author or cartographer) of a map."/><br>
 									Map size: <input type="text" id="paperMapSize" title="e g. 74 * 95 cm" /><br>
