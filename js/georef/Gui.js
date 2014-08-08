@@ -35,7 +35,7 @@ var paperMapDescription;
 var mapAreawkt;
 
 $(document).ready(function () {
-	c = new Constants();
+	c = Constants.getInstance();
 	$( document ).tooltip();//enables JQuery UI tooltips
 	
 	//------------------------------------------
@@ -318,7 +318,7 @@ $(document).ready(function () {
 	function projectImageBoundaries(cpManager, imgModelScaled, mapAreaLatLonArray, map){
 		trans = createTransformation(cpManager);
 		mapAreawkt = "";
-		var c = new Constants();
+		var c = Constants.getInstance();
 		if(trans != null){
 			var mapAreaBnd = new Array();
 			var xyProjArrayBnd = getImageBoundariesInMapCoords(trans, imgModelScaled);
@@ -496,7 +496,7 @@ $(document).ready(function () {
 	function validateMetadata(){
 		var res = true;
 
-		var c = new Constants();
+		var c = Constants.getInstance();
 		var paperMapUri = $("#paperMapUri").val();
 		var d = new Date();
 		var messages = new Array();
@@ -559,7 +559,7 @@ $(document).ready(function () {
 	*/
 	function buildTriples(graph){
 		var res;
-		var c = new Constants();
+		var c = Constants.getInstance();
 		var baseUri = c.getConstant("HOME_URI");
 
 		var prefix = c.getConstant("PREFIXES");
@@ -899,7 +899,7 @@ $(document).ready(function () {
 		$( "#btStoreTriples" ).click(function(){
 			paperMapUri = $("#paperMapUri").val();
 			var imageMapUri;
-			var c = new Constants();
+			var c = Constants.getInstance();
 			if(imgModelOriginal != null){
 				imageMapUri = imgModelOriginal.getUrl()
 			}
@@ -966,7 +966,7 @@ $(document).ready(function () {
 			if(validateMetadata()){
 				paperMapUri = $("#paperMapUri").val();
 				var imageMapUri = imgModelOriginal.getUrl()
-				var c = new Constants();	
+				var c = Constants.getInstance();	
 				var graph = createGraphName(c.getConstant("HOME_URI"), paperMapUri);
 				var queryInsert = buildTriples(graph);
 				var win = window.open(c.getConstant("CODE_WINDOW_PROPERTIES"));
@@ -1154,7 +1154,7 @@ $(document).ready(function () {
 		$( "#btUpdateMapLinks" ).click(function(){
 			if(trans != null){
 				if(validateMetadata()){
-					var c = new Constants();
+					var c = Constants.getInstance();
 					var dateSeparator = c.getConstant("DATE_SEPARATOR");
 					var year = $.trim($("#paperMapTime").val());
 					if(year != null){

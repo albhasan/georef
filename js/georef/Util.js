@@ -341,7 +341,7 @@ function pointArrayDistance(pointArray){
 */
 function getOverlayText(imgUrl, north, south, east, west, rotation){
 	var res = "";
-	var c = new Constants();
+	var c = Constants.getInstance();
 	var template = c.getConstant("KML_OVERLAY");
 	
 	res = template.replace("<PARAM_URL>", imgUrl);
