@@ -35,7 +35,7 @@ var paperMapDescription;
 var mapAreawkt;
 
 $(document).ready(function () {
-	c = new Constants();
+	c = Constants.getInstance();
 	$( document ).tooltip();//enables JQuery UI tooltips
 	
 	//------------------------------------------
@@ -318,7 +318,7 @@ $(document).ready(function () {
 	function projectImageBoundaries(cpManager, imgModelScaled, mapAreaLatLonArray, map){
 		trans = createTransformation(cpManager);
 		mapAreawkt = "";
-		var c = new Constants();
+		var c = Constants.getInstance();
 		if(trans != null){
 			var mapAreaBnd = new Array();
 			var xyProjArrayBnd = getImageBoundariesInMapCoords(trans, imgModelScaled);
@@ -496,7 +496,7 @@ $(document).ready(function () {
 	function validateMetadata(){
 		var res = true;
 
-		var c = new Constants();
+		var c = Constants.getInstance();
 		var paperMapUri = $("#paperMapUri").val();
 		var d = new Date();
 		var messages = new Array();
@@ -553,167 +553,6 @@ $(document).ready(function () {
 		return res;
 	}
 	
-	
-	/**
-	* Build the triples to be sent to the triple store
-	*/
-	function buildTriples(graph){
-		var res;
-		var c = new Constants();
-		var baseUri = c.getConstant("HOME_URI");
-
-		var prefix = c.getConstant("PREFIXES");
-		var insertTemplate = c.getConstant("QUERY_INSERT");
-		var imageMapUri = imgModelOriginal.getUrl()
-		var tripleSeparator = " . ";// + String.fromCharCode(13);
-		var pmu = $("#paperMapUri").val();
-		var paperMapUri = "<" + pmu + "> ";
-		if(validateMetadata()){
-			//Gets the data from the form (in case the user changed something)
-			paperMapCreator = getStringEscaped($.trim($("#paperMapCreator").val()));
-			paperMapSize = $.trim($("#paperMapSize").val());
-			paperMapTitle = getStringEscaped($.trim($("#paperMapTitle").val()));
-			paperMapTime = $.trim($("#paperMapTime").val());
-			paperMapScale = $.trim($("#paperMapScale").val());
-			paperMapPlaces = $.trim($("#paperMapPlaces").val());
-			paperMapDescription = getStringEscaped($.trim($("#taMapDescription").val()));
-			mapAreawkt = $.trim($("#mapAreawkt").val());
-			var paperMapPlacesArray = csv2array(paperMapPlaces);//Get the list of user's places as an array
-			
-			//Triples for map
-			var cMapTriples = "";
-			// paper map
-			cMapTriples = paperMapUri + "a <http://www.geographicknowledge.de/vocab/maps#Map>" + tripleSeparator;
-			cMapTriples += paperMapUri + "<http://www.geographicknowledge.de/vocab/maps#medium> <http://www.geographicknowledge.de/vocab/maps#Paper>" + tripleSeparator;
-			// Relation paper - image
-			cMapTriples += paperMapUri + "<http://www.geographicknowledge.de/vocab/maps#digitalImageVersion> <" + imageMapUri + ">" + tripleSeparator;
-			//Size
-			if(paperMapSize != null && paperMapSize.length > 0){
-				cMapTriples += paperMapUri + "<http://www.geographicknowledge.de/vocab/maps#mapSize> '" + paperMapSize + "'^^xsd:string" + tripleSeparator;
-			}
-			//paper map title
-			if(paperMapTitle != null && paperMapTitle.length > 0){
-				cMapTriples += paperMapUri + "<http://www.geographicknowledge.de/vocab/maps#title> '" + paperMapTitle + "'^^xsd:string" + tripleSeparator;
-			}
-			
-			//paper map time
-			if(paperMapTime != null && paperMapTime.length > 0){
-				var dateArray = paperMapTime.split("-");
-				var dateFrom = "";
-				var dateTo = "";
-				var tripleFrom = "";
-				var tripleTo = "";
-				var timeTriple = "";
-
-				if(dateArray.length > 0){
-					if(dateArray.length == 1){
-						dateFrom = dateArray[0];
-						dateFrom = dateFrom.trim();
-						tripleFrom = "<" + pmu + "/mapRepresentationTime> a <http://www.w3.org/2006/time#Instant>" + tripleSeparator;
-						tripleFrom += "<" + pmu + "/mapRepresentationTime> <http://www.w3.org/2001/XMLSchema#gYear> '" + dateFrom + "'" + tripleSeparator;
-						timeTriple = tripleFrom;
-					}else if(dateArray.length == 2){
-						dateFrom = dateArray[0];
-						dateFrom = dateFrom.trim();
-						dateTo = dateArray[1];
-						dateTo = dateTo.trim();
-						tripleFrom = "<" + pmu + "/mapRepresentationTime/start> a <http://www.w3.org/2006/time#Instant>" + tripleSeparator;
-						tripleFrom += "<" + pmu + "/mapRepresentationTime/start> <http://www.w3.org/2001/XMLSchema#gYear> '" + dateFrom + "'" + tripleSeparator;
-						tripleTo = "<" + pmu + "/mapRepresentationTime/end> a <http://www.w3.org/2006/time#Instant>" + tripleSeparator;
-						tripleTo += "<" + pmu + "/mapRepresentationTime/end> <http://www.w3.org/2001/XMLSchema#gYear> '" + dateTo + "'" + tripleSeparator;
-						var intervalTriple = "<" + pmu + "/mapRepresentationTime> a <http://www.w3.org/2006/time#Interval>" + tripleSeparator;
-						intervalTriple +=  "<" + pmu + "/mapRepresentationTime> <http://www.w3.org/2006/time#hasBeginning> <" + pmu + "/mapRepresentationTime/start>" + tripleSeparator;
-						intervalTriple +=  "<" + pmu + "/mapRepresentationTime> <http://www.w3.org/2006/time#hasEnd> <" + pmu + "/mapRepresentationTime/end>" + tripleSeparator;
-						timeTriple	=  intervalTriple + tripleFrom + tripleTo;
-					}
-					cMapTriples += paperMapUri + "<http://www.geographicknowledge.de/vocab/maps#mapsTime> <" + pmu + "/mapRepresentationTime>" + tripleSeparator;
-					cMapTriples += timeTriple;
-				}
-			}
-			
-			//paper map scale
-			if(paperMapScale != null && paperMapScale.length > 0){
-				cMapTriples += paperMapUri + "<http://www.geographicknowledge.de/vocab/maps#hasScale> '" + paperMapScale + "'^^xsd:string" +  tripleSeparator;
-			}
-			//paper map area en map coords
-			if(mapAreawkt != null && mapAreawkt.length > 0){
-				//Get a name for the Geometry object (map area)
-				var geomName = imageMapUri + "/" + djb2Code(imageMapUri);
-				cMapTriples += "<" + geomName + "> a geo:Geometry " +  tripleSeparator;
-				cMapTriples += paperMapUri + "<http://www.geographicknowledge.de/vocab/maps#mapsArea> " + "<" + geomName + "> " +  tripleSeparator;
-				cMapTriples += "<" + geomName + "> geo:asWKT '" + mapAreawkt + "'^^sf:wktLiteral" +  tripleSeparator;
-			}
-			//paper map description
-			if(paperMapDescription != null && paperMapDescription.length > 0){
-
-				var tmpDescription = paperMapDescription.replace("'",'\"');
-
-				cMapTriples += paperMapUri + "<http://purl.org/dc/terms/description> '" + paperMapDescription + "'^^xsd:string" +  tripleSeparator;
-			}
-			
-			//Triples for places typed by the user. Creates a new URI for each place
-			var cPlaceTriples = "";	
-			if(paperMapPlacesArray != null){
-				for(var i = 0; i < paperMapPlacesArray.length; i++){
-					var tmpPlace = encodeURI(baseUri + "/" + paperMapPlacesArray[i]);
-					cPlaceTriples += "<" + tmpPlace + "> a <http://www.geographicknowledge.de/vocab/maps#Place>" + tripleSeparator; 
-					cPlaceTriples += "<" + tmpPlace + "> foaf:name '" + paperMapPlacesArray[i] + "'^^xsd:string" + tripleSeparator;
-					//Links the paper map to the place just created
-					cMapTriples += paperMapUri + "<http://www.geographicknowledge.de/vocab/maps#mapsPhenomenon> <" + tmpPlace + ">" + tripleSeparator;
-				}
-			}
-			
-			//Triples about the map's author
-			var cAgentTriples = "";
-			if(paperMapCreator != null && paperMapCreator.length > 0){
-				var tmpMapCreator =  encodeURI(baseUri + "/" + paperMapCreator);
-				cAgentTriples = paperMapUri + " <http://purl.org/dc/terms/creator> <" + tmpMapCreator + ">" + tripleSeparator;
-				cAgentTriples += "<" + tmpMapCreator + "> a <http://purl.org/dc/terms/Agent>" + tripleSeparator;
-				cAgentTriples += "<" + tmpMapCreator + "> foaf:name '" + paperMapCreator + "'^^xsd:string" + tripleSeparator;
-			}
-
-			//Builds triples form the checkboxes
-			
-			//DBpedia places matched from user's places. Alphanumeric
-			$(".chPlaceSuggestion").each(function( index ){
-				if(this.checked){
-					cMapTriples += paperMapUri + "<http://www.geographicknowledge.de/vocab/maps#mapsPhenomenon> <" +  this.value + ">" + tripleSeparator;
-				}
-			});
-			//DBpedia retrieved from the image map boundary and the user's typed year- spatio temporal places
-			$(".chMapLinkSuggestion").each(function( index ){
-				if(this.checked){
-					cMapTriples += paperMapUri + "<http://www.geographicknowledge.de/vocab/maps#mapsPhenomenon> <" +  this.value + ">" + tripleSeparator;
-				}
-			});
-			//DBpedia - Links found in the user's description
-			$(".chDescriptionSuggestion").each(function( index ){
-				if(this.checked){
-					cMapTriples += paperMapUri + "<http://purl.org/dc/terms/references> <" +  this.value + ">" + tripleSeparator;
-					//http://www.geographicknowledge.de/vocab/maps#mapsPhenomenon
-					
-				}
-			});
-			//Triples from the ontology
-			$(".chOntologyContent").each(function( index ){
-				if(this.checked){
-					var tmpInstance = djb2Code(pmu + "/" + this.value);
-					cMapTriples += paperMapUri + " a <" + this.value  + ">" + tripleSeparator;
-					cMapTriples += paperMapUri + "<http://www.geographicknowledge.de/vocab/maps#mapsPhenomenon> _:" +  tmpInstance + tripleSeparator;
-				}
-			});
-			
-			//Replace in the insert template
-			insertTemplate = insertTemplate.replace("PARAM_GRAPH", graph);
-			insertTemplate = insertTemplate.replace("PARAM_TRIPLES", cMapTriples + cPlaceTriples + cAgentTriples);
-			var queryInsert = prefix + " " + insertTemplate;
-			//queryInsert = queryInsert.replace(/(\r\n|\n|\r)/gm,"");//Removes \r
-			res = queryInsert;
-			
-		}
-
-		return res;
-	}
 	
 	//------------------------------------------
 	//DataTables http://www.datatables.net
@@ -899,7 +738,7 @@ $(document).ready(function () {
 		$( "#btStoreTriples" ).click(function(){
 			paperMapUri = $("#paperMapUri").val();
 			var imageMapUri;
-			var c = new Constants();
+			var c = Constants.getInstance();
 			if(imgModelOriginal != null){
 				imageMapUri = imgModelOriginal.getUrl()
 			}
@@ -966,7 +805,7 @@ $(document).ready(function () {
 			if(validateMetadata()){
 				paperMapUri = $("#paperMapUri").val();
 				var imageMapUri = imgModelOriginal.getUrl()
-				var c = new Constants();	
+				var c = Constants.getInstance();	
 				var graph = createGraphName(c.getConstant("HOME_URI"), paperMapUri);
 				var queryInsert = buildTriples(graph);
 				var win = window.open(c.getConstant("CODE_WINDOW_PROPERTIES"));
@@ -993,21 +832,6 @@ $(document).ready(function () {
 	});	
 	
 	
-	/**
-	* Creates a name for the graph of the map from a prefix and the map URI
-	*/
-	function createGraphName(prefix, mapURI){
-		var res = "";
-		if(prefix.length > 1 && mapURI.length > 1){
-			var tmp = djb2Code(mapURI);
-			if(prefix.substr(prefix.length - 1) == "/"){
-				res = prefix + tmp;
-			}else{
-				res = prefix + "/" + tmp;
-			}
-		}
-		return res;
-	}
 	
 	
 	/**
@@ -1154,7 +978,7 @@ $(document).ready(function () {
 		$( "#btUpdateMapLinks" ).click(function(){
 			if(trans != null){
 				if(validateMetadata()){
-					var c = new Constants();
+					var c = Constants.getInstance();
 					var dateSeparator = c.getConstant("DATE_SEPARATOR");
 					var year = $.trim($("#paperMapTime").val());
 					if(year != null){

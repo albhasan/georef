@@ -341,7 +341,7 @@ function pointArrayDistance(pointArray){
 */
 function getOverlayText(imgUrl, north, south, east, west, rotation){
 	var res = "";
-	var c = new Constants();
+	var c = Constants.getInstance();
 	var template = c.getConstant("KML_OVERLAY");
 	
 	res = template.replace("<PARAM_URL>", imgUrl);
@@ -580,6 +580,21 @@ function removeElement(id){
 	$('#' + id).remove();
 }
 
+/**
+* Creates a name for the graph of the map from a prefix and the map URI
+*/
+function createGraphName(prefix, mapURI){
+	var res = "";
+	if(prefix.length > 1 && mapURI.length > 1){
+		var tmp = djb2Code(mapURI);
+		if(prefix.substr(prefix.length - 1) == "/"){
+			res = prefix + tmp;
+		}else{
+			res = prefix + "/" + tmp;
+		}
+	}
+	return res;
+}
 
 
 
