@@ -23,7 +23,6 @@ var imageBoundaryOnMap;
 var imageMapAreaOnMap;
 var drawnItemsImage = new L.FeatureGroup();
 var drawnItemsMap = new L.FeatureGroup();
-var c;//Constants
 var trans;//Transformation
 var imageMapArea;//Area of the mapArea in the image (pixels)
 
@@ -552,7 +551,21 @@ $(document).ready(function () {
 		}
 		return res;
 	}
+
 	
+	/**
+	* Build the triples to be sent to the triple store
+	*/
+	function buildTriples(graph){
+		//*****************************************************
+		//TODO: Update code to use the methods in MapDescription
+		//*****************************************************
+		var md  = MapDescription.getInstance();
+		var res = md.buildTriples();
+		return res;
+	}
+
+
 	
 	//------------------------------------------
 	//DataTables http://www.datatables.net
@@ -686,15 +699,6 @@ $(document).ready(function () {
 		$( ".tabs-bottom .ui-tabs-nav" ).appendTo( ".tabs-bottom" );
 	});
 
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	//Button - Searchs for exiting maps in a triple store using the MAP URI
 	$(function(){
 		$( "#btSearchMapUri" ).click(function(){
@@ -722,16 +726,11 @@ $(document).ready(function () {
 					$( "#paperMapCreator" ).val(myObj.creator);
 				}
 			}
+			if(graph.length == 0){
+				alert("No results found");
+			}
 		});		
 	}
-	
-	
-	
-	
-	
-	
-	
-	
 	
 	//Button - store. Gets the data, creates a new graph, builds triples and send them to the triple store
 	$(function(){
@@ -832,6 +831,177 @@ $(document).ready(function () {
 	});	
 	
 	
+	//Button - load image. Loads the image to the map
+	$(function(){
+		$( "#btLoadImage" ).click(function(){
+			var imageUrl = $( "#imgMapInput" ).val();
+			if(isUrlOfImage(imageUrl)){
+				var image = new Image();
+				image.onload = function(){
+					//Loads the new image to the map
+					imgModelOriginal = new ImageModel(imageUrl, this.width, this.height);
+					imgModelScaled = new ScaledImage(imgModelOriginal, imageMapMaxSize);
+					var scaleBounds = new Array();
+					scaleBounds[0] = imgModelScaled.getScaledImage().getCartesianLowerLeft_Image1Q().reverse();
+					scaleBounds[1] = imgModelScaled.getScaledImage().getCartesianUpperRight_Image1Q().reverse();
+					if(imageMapLayer != null){
+						mapImage.removeLayer(imageMapLayer);//Removes the last loaded image
+					}
+					imageMapLayer = new L.imageOverlay(imageUrl, scaleBounds);
+					imageMapLayer.addTo(mapImage);
+					mapImage.setView([imgModelScaled.getScaledImage().getHeight()/2, imgModelScaled.getScaledImage().getWidth()/2], 5);//Zoom to image center
+				}
+				image.src = imageUrl;
+				var md = MapDescription.getInstance();
+				md.setImageUrl(imageUrl);
+			}else{
+				alert("Invalid URL!");
+			}
+		});
+	});
+	
+	//Button - Suggest tags (spatio-temporal references)
+	$(function(){
+		$( "#btUpdateMapLinks" ).click(function(){
+			if(trans != null){
+				if(validateMetadata()){
+					var c = Constants.getInstance();
+					var dateSeparator = c.getConstant("DATE_SEPARATOR");
+					var year = $.trim($("#paperMapTime").val());
+					if(year != null){
+						var xyProjArrayBnd = getImageBoundariesInMapCoords(trans, imgModelScaled);
+						var xybboxBnd = getBoundary(xyProjArrayBnd);
+						var yearStart = "";
+						var yearEnd = "";
+						if(year.indexOf(dateSeparator) >= 0){
+							var yearStrArray = year.split(dateSeparator);
+							yearStart = yearStrArray[0] + "-01-01T00:00:00+00:00";//TODO: Find a better way to make the year valid
+							yearEnd = yearStrArray[1];//HACK: Machete kills!
+						}else{
+							yearStart = year + "-01-01T00:00:00+00:00";//TODO: Find a better way to make the year valid
+							yearEnd = year;//HACK: Machete kills!
+						}
+						var stRefs = queryDbpediaST(xybboxBnd, yearStart, yearEnd);
+						//Adds check boxes for suggestions
+						$("#stSuggestions").empty();
+						var tmp = new Array();
+						for(var i = 0; i < stRefs.length; i++){
+							var ref = stRefs[i];
+							var subject = ref[0];
+							if(tmp.indexOf(subject) < 0){//Avoid subject repetition
+								tmp.push(subject);
+								var label = ref[1];
+								var abst = ref[2];
+								$("#stSuggestions").append("<p id='pStTag" + tmp.length +"'><input type='checkbox' id='" + subject + "' value='" + subject + "' title='" + abst + "' class='chMapLinkSuggestion' >" + label + " - <a href='" + subject + "' target='_blank'>view</a> <a href='javascript: void(0)' onclick='removeElement(&quot;pStTag" + tmp.length + "&quot;)'>remove</a></p>");
+							}
+						}
+						if(stRefs.length == 0){
+							alert("No suggestions found");
+						}
+					}else{
+						alert("Please fill the map time field in the metadata tab.");
+					}
+				}
+			}
+		});
+	});
+
+		
+	//Button - Find matches to places typed by the user
+	$(function(){
+		$('#btFindPlaceMatches').click(function() {
+			if(validateMetadata()){
+				queryDbpediaSuggestedPlaces();
+			}
+		});
+	});		
+		
+		
+	//Button - btFindDescriptionMatches Find dbpedia matches to the description typed by the user
+	$(function(){
+		$( "#btFindDescriptionMatches" ).click(function(){
+			queryDbpediaDescription();
+		});
+	});
+
+	
+	/**
+	* Metadata tab events
+	*/
+	$("#paperMapUri").change(function(){
+		var md = MapDescription.getInstance();
+		md.setMapUri($.trim($("#paperMapUri").val()));
+	});
+	$("#paperMapTitle").change(function(){
+		var md = MapDescription.getInstance();
+		md.setMapTitle(getStringEscaped($.trim($("#paperMapTitle").val())));
+	});
+	$("#paperMapCreator").change(function(){
+		var md = MapDescription.getInstance();
+		md.setMapTitle(getStringEscaped($.trim($("#paperMapCreator").val())));
+	});
+	$("#paperMapSize").change(function(){
+		var md = MapDescription.getInstance();
+		md.setMapTitle($.trim($("#paperMapSize").val()));
+	});
+	$("#paperMapTime").change(function(){
+		var md = MapDescription.getInstance();
+		md.setMapTitle($.trim($("#paperMapTime").val()));
+	});
+	$("#paperMapScale").change(function(){
+		var md = MapDescription.getInstance();
+		md.setMapTitle($.trim($("#paperMapScale").val()));
+	});
+	$("#mapAreawkt").change(function(){
+		var md = MapDescription.getInstance();
+		md.setMapTitle($.trim($("#mapAreawkt").val()));
+	});
+
+	
+	/**
+	* Events of the dinamically created checkboxes
+	*/
+	$("body").on("change", ".chOntologyContent", function() {
+		var res = new Array();
+		$(".chOntologyContent").each(function( index ){
+			if(this.checked){
+				res.push(this.value);
+			}
+		});
+		var md = MapDescription.getInstance();
+		md.setMapLinksContents(res);
+	});
+	$("body").on("change", ".chMapLinkSuggestion", function() {
+		var res = new Array();
+		$(".chMapLinkSuggestion").each(function( index ){
+			if(this.checked){
+				res.push(this.value);
+			}
+		});	
+		var md = MapDescription.getInstance();
+		md.setMapLinksTags(res);
+	});
+	$("body").on("change", ".chPlaceSuggestion", function() {
+		var res = new Array();
+		$(".chPlaceSuggestion").each(function( index ){
+			if(this.checked){
+				res.push(this.value);
+			}
+		});	
+		var md = MapDescription.getInstance();
+		md.setMapLinksPlaces(res);
+	});
+	$("body").on("change", ".chDescriptionSuggestion", function() {
+		var res = new Array();
+		$(".chDescriptionSuggestion").each(function( index ){
+			if(this.checked){
+				res.push(this.value);
+			}
+		});	
+		var md = MapDescription.getInstance();
+		md.setMapLinksDescription(res);
+	});
+
 	
 	
 	/**
@@ -847,7 +1017,6 @@ $(document).ready(function () {
 				"Content-Type": "text/plain; charset=utf-8"
 			},
 			}).done(function ( data ) {
-
 				$("#placeTags").html("");
 				var tmp = new Array();
 				if(data != null && data.Resources != null){
@@ -864,8 +1033,9 @@ $(document).ready(function () {
 							//Completes the subject with the label and abstract -getDbpediaLabelAbstract();
 						}
 					}
+				}else{
+					alert("No matches found");
 				}
-
 			}
 		);	
 	}
@@ -945,96 +1115,6 @@ $(document).ready(function () {
 		return res;
 	}
 	
-
-	//Button - load image. Loads the image to the map
-	$(function(){
-		$( "#btLoadImage" ).click(function(){
-			var imageUrl = $( "#imgMapInput" ).val();
-			if(isUrlOfImage(imageUrl)){
-				var image = new Image();
-				image.onload = function(){
-					//Loads the new image to the map
-					imgModelOriginal = new ImageModel(imageUrl, this.width, this.height);
-					imgModelScaled = new ScaledImage(imgModelOriginal, imageMapMaxSize);
-					var scaleBounds = new Array();
-					scaleBounds[0] = imgModelScaled.getScaledImage().getCartesianLowerLeft_Image1Q().reverse();
-					scaleBounds[1] = imgModelScaled.getScaledImage().getCartesianUpperRight_Image1Q().reverse();
-					if(imageMapLayer != null){
-						mapImage.removeLayer(imageMapLayer);//Removes the last loaded image
-					}
-					imageMapLayer = new L.imageOverlay(imageUrl, scaleBounds);
-					imageMapLayer.addTo(mapImage);
-					mapImage.setView([imgModelScaled.getScaledImage().getHeight()/2, imgModelScaled.getScaledImage().getWidth()/2], 5);//Zoom to image center
-				}
-				image.src = imageUrl;	
-			}else{
-				alert("Invalid URL!");
-			}
-		});
-	});
-	
-	//Button - Suggest tags (spatio-temporal references)
-	$(function(){
-		$( "#btUpdateMapLinks" ).click(function(){
-			if(trans != null){
-				if(validateMetadata()){
-					var c = Constants.getInstance();
-					var dateSeparator = c.getConstant("DATE_SEPARATOR");
-					var year = $.trim($("#paperMapTime").val());
-					if(year != null){
-						var xyProjArrayBnd = getImageBoundariesInMapCoords(trans, imgModelScaled);
-						var xybboxBnd = getBoundary(xyProjArrayBnd);
-						var yearStart = "";
-						var yearEnd = "";
-						if(year.indexOf(dateSeparator) >= 0){
-							var yearStrArray = year.split(dateSeparator);
-							yearStart = yearStrArray[0] + "-01-01T00:00:00+00:00";//TODO: Find a better way to make the year valid
-							yearEnd = yearStrArray[1];//HACK: Machete kills!
-						}else{
-							yearStart = year + "-01-01T00:00:00+00:00";//TODO: Find a better way to make the year valid
-							yearEnd = year;//HACK: Machete kills!
-						}
-						var stRefs = queryDbpediaST(xybboxBnd, yearStart, yearEnd);
-						//Adds check boxes for suggestions
-						$("#stSuggestions").empty();
-						var tmp = new Array();
-						for(var i = 0; i < stRefs.length; i++){
-							var ref = stRefs[i];
-							var subject = ref[0];
-							if(tmp.indexOf(subject) < 0){//Avoid subject repetition
-								tmp.push(subject);
-								var label = ref[1];
-								var abst = ref[2];
-								$("#stSuggestions").append("<p id='pStTag" + tmp.length +"'><input type='checkbox' id='" + subject + "' value='" + subject + "' title='" + abst + "' class='chMapLinkSuggestion' >" + label + " - <a href='" + subject + "' target='_blank'>view</a> <a href='javascript: void(0)' onclick='removeElement(&quot;pStTag" + tmp.length + "&quot;)'>remove</a></p>");
-							}
-						}
-					}else{
-						alert("Please fill the map time field in the metadata tab.");
-					}
-				}
-			}
-		});
-	});
-		
-		
-		
-	//Button - Find matches to places typed by the user
-	$(function(){
-		$('#btFindPlaceMatches').click(function() {
-			if(validateMetadata()){
-				queryDbpediaSuggestedPlaces();
-			}
-		});
-	});		
-		
-		
-	//Button - btFindDescriptionMatches Find dbpedia matches to the description typed by the user
-	$(function(){
-		$( "#btFindDescriptionMatches" ).click(function(){
-			queryDbpediaDescription()
-		});
-	});
-	
 	/**
 	* Prints suggested places taken from DBPedia. Purely alphanumerical.
 	*/
@@ -1071,6 +1151,8 @@ $(document).ready(function () {
 
 
 });	
+
+
 
 
 

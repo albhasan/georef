@@ -44,6 +44,23 @@ function isUrlValid(url){
 }
 
 
+/**
+* Tests if the given text is an URL
+* @param aText - Text to be tested
+* @returns TRUE if the text is a URL, FALSE otherwise
+*/
+function isUrl(aText){
+	var res = false;
+	if(isTextValid(aText)){
+		var urlregex = new RegExp("^(http:\/\/www.|https:\/\/www.|ftp:\/\/www.|www.){1}([0-9A-Za-z]+\.)");
+		if (urlregex.test(aText)) {
+			res = true;
+		}
+	}
+    return res;
+}
+
+
 
 /**
 * Tests if the given string is valid
