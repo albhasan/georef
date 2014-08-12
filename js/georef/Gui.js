@@ -938,23 +938,23 @@ $(document).ready(function () {
 	});
 	$("#paperMapCreator").change(function(){
 		var md = MapDescription.getInstance();
-		md.setMapTitle(getStringEscaped($.trim($("#paperMapCreator").val())));
+		md.setMapCreator(getStringEscaped($.trim($("#paperMapCreator").val())));
 	});
 	$("#paperMapSize").change(function(){
 		var md = MapDescription.getInstance();
-		md.setMapTitle($.trim($("#paperMapSize").val()));
+		md.setMapSize($.trim($("#paperMapSize").val()));
 	});
 	$("#paperMapTime").change(function(){
 		var md = MapDescription.getInstance();
-		md.setMapTitle($.trim($("#paperMapTime").val()));
+		md.setMapTime($.trim($("#paperMapTime").val()));
 	});
 	$("#paperMapScale").change(function(){
 		var md = MapDescription.getInstance();
-		md.setMapTitle($.trim($("#paperMapScale").val()));
+		md.setMapScale($.trim($("#paperMapScale").val()));
 	});
 	$("#mapAreawkt").change(function(){
 		var md = MapDescription.getInstance();
-		md.setMapTitle($.trim($("#mapAreawkt").val()));
+		md.setMapArea($.trim($("#mapAreawkt").val()));
 	});
 
 	
