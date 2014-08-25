@@ -148,7 +148,7 @@ var MapDescription = (function(){
 			}
 			//paper map title
 			if(getMapTitle() != null && getMapTitle().length > 0){
-				cMapTriples += paperMapUri + "<http://www.geographicknowledge.de/vocab/maps#title> '" + getMapTitle() + "'^^xsd:string" + tripleSeparator;
+				cMapTriples += paperMapUri + '<http://www.geographicknowledge.de/vocab/maps#title> "' + getMapTitle() + '"^^xsd:string' + tripleSeparator;
 			}
 			
 			//paper map time
@@ -165,7 +165,7 @@ var MapDescription = (function(){
 						dateFrom = dateArray[0];
 						dateFrom = dateFrom.trim();
 						tripleFrom = "<" + mapUri + "/mapRepresentationTime> a <http://www.w3.org/2006/time#Instant>" + tripleSeparator;
-						tripleFrom += "<" + mapUri + "/mapRepresentationTime> <http://www.w3.org/2001/XMLSchema#gYear> '" + dateFrom + "'" + tripleSeparator;
+						tripleFrom += '<' + mapUri + '/mapRepresentationTime> <http://www.w3.org/2001/XMLSchema#gYear> "' + dateFrom + '"' + tripleSeparator;
 						timeTriple = tripleFrom;
 					}else if(dateArray.length == 2){
 						dateFrom = dateArray[0];
@@ -173,9 +173,9 @@ var MapDescription = (function(){
 						dateTo = dateArray[1];
 						dateTo = dateTo.trim();
 						tripleFrom = "<" + mapUri + "/mapRepresentationTime/start> a <http://www.w3.org/2006/time#Instant>" + tripleSeparator;
-						tripleFrom += "<" + mapUri + "/mapRepresentationTime/start> <http://www.w3.org/2001/XMLSchema#gYear> '" + dateFrom + "'" + tripleSeparator;
+						tripleFrom += '<' + mapUri + '/mapRepresentationTime/start> <http://www.w3.org/2001/XMLSchema#gYear> "' + dateFrom + '"' + tripleSeparator;
 						tripleTo = "<" + mapUri + "/mapRepresentationTime/end> a <http://www.w3.org/2006/time#Instant>" + tripleSeparator;
-						tripleTo += "<" + mapUri + "/mapRepresentationTime/end> <http://www.w3.org/2001/XMLSchema#gYear> '" + dateTo + "'" + tripleSeparator;
+						tripleTo += '<' + mapUri + '/mapRepresentationTime/end> <http://www.w3.org/2001/XMLSchema#gYear> "' + dateTo + '"' + tripleSeparator;
 						var intervalTriple = "<" + mapUri + "/mapRepresentationTime> a <http://www.w3.org/2006/time#Interval>" + tripleSeparator;
 						intervalTriple +=  "<" + mapUri + "/mapRepresentationTime> <http://www.w3.org/2006/time#hasBeginning> <" + mapUri + "/mapRepresentationTime/start>" + tripleSeparator;
 						intervalTriple +=  "<" + mapUri + "/mapRepresentationTime> <http://www.w3.org/2006/time#hasEnd> <" + mapUri + "/mapRepresentationTime/end>" + tripleSeparator;
@@ -188,20 +188,20 @@ var MapDescription = (function(){
 			
 			//paper map scale
 			if(this.getMapScale() != null && this.getMapScale().length > 0){
-				cMapTriples += paperMapUri + "<http://www.geographicknowledge.de/vocab/maps#hasScale> '" + getMapScale() + "'^^xsd:string" +  tripleSeparator;
+				cMapTriples += paperMapUri + '<http://www.geographicknowledge.de/vocab/maps#hasScale> "' + getMapScale() + '"^^xsd:string' +  tripleSeparator;
 			}
-			//paper map area en map coords
+			//paper map area in map coords
 			if(this.getMapArea() != null && this.getMapArea().length > 0){
 				//Get a name for the Geometry object (map area)
 				var geomName = imageUrl + "/" + djb2Code(imageUrl);
 				cMapTriples += "<" + geomName + "> a geo:Geometry " +  tripleSeparator;
 				cMapTriples += paperMapUri + "<http://www.geographicknowledge.de/vocab/maps#mapsArea> " + "<" + geomName + "> " +  tripleSeparator;
-				cMapTriples += "<" + geomName + "> geo:asWKT '" + this.getMapArea() + "'^^sf:wktLiteral" +  tripleSeparator;
+				cMapTriples += '<' + geomName + '> geo:asWKT "' + getMapArea() + '"^^sf:wktLiteral' +  tripleSeparator;
 			}
 			//paper map description
-			if(this.getMapDescription() != null && this.getMapDescription().length > 0){
-				var tmpDescription = this.getMapDescription().replace("'",'\"');
-				cMapTriples += paperMapUri + "<http://purl.org/dc/terms/description> '" + this.getMapDescription() + "'^^xsd:string" +  tripleSeparator;
+			if(getMapDescription() != null && getMapDescription().length > 0){
+				var tmpDescription = getMapDescription().replace("'",'\"');
+				cMapTriples += paperMapUri + '<http://purl.org/dc/terms/description> "' + getMapDescription() + '"^^xsd:string' +  tripleSeparator;
 			}
 			//Triples for places typed by the user. Creates a new URI for each place
 			var cPlaceTriples = "";	
@@ -209,7 +209,7 @@ var MapDescription = (function(){
 				for(var i = 0; i < paperMapPlacesArray.length; i++){
 					var tmpPlace = encodeURI(baseUri + "/" + paperMapPlacesArray[i]);
 					cPlaceTriples += "<" + tmpPlace + "> a <http://www.geographicknowledge.de/vocab/maps#Place>" + tripleSeparator; 
-					cPlaceTriples += "<" + tmpPlace + "> foaf:name '" + paperMapPlacesArray[i] + "'^^xsd:string" + tripleSeparator;
+					cPlaceTriples += '<' + tmpPlace + '> foaf:name "' + paperMapPlacesArray[i] + '"^^xsd:string' + tripleSeparator;
 					//Links the paper map to the place just created
 					cMapTriples += paperMapUri + "<http://www.geographicknowledge.de/vocab/maps#mapsPhenomenon> <" + tmpPlace + ">" + tripleSeparator;
 				}
@@ -224,7 +224,7 @@ var MapDescription = (function(){
 					var tmpMapCreator =  encodeURI(baseUri + "/" + this.getMapCreator());
 					cAgentTriples = paperMapUri + " <http://purl.org/dc/terms/creator> <" + tmpMapCreator + ">" + tripleSeparator;
 					cAgentTriples += "<" + tmpMapCreator + "> a <http://purl.org/dc/terms/Agent>" + tripleSeparator;
-					cAgentTriples += "<" + tmpMapCreator + "> foaf:name '" + this.getMapCreator() + "'^^xsd:string" + tripleSeparator;
+					cAgentTriples += '<' + tmpMapCreator + '> foaf:name "' + this.getMapCreator() + '"^^xsd:string' + tripleSeparator;
 				}
 			}
 
