@@ -878,10 +878,10 @@ $(document).ready(function () {
 						var yearEnd = "";
 						if(year.indexOf(dateSeparator) >= 0){
 							var yearStrArray = year.split(dateSeparator);
-							yearStart = yearStrArray[0] + "-01-01T00:00:00+00:00";//TODO: Find a better way to make the year valid
+							yearStart = yearStrArray[0];// + "-01-01T00:00:00+00:00";//TODO: Find a better way to make the year valid
 							yearEnd = yearStrArray[1];//HACK: Machete kills!
 						}else{
-							yearStart = year + "-01-01T00:00:00+00:00";//TODO: Find a better way to make the year valid
+							yearStart = year// + "-01-01T00:00:00+00:00";//TODO: Find a better way to make the year valid
 							yearEnd = year;//HACK: Machete kills!
 						}
 						var stRefs = queryDbpediaST(xybboxBnd, yearStart, yearEnd);

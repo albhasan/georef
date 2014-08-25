@@ -108,8 +108,8 @@ var Constants = (function(){
 								'	{ ' + newline +
 								'		SELECT DISTINCT ?subject ' + newline +
 								'		WHERE { ' + newline +
-								'			?subject geoWgs84:lat ?lat. ' + newline +
-								'			?subject geoWgs84:long ?long. ' + newline +
+								'			?subject geoWgs84:lat ?lat . ' + newline +
+								'			?subject geoWgs84:long ?long . ' + newline +
 								'			?subject dbpedia-owl:foundingYear ?start . ' + newline +
 								'			?subject dbpedia-owl:dissolutionYear ?end . ' + newline +
 								'			FILTER( ' + newline +
