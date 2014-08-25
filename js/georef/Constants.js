@@ -117,8 +117,8 @@ var Constants = (function(){
 								'				xsd:double(?lat) <= <PARAM_YMAX> && ' + newline +
 								'				xsd:double(?long) >= <PARAM_XMIN> && ' + newline +
 								'				xsd:double(?long) <= <PARAM_XMAX> && ' + newline +
-								'				?start < "<PARAM_YEAR_START>"^^xsd:gYear && ' + newline +
-								'				?end > "<PARAM_YEAR_END>"^^xsd:gYear ' + newline +
+								'				year(?start) < <PARAM_YEAR_START> && ' + newline +
+								'				year(?end) > <PARAM_YEAR_END> ' + newline +
 								'			). ' + newline +
 								'		}LIMIT 10 ' + newline +
 								'	} ' + newline +
