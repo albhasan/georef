@@ -667,6 +667,9 @@ $(document).ready(function () {
         }
     });
 
+	
+	
+	
 
 	//------------------------------------------
 	//jQuery UI http://jqueryui.com/
@@ -924,7 +927,41 @@ $(document).ready(function () {
 		});
 	});
 
+	//Button - btToggleContentTags - Toggles checkboxes on/off
+	$(function(){
+		$( "#btToggleContentTags" ).click(function(){
+			//$(".chOntologyContent").attr('checked','checked');
+			//$(".chOntologyContent").removeAttr('checked');
+			var checkBoxes = $(".chOntologyContent")
+			checkBoxes.prop("checked", !checkBoxes.prop("checked"));
+		});
+	});
+
+	//Button - btToggleSuggestionTags - Toggles checkboxes on/off
+	$(function(){
+		$( "#btToggleSuggestionTags" ).click(function(){
+			var checkBoxes = $(".chMapLinkSuggestion")
+			checkBoxes.prop("checked", !checkBoxes.prop("checked"));
+		});
+	});
+
+	//Button - btTogglePlaceTags - Toggles checkboxes on/off
+	$(function(){
+		$( "#btTogglePlaceTags" ).click(function(){
+			var checkBoxes = $(".chPlaceSuggestion")
+			checkBoxes.prop("checked", !checkBoxes.prop("checked"));
+		});
+	});
+
+	//Button - btToggleDescriptionTags - Toggles checkboxes on/off
+	$(function(){
+		$( "#btToggleDescriptionTags" ).click(function(){
+			var checkBoxes = $(".chDescriptionSuggestion")
+			checkBoxes.prop("checked", !checkBoxes.prop("checked"));
+		});
+	});	
 	
+
 	/**
 	* Metadata tab events
 	*/
