@@ -130,10 +130,10 @@ var MapDescription = (function(){
 			var baseUri = c.getConstant("HOME_URI");
 			var prefix = c.getConstant("PREFIXES");
 			var insertTemplate = c.getConstant("QUERY_INSERT");
-			var tripleSeparator = " . ";// + String.fromCharCode(13);
+			var tripleSeparator = " . \n";// + String.fromCharCode(13);
 			var paperMapUri = "<" + mapUri + "> ";
 			
-			var paperMapPlacesArray = csv2array(this.getMapPlaces());//Get the list of user's places as an array
+			var paperMapPlacesArray = csv2array(getMapPlaces());//Get the list of user's places as an array
 			
 			//Triples for map
 			var cMapTriples = "";
@@ -143,12 +143,12 @@ var MapDescription = (function(){
 			// Relation paper - image
 			cMapTriples += paperMapUri + "<http://www.geographicknowledge.de/vocab/maps#digitalImageVersion> <" + imageUrl + ">" + tripleSeparator;
 			//Size
-			if(this.getMapSize() != null && this.getMapSize().length > 0){
-				cMapTriples += paperMapUri + "<http://www.geographicknowledge.de/vocab/maps#mapSize> '" + this.getMapSize() + "'^^xsd:string" + tripleSeparator;
+			if(getMapSize() != null && getMapSize().length > 0){
+				cMapTriples += paperMapUri + "<http://www.geographicknowledge.de/vocab/maps#mapSize> '" + getMapSize() + "'^^xsd:string" + tripleSeparator;
 			}
 			//paper map title
-			if(this.getMapTitle() != null && this.getMapTitle().length > 0){
-				cMapTriples += paperMapUri + "<http://www.geographicknowledge.de/vocab/maps#title> '" + this.getMapTitle() + "'^^xsd:string" + tripleSeparator;
+			if(getMapTitle() != null && getMapTitle().length > 0){
+				cMapTriples += paperMapUri + "<http://www.geographicknowledge.de/vocab/maps#title> '" + getMapTitle() + "'^^xsd:string" + tripleSeparator;
 			}
 			
 			//paper map time
@@ -188,7 +188,7 @@ var MapDescription = (function(){
 			
 			//paper map scale
 			if(this.getMapScale() != null && this.getMapScale().length > 0){
-				cMapTriples += paperMapUri + "<http://www.geographicknowledge.de/vocab/maps#hasScale> '" + this.getMapScale() + "'^^xsd:string" +  tripleSeparator;
+				cMapTriples += paperMapUri + "<http://www.geographicknowledge.de/vocab/maps#hasScale> '" + getMapScale() + "'^^xsd:string" +  tripleSeparator;
 			}
 			//paper map area en map coords
 			if(this.getMapArea() != null && this.getMapArea().length > 0){
@@ -214,7 +214,7 @@ var MapDescription = (function(){
 					cMapTriples += paperMapUri + "<http://www.geographicknowledge.de/vocab/maps#mapsPhenomenon> <" + tmpPlace + ">" + tripleSeparator;
 				}
 			}
-			
+
 			//Triples about the map's author
 			var cAgentTriples = "";
 			if(this.getMapCreator() != null && this.getMapCreator().length > 0){
@@ -233,27 +233,39 @@ var MapDescription = (function(){
 			//Builds triples form the checkboxes
 			//-----------------------------------
 			
+			cMapTriples += "\n\n#############DBPEDIA triples#############\n";
 			
 			//DBpedia places matched from user's places. Alphanumeric
-			for (var i = 0; i < this.getMapLinksPlaces().length; i++) {
-				cMapTriples += paperMapUri + "<http://www.geographicknowledge.de/vocab/maps#mapsPhenomenon> <" +  this.getMapLinksPlaces()[i] + ">" + tripleSeparator;
+			
+			
+			if(getMapLinksPlaces() != null){
+				for (var i = 0; i < getMapLinksPlaces().length; i++) {
+					cMapTriples += paperMapUri + "<http://www.geographicknowledge.de/vocab/maps#mapsPhenomenon> <" +  getMapLinksPlaces()[i] + ">" + tripleSeparator;
+				}
 			}
 
 			//DBpedia retrieved from the image map boundary and the user's typed year- spatio temporal places
-			for (var i = 0; i < this.getMapLinksTags().length; i++) {
-				cMapTriples += paperMapUri + "<http://www.geographicknowledge.de/vocab/maps#mapsPhenomenon> <" + this.getMapLinksTags()[i] + ">" + tripleSeparator;
+			
+			if(getMapLinksTags() != null){
+				for (var i = 0; i < getMapLinksTags().length; i++) {
+					cMapTriples += paperMapUri + "<http://www.geographicknowledge.de/vocab/maps#mapsPhenomenon> <" + getMapLinksTags()[i] + ">" + tripleSeparator;
+				}
 			}
 
 			//DBpedia - Links found in the user's description
-			for (var i = 0; i < this.getMapLinksDescription().length; i++) {
-				cMapTriples += paperMapUri + "<http://purl.org/dc/terms/references> <" +  this.getMapLinksDescription()[i] + ">" + tripleSeparator;
+			if(getMapLinksDescription() != null){
+				for (var i = 0; i < getMapLinksDescription().length; i++) {
+					cMapTriples += paperMapUri + "<http://purl.org/dc/terms/references> <" +  getMapLinksDescription()[i] + ">" + tripleSeparator;
+				}
 			}
-					
+
 			//Triples from the ontology
-			for (var i = 0; i < this.getMapLinksContents().length; i++) {
-				var tmpInstance = djb2Code(mapUri + "/" + this.getMapLinksContents()[i]);
-				cMapTriples += paperMapUri + " a <" + this.getMapLinksContents()[i]  + ">" + tripleSeparator;
+			if(getMapLinksContents() != null){
+			for (var i = 0; i < getMapLinksContents().length; i++) {
+				var tmpInstance = djb2Code(mapUri + "/" + getMapLinksContents()[i]);
+				cMapTriples += "_:" +  tmpInstance + " a <" + getMapLinksContents()[i]  + ">" + tripleSeparator;
 				cMapTriples += paperMapUri + "<http://www.geographicknowledge.de/vocab/maps#mapsPhenomenon> _:" +  tmpInstance + tripleSeparator;
+			}
 			}
 			
 			//Replace in the insert template

@@ -1168,23 +1168,24 @@ $(document).ready(function () {
 			}).done(function ( data ) {
 				$("#descriptionTags").html("");
 				var tmp = new Array();
-				for(var i = 0; i < data.Resources.length; i++){
-					var obj = data.Resources[i];
-					var subject = obj["@URI"];
-					if(tmp.indexOf(subject) < 0){//Avoid subject repetition
-						tmp.push(subject);
-						//var originalText = obj["@surfaceForm"];
-						//Gets the URL last part
-						var matchedText = subject.substring(subject.lastIndexOf("/") + 1, subject.length);
-						//Creates the checkboxes					
-						$("#descriptionTags").append("<p id='pDescriptionTag" + tmp.length +"'><input type='checkbox' id='" + subject + "' value='" + subject + "' class='chDescriptionSuggestion' >" + matchedText + " - <a href='" + subject + "' target='_blank'>view</a> <a href='javascript: void(0)' onclick='removeElement(&quot;pDescriptionTag" + tmp.length + "&quot;)'>remove</a></p>");
-						//Completes the subject with the label and abstract -getDbpediaLabelAbstract();
+				if(data.Resources != null){
+					for(var i = 0; i < data.Resources.length; i++){
+						var obj = data.Resources[i];
+						var subject = obj["@URI"];
+						if(tmp.indexOf(subject) < 0){//Avoid subject repetition
+							tmp.push(subject);
+							//var originalText = obj["@surfaceForm"];
+							//Gets the URL last part
+							var matchedText = subject.substring(subject.lastIndexOf("/") + 1, subject.length);
+							//Creates the checkboxes					
+							$("#descriptionTags").append("<p id='pDescriptionTag" + tmp.length +"'><input type='checkbox' id='" + subject + "' value='" + subject + "' class='chDescriptionSuggestion' >" + matchedText + " - <a href='" + subject + "' target='_blank'>view</a> <a href='javascript: void(0)' onclick='removeElement(&quot;pDescriptionTag" + tmp.length + "&quot;)'>remove</a></p>");
+							//Completes the subject with the label and abstract -getDbpediaLabelAbstract();
+						}
 					}
 				}
-
 			}
 		);	
-	
+
 	}
 
 

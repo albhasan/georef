@@ -570,7 +570,7 @@ function djb2Code(str){
 		char = str.charCodeAt(i);
 		hash = ((hash << 5) + hash) + char; /* hash * 33 + c */
 	}
-	return hash;
+	return Math.abs(hash);
 }
 
 

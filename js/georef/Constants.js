@@ -11,7 +11,7 @@ var Constants = (function(){
 	var createConstants = function(){
 	
 	
-		var newline = " ";
+		var newline = " \n";
 		var DBPEDIA_SPARQL = 'http://dbpedia.org/sparql';
 		var HOME_URI = 'http://uni-muenster.de/historicmaps';
 		var HOME_GRAPH = 'http://ifgi.uni-muenster.de/lodum/historicmaps/';
