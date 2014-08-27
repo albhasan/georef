@@ -142,7 +142,7 @@ $(document).ready(function () {
 		var drawControlImage = new L.Control.Draw({
 			draw: {
 				polyline: {
-					title: 'Draw an 1 cm line',
+					title: 'Draw a 20 cms line',
 					allowIntersection: false, // Restricts shapes to simple polygons
 					drawError: {
 						color: '#FF0000', // Color the shape will turn when intersects
