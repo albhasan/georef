@@ -494,14 +494,49 @@ $(document).ready(function () {
 	*/
 	function validateMetadata(){
 		var res = true;
+		var md = MapDescription.getInstance();
 
+		md.setMapUri($("#paperMapUri").val());
+		md.setMapCreator($.trim($("#paperMapCreator").val()));
+		md.setMapSize($.trim($("#paperMapSize").val()));
+		md.setMapTitle($.trim($("#paperMapTitle").val()));
+		md.setMapTime($.trim($("#paperMapTime").val()));
+		if(imgModelOriginal != null){
+			md.setImageUrl(imgModelOriginal.getUrl());
+		}
+		md.setMapScale($.trim($("#paperMapScale").val()));
+		md.setMapPlaces($.trim($("#paperMapPlaces").val()));
+		md.setMapArea($.trim($("#mapAreawkt").val()));
+		var messages = md.validate();
+		var emessage = [];
+		var wmessage = [];
+		if (messages.length > 0 ){
+			for (var i = 0; i < messages.length; i++) {
+				var m = messages[i];
+				if(m[0] == "ERROR"){
+					emessage.push(m[1]);
+				}else if(m[0] == "WARNING"){
+					wmessage.push(m[1]);
+				}
+			}
+			if(emessage.length > 0){
+				alert("ERRORS: " + emessage.join(" "));
+			}
+			if(wmessage.length > 0){
+				alert("WARNINGS: " + wmessage.join(" "));
+			}
+			res = false;
+		}
+		return res;
+
+		/*
 		var c = Constants.getInstance();
 		var paperMapUri = $("#paperMapUri").val();
 		var d = new Date();
 		var messages = new Array();
 		var imageMapUri;
 		var dateSeparator = c.getConstant("DATE_SEPARATOR");
-		
+
 		if(imgModelOriginal != null){
 			imageMapUri = imgModelOriginal.getUrl();
 		}
@@ -550,6 +585,7 @@ $(document).ready(function () {
 			res = false;
 		}
 		return res;
+		*/
 	}
 
 	
@@ -867,7 +903,9 @@ $(document).ready(function () {
 	$(function(){
 		$( "#btUpdateMapLinks" ).click(function(){
 			if(trans != null){
-				if(validateMetadata()){
+				var md = MapDescription.getInstance();
+				var ewmessages = md.validate()
+				if(countErrorMessages(ewmessages)[0] == 0){
 					var c = Constants.getInstance();
 					var dateSeparator = c.getConstant("DATE_SEPARATOR");
 					var year = $.trim($("#paperMapTime").val());
@@ -904,6 +942,15 @@ $(document).ready(function () {
 					}else{
 						alert("Please fill the map time field in the metadata tab.");
 					}
+				}else{
+					var em = " ";
+					for (var i = 0; i < ewmessages.length; i++){
+						var m = ewmessages[i];
+						if(m[0] == "ERROR"){
+							em = em + " " + m[1];
+						}
+						alert("ERRORS:" + em);
+					}
 				}
 			}
 		});
@@ -913,8 +960,19 @@ $(document).ready(function () {
 	//Button - Find matches to places typed by the user
 	$(function(){
 		$('#btFindPlaceMatches').click(function() {
-			if(validateMetadata()){
+			var md = MapDescription.getInstance();
+			var ewmessages = md.validate();
+			if(countErrorMessages(ewmessages)[0] == 0){
 				queryDbpediaSuggestedPlaces();
+			}else{
+				var em = " ";
+				for (var i = 0; i < ewmessages.length; i++){
+					var m = ewmessages[i];
+					if(m[0] == "ERROR"){
+						em = em + " " + m[1];
+					}
+					alert("ERRORS:" + em);
+				}
 			}
 		});
 	});		
@@ -993,7 +1051,10 @@ $(document).ready(function () {
 		var md = MapDescription.getInstance();
 		md.setMapArea($.trim($("#mapAreawkt").val()));
 	});
-
+	$("#taMapDescription").change(function(){
+		var md = MapDescription.getInstance();
+		md.setMapDescription($.trim($("#taMapDescription").val()));
+	});
 	
 	/**
 	* Events of the dinamically created checkboxes

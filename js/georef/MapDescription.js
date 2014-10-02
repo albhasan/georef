@@ -94,7 +94,7 @@ var MapDescription = (function(){
 		var setMapScale = function(aMapScale){
 			mapScale = aMapScale;
 		};
-		var setMapArea = function(){
+		var setMapArea = function(aMapArea){
 			mapArea = aMapArea;
 		};
 		var setMapPlaces = function(aMapPlaces){
@@ -278,7 +278,69 @@ var MapDescription = (function(){
 			return res;
 		};
 
-		
+		var validate = function(){
+			var res = [];
+			
+			var lmapUri = this.getMapUri();
+			var limageUrl = this.getImageUrl();
+			var lmapTitle = this.getMapTitle();
+			var lmapCreator = this.getMapCreator();
+			var lmapSize = this.getMapSize();
+			var lmapScale = this.getMapScale();
+			var lmapArea = this.getMapArea();
+			var lmapPlaces = this.getMapPlaces();
+			var lmapDescription = this.getMapDescription();
+			var lmapLinksContents = this.getMapLinksContents();
+			var lmapLinksPlaces = this.getMapLinksPlaces();
+			var lmapLinksTags = this.getMapLinksTags();
+			var lmapLinksDescription = this.getMapLinksDescription();
+			var lmapTime = this.getMapTime();
+
+			if(!isUrlOfImage(limageUrl)){
+				res.push(["ERROR", "Missing image URL."]);
+			}
+			if(!isUriValid(lmapUri)){
+				res.push(["ERROR", "Missing paper map URI."]);
+			}			
+			if(lmapTitle == null || lmapTitle.length < 1){
+				res.push(["ERROR", "Missing map title."]);
+			}
+			if(lmapCreator == null || lmapCreator.length < 1){
+				res.push(["WARNING", "Missing map creator."]);
+			}
+			if(lmapSize == null || lmapSize.length < 1){
+				res.push(["WARNING", "Missing map size."]);
+			}
+			if(lmapScale == null || lmapScale.length < 1){
+				res.push(["WARNING", "Missing map scale."]);
+			}
+			if(lmapArea == null || lmapArea.length < 1){
+				res.push(["ERROR", "Missing map area."]);
+			}
+			if(lmapPlaces == null || lmapPlaces.length < 1){
+				res.push(["WARNING", "Missing map places."]);
+			}
+			if(lmapDescription == null || lmapDescription.length < 1){
+				res.push(["WARNING", "Missing map description."]);
+			}
+			if(lmapLinksContents == null || lmapLinksContents.length < 1){
+				res.push(["WARNING", "Missing map link contents."]);
+			}
+			if(lmapLinksPlaces == null || lmapLinksPlaces.length < 1){
+				res.push(["WARNING", "Missing map link places."]);
+			}
+			if(lmapLinksTags == null || lmapLinksTags.length < 1){
+				res.push(["WARNING", "Missing map link tags."]);
+			}
+			if(lmapLinksDescription == null || lmapLinksDescription.length < 1){
+				res.push(["WARNING", "Missing map links description."]);
+			}
+			if(lmapTime == null || lmapTime.length < 1){
+				res.push(["ERROR", "Missing map time."]);
+			}
+			return res;
+		};
+
 		return {
 			getImageUrl: getImageUrl,
 			getMapUri: getMapUri,
@@ -310,7 +372,8 @@ var MapDescription = (function(){
 			setMapLinksPlaces: setMapLinksPlaces,
 			setMapLinksTags: setMapLinksTags,
 			setMapLinksDescription: setMapLinksDescription,
-			buildTriples: buildTriples
+			buildTriples: buildTriples,
+			validate: validate
 		};
 	};
 	

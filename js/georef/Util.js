@@ -613,6 +613,21 @@ function createGraphName(prefix, mapURI){
 	return res;
 }
 
+/**
+* Counts the number of error and warning messages thrown by the validation function
+*/
+function countErrorMessages(messageArray){
+	var ecount = 0;
+	var wcount = 0;
+	for(m in messageArray){
+		if(m[0] == "ERROR"){
+			ecount++
+		}else if(m[0] == "WARNING"){
+			wcount++
+		}
+	}
+	return [ecount, wcount];
+}
 
 
 
