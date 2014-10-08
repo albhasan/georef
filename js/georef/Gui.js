@@ -521,11 +521,11 @@ $(document).ready(function () {
 			}
 			if(emessage.length > 0){
 				alert("ERRORS: " + emessage.join(" "));
+				res = false;
 			}
 			if(wmessage.length > 0){
 				alert("WARNINGS: " + wmessage.join(" "));
 			}
-			res = false;
 		}
 		return res;
 

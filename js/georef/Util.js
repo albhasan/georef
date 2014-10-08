@@ -50,18 +50,6 @@ function isUrlValid(url){
 * @returns TRUE if the text is a URL, FALSE otherwise
 */
 function isUrl(aText){
-/*
-	var res = false;
-	if(isTextValid(aText)){
-		var urlregex = new RegExp("/^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/");
-		if (urlregex.test(aText)) {
-			res = true;
-		}
-	}
-	alert(" " + aText + " " + res)
-    return res;
-*/	
-//return regexp.test(aText);
     return /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/.test(aText);
 }
 
