@@ -115,9 +115,7 @@ as published by Sam Hocevar. See the COPYING file for more details.
 								<input id="imgMapInput" type="text">
 								<button id="btLoadImage">Load image</button>
 								<br/>
-								i.e <a href="http://sammlungen.ulb.uni-muenster.de/hd/image/view/2573587" target="_blank">Erste Periode</a>
-								<br/>
-								i.e <a href="http://sammlungen.ulb.uni-muenster.de/hd/image/view/2619150" target="_blank">Zweite Periode</a>
+								i.e <a href="http://sammlungen.ulb.uni-muenster.de/download/webcache/6000/1617755" target="_blank">BERGHE Ducatus MARCK CO mitatus et COLONIEN fis Dioecefis</a>
 							</div>
 						</div>
 						<h3 title="Click on the button 'Add an Image Control Point' on the left side map and create a matchinbg point on the right side map using the button 'Add a Map Control Point'.">2 - Control Points</h3>
@@ -164,16 +162,17 @@ as published by Sam Hocevar. See the COPYING file for more details.
 						<ul>
 							<li><a href="#tabs-1">Map</a></li>
 							<li><a href="#tabs-2">Metadata</a></li>
-							<li><a href="#tabs-3">Places</a></li>
-							<li><a href="#tabs-4">Links</a></li>
-							<li><a href="#tabs-5">Description</a></li>
-							<li><a href="#tabs-6">Contents</a></li>
+							<li><a href="#tabs-3">Subjects</a></li>
+							<li><a href="#tabs-4">Places</a></li>
+							<li><a href="#tabs-5">Links</a></li>
+							<li><a href="#tabs-6">Description</a></li>
+							<li><a href="#tabs-7">Contents</a></li>
 						</ul>
 						<div class="tabs-spacer"></div>
 						<div id="tabs-1">
 							<div id="middle-center-tabone-center">
 								<div id="map"></div>
-								<div id="stuff">
+								<div id="divSearchPlacesOnMap">
 									Search
 									<form id="frSearchPlaces" autocomplete="off">
 										<input type="text" id="searchMapPlaces" title="Type the name of a location. The map will pan to it." />
@@ -203,6 +202,19 @@ as published by Sam Hocevar. See the COPYING file for more details.
 							</form>
 						</div>
 						<div id="tabs-3">
+							<form id="frMapSubjects" autocomplete="off">
+								<fieldset id="fsSubjectTags">
+									<legend>Subjects</legend>
+									<p>Please type a comma separated list of subjects. The application will retrieve suggestions from <a href="http://lobid.org/" target="_blank">LOBID</a>.</p>
+									<input type="text" id="paperMapSubjects" title="Authority data (GND)." />
+									<button type="button" id="btFindSubjectMatches">Find matches</button><br>
+									<button type="button" id="btToggleSubjectTags">Toggle all</button><br>									
+									<div id="subjectTags">
+									</div>
+								</fieldset>
+							</form>
+						</div>						
+						<div id="tabs-4">
 							<form id="frMapPlaces" autocomplete="off">
 								<fieldset id="fsPlaceTags">
 									<legend>Map places</legend>
@@ -215,7 +227,7 @@ as published by Sam Hocevar. See the COPYING file for more details.
 								</fieldset>
 							</form>
 						</div>
-						<div id="tabs-4">
+						<div id="tabs-5">
 							<form id="frTags">
 								<fieldset id="fsTags">
 									<legend>Suggested tags</legend>
@@ -227,7 +239,7 @@ as published by Sam Hocevar. See the COPYING file for more details.
 								</fieldset>
 							</form>
 						</div>
-						<div id="tabs-5">
+						<div id="tabs-6">
 							<form id="frDescription" autocomplete="off">
 								<fieldset id="fsDescriptionTags">
 									<legend>Map description</legend>
@@ -240,7 +252,7 @@ as published by Sam Hocevar. See the COPYING file for more details.
 								</fieldset>
 							</form>
 						</div>
-						<div id="tabs-6">
+						<div id="tabs-7">
 							<form id="frContent">
 								<fieldset id="fsContentTags">
 									<legend>Map Contents</legend>

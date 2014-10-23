@@ -762,7 +762,7 @@ $(document).ready(function () {
 				myObj =  graph[i];
 				if(myObj["@id"] == mapUri){
 					$( "#paperMapTitle" ).val(myObj.title);
-					$( "#paperMapCreator" ).val(myObj.creator);
+					$( "#paperMapCreator" ).val(myObj.contributor);
 				}
 			}
 			if(graph.length == 0){
@@ -956,7 +956,17 @@ $(document).ready(function () {
 		});
 	});
 
-		
+
+	//Button - Find matches to subjects typed by the user
+	$(function(){
+		$('#btFindSubjectMatches').click(function() {
+			queryLobidSubject();
+		});
+	});		
+	
+	
+	
+	
 	//Button - Find matches to places typed by the user
 	$(function(){
 		$('#btFindPlaceMatches').click(function() {
@@ -1099,9 +1109,50 @@ $(document).ready(function () {
 		var md = MapDescription.getInstance();
 		md.setMapLinksDescription(res);
 	});
+	
 
+	/**
+	* Query LOBID for subjects.
+	*/
+	function queryLobidSubject(){
+		paperMapPlaces = $.trim($("#paperMapSubjects").val());
+		$.ajax({
+			//Uses LOBID
+			url: "http://lobid.org/subject",
+			dataType : "jsonp",
+			data : {
+				name : paperMapPlaces,
+				format : "full"
+			},
+			success : function(data) {
+alert(data);
+				$("#subjectTags").html("");
+				var tmp = new Array();
+				if(data != null && data.length > 1){
+					for(var i = 1; i < data.length; i++){
+						var obj = data[i];
+						var id = obj["@id"];
+						var graph0 = obj["@graph"][0];
+						var name = graph0["preferredName"];
+						var types = "";
+						if(tmp.indexOf(id) < 0){//Avoid duplicated tags
+							tmp.push(id);
+							for(type in graph0["@type"]){
+								types = type.substring(type.lastIndexOf("#") + 1, type.length);
+							}
+							//Creates the checkboxes					
+							$("#subjectTags").append("<p id='pSuggestedSubjectTag" + tmp.length +"'><input type='checkbox' id='" + id + "' value='" + encodeURI(name) + "' class='chSubjectSuggestion' >" + name + " - <a href='" + id + "' target='_blank'>view</a> <a href='javascript: void(0)' onclick='removeElement(&quot;pSuggestedSubjectTag" + tmp.length + "&quot;)'>remove</a></p>");
+						}
+					}
+				}else{
+					alert("No matches found");
+				}
+				
+			}
+		});
+	}
 	
-	
+
 	/**
 	* Prints suggested places taken from DBPedia. Purely alphanumerical.
 	*/

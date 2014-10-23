@@ -134,7 +134,7 @@ as published by Sam Hocevar. See the COPYING file for more details.
 .tabs-bottom .ui-tabs-nav li { top: auto; bottom: 0; margin: 0 .2em 1px 0; border-bottom: auto; border-top: 0; }
 .tabs-bottom .ui-tabs-nav li.ui-tabs-active { margin-top: -1px; padding-top: 1px; }
 
-#tabs-1,#tabs-2,#tabs-3,#tabs-4,#tabs-5,#tabs-6{
+#tabs-1,#tabs-2,#tabs-3,#tabs-4,#tabs-5,#tabs-6,#tabs-7{
 	/*height:350px;*/
 	height:100%;
 }
