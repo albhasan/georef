@@ -12,15 +12,18 @@ as published by Sam Hocevar. See the COPYING file for more details.
 */
 function isUrlOfImage(testUrl){
 	//TODO: How to check if it really is an image e.g http://sammlungen.ulb.uni-muenster.de/hd/content/pageview/2578874
-	res = true;
-	/*if(isUrlValid(testUrl)){
-		Check for common image file extension
-		return /^.*\.(jpg|JPG|jpeg|JPEG|gif|GIF|bmp|BMP)$/.test(testUrl);
+	res = false;
+	if(isTextValid(testUrl)){
+		/*if(isUrlValid(testUrl)){
+			Check for common image file extension
+			return /^.*\.(jpg|JPG|jpeg|JPEG|gif|GIF|bmp|BMP)$/.test(testUrl);
+			res = true;
+		}*/
 		res = true;
-	}*/
-	if(testUrl.indexOf("?") > 0 ){
-		alert("The given URL contains parameters. Please remove the question mark and every character to the right of it.");
-		res = false;
+		if(testUrl.indexOf("?") > 0 ){
+			alert("The given URL contains parameters. Please remove the question mark and every character to the right of it.");
+			res = false;
+		}
 	}
 	return res;
 }

@@ -20,6 +20,7 @@ var MapDescription = (function(){
 		var mapLinksPlaces;
 		var mapLinksTags;
 		var mapLinksDescription;
+		var mapLinksSubjects;
 
 		//--------------------------
 		//Getters
@@ -68,6 +69,9 @@ var MapDescription = (function(){
 		};
 		var getMapLinksDescription = function(){
 			return mapLinksDescription;
+		};
+		var getMapLinksSubjects = function(){
+			return mapLinksSubjects;
 		};
 		//--------------------------
 		//Setters
@@ -118,6 +122,11 @@ var MapDescription = (function(){
 		var setMapLinksDescription = function(aMapLinksDescription){
 			mapLinksDescription = aMapLinksDescription;
 		};
+		var setMapLinksSubjects = function(aMapLinksSubjects){
+			mapLinksSubjects = aMapLinksSubjects;
+		};
+
+	
 	
 
 		/**
@@ -233,7 +242,7 @@ var MapDescription = (function(){
 			//Builds triples form the checkboxes
 			//-----------------------------------
 			
-			cMapTriples += "\n\n#############DBPEDIA triples#############\n";
+			cMapTriples += "\n\n############# Triples from suggestions #############\n";
 			
 			//DBpedia places matched from user's places. Alphanumeric
 			
@@ -261,12 +270,20 @@ var MapDescription = (function(){
 
 			//Triples from the ontology
 			if(getMapLinksContents() != null){
-			for (var i = 0; i < getMapLinksContents().length; i++) {
-				var tmpInstance = djb2Code(mapUri + "/" + getMapLinksContents()[i]);
-				cMapTriples += "_:" +  tmpInstance + " a <" + getMapLinksContents()[i]  + ">" + tripleSeparator;
-				cMapTriples += paperMapUri + "<http://www.geographicknowledge.de/vocab/maps#mapsPhenomenon> _:" +  tmpInstance + tripleSeparator;
+				for (var i = 0; i < getMapLinksContents().length; i++) {
+					var tmpInstance = djb2Code(mapUri + "/" + getMapLinksContents()[i]);
+					cMapTriples += "_:" +  tmpInstance + " a <" + getMapLinksContents()[i]  + ">" + tripleSeparator;
+					cMapTriples += paperMapUri + "<http://www.geographicknowledge.de/vocab/maps#mapsPhenomenon> _:" +  tmpInstance + tripleSeparator;
+				}
 			}
+			//Triples resulting from LOBID subject 
+			if(getMapLinksSubjects() != null){
+				for (var i = 0; i < getMapLinksSubjects().length; i++) {
+					cMapTriples += paperMapUri + "<http://purl.org/dc/terms/references> <" +  getMapLinksSubjects()[i] + ">" + tripleSeparator;
+				}
 			}
+			
+			
 			
 			//Replace in the insert template
 			insertTemplate = insertTemplate.replace("PARAM_GRAPH", graph);
@@ -357,6 +374,7 @@ var MapDescription = (function(){
 			getMapLinksPlaces: getMapLinksPlaces,
 			getMapLinksTags: getMapLinksTags,
 			getMapLinksDescription: getMapLinksDescription,
+			getMapLinksSubjects: getMapLinksSubjects,
 			setImageUrl: setImageUrl,
 			setMapUri: setMapUri,
 			setMapTitle: setMapTitle,
@@ -372,6 +390,7 @@ var MapDescription = (function(){
 			setMapLinksPlaces: setMapLinksPlaces,
 			setMapLinksTags: setMapLinksTags,
 			setMapLinksDescription: setMapLinksDescription,
+			setMapLinksSubjects: setMapLinksSubjects,
 			buildTriples: buildTriples,
 			validate: validate
 		};

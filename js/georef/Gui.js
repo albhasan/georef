@@ -528,64 +528,6 @@ $(document).ready(function () {
 			}
 		}
 		return res;
-
-		/*
-		var c = Constants.getInstance();
-		var paperMapUri = $("#paperMapUri").val();
-		var d = new Date();
-		var messages = new Array();
-		var imageMapUri;
-		var dateSeparator = c.getConstant("DATE_SEPARATOR");
-
-		if(imgModelOriginal != null){
-			imageMapUri = imgModelOriginal.getUrl();
-		}
-		if(isUrlOfImage(imageMapUri)){
-			if(isUriValid(paperMapUri)){
-
-				paperMapCreator = $.trim($("#paperMapCreator").val());
-				paperMapSize = $.trim($("#paperMapSize").val());
-				paperMapTitle = $.trim($("#paperMapTitle").val());
-				paperMapTime = $.trim($("#paperMapTime").val());
-				if(paperMapTime != null){
-					if(paperMapTime.length > 3){
-						if(paperMapTime.indexOf(dateSeparator) >= 0){
-							var strDates = paperMapTime.split(dateSeparator);
-							if(isPositiveInteger(strDates[0].trim()) == false || isPositiveInteger(strDates[1].trim()) == false){
-								messages.unshift("Invalid map time. Expected is like '1810' or '1810-1819'. Please review it in the Map Metadata tab.");
-							}
-						}else{
-							if(isPositiveInteger(paperMapTime) == false || paperMapTime > d.getFullYear()){
-								messages.unshift("Invalid 	map time. Please review it in the Map Metadata tab.");
-
-							}
-						}
-					}
-
-					paperMapScale = $.trim($("#paperMapScale").val());
-					paperMapPlaces = $.trim($("#paperMapPlaces").val());
-					mapAreawkt = $.trim($("#mapAreawkt").val());
-				}else{
-					messages.unshift("The map URI is invalid. Please review it in the Map Metadata tab.");
-				}
-			}else{
-				messages.unshift("The image URL is invalid. Please review it in the image tab.");
-			}
-		}
-		if(messages.length > 0){
-			var msgstr = "";
-			for (var i = 0; i < messages.length; i++){
-				if(i == 0){
-					msgstr = messages[i] + "\n";
-				}else{
-					msgstr += messages[i];
-				}
-			}
-			alert(msgstr);
-			res = false;
-		}
-		return res;
-		*/
 	}
 
 	
@@ -1067,7 +1009,7 @@ $(document).ready(function () {
 	});
 	
 	/**
-	* Events of the dinamically created checkboxes
+	* Events of the dynamically created checkboxes
 	*/
 	$("body").on("change", ".chOntologyContent", function() {
 		var res = new Array();
@@ -1109,7 +1051,16 @@ $(document).ready(function () {
 		var md = MapDescription.getInstance();
 		md.setMapLinksDescription(res);
 	});
-	
+	$("body").on("change", ".chSubjectSuggestion", function() {
+		var res = new Array();
+		$(".chSubjectSuggestion").each(function( index ){
+			if(this.checked){
+				res.push(this.id);
+			}
+		});	
+		var md = MapDescription.getInstance();
+		md.setMapLinksSubjects(res);
+	});
 
 	/**
 	* Query LOBID for subjects.
@@ -1125,7 +1076,6 @@ $(document).ready(function () {
 				format : "full"
 			},
 			success : function(data) {
-alert(data);
 				$("#subjectTags").html("");
 				var tmp = new Array();
 				if(data != null && data.length > 1){
